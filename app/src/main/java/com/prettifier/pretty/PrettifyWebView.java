@@ -17,13 +17,8 @@ import android.webkit.WebViewClient;
 import com.fastaccess.helper.ActivityHelper;
 import com.prettifier.pretty.utils.SourceUtils;
 
-/**
- * This Class was created by Patrick J
- * on 09.06.16. For more Details and Licensing
- * have a look at the README.md
- */
 
-public class HighlightJsView extends NestedWebView {
+public class PrettifyWebView extends NestedWebView {
     private String content;
     private OnContentChangedListener onContentChangedListener;
 
@@ -31,18 +26,18 @@ public class HighlightJsView extends NestedWebView {
         void onContentChanged(int progress);
     }
 
-    public HighlightJsView(Context context) {
+    public PrettifyWebView(Context context) {
         super(context);
         if (isInEditMode()) return;
         initView();
     }
 
-    public HighlightJsView(Context context, AttributeSet attrs) {
+    public PrettifyWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView();
     }
 
-    public HighlightJsView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public PrettifyWebView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initView();
     }

@@ -7,7 +7,7 @@ import android.support.annotation.StringRes;
 
 import com.fastaccess.data.dao.FilesListModel;
 import com.fastaccess.ui.base.mvp.BaseMvp;
-import com.prettifier.pretty.HighlightJsView;
+import com.prettifier.pretty.PrettifyWebView;
 
 /**
  * Created by Kosh on 27 Nov 2016, 3:41 PM
@@ -15,7 +15,7 @@ import com.prettifier.pretty.HighlightJsView;
 
 public interface ViewerMvp {
 
-    interface View extends BaseMvp.FAView, HighlightJsView.OnContentChangedListener {
+    interface View extends BaseMvp.FAView, PrettifyWebView.OnContentChangedListener {
 
         void onSetNormalText(@NonNull String text);
 

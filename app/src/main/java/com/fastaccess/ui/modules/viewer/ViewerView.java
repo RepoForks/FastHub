@@ -13,7 +13,7 @@ import com.fastaccess.helper.InputHelper;
 import com.fastaccess.provider.markdown.MarkDownProvider;
 import com.fastaccess.ui.base.BaseFragment;
 import com.fastaccess.ui.widgets.FontTextView;
-import com.prettifier.pretty.HighlightJsView;
+import com.prettifier.pretty.PrettifyWebView;
 
 import butterknife.BindView;
 
@@ -27,7 +27,7 @@ public class ViewerView extends BaseFragment<ViewerMvp.View, ViewerPresenter> im
 
     @BindView(R.id.textView) FontTextView textView;
     @BindView(R.id.textViewHolder) ScrollView textViewHolder;
-    @BindView(R.id.webView) HighlightJsView webView;
+    @BindView(R.id.webView) PrettifyWebView webView;
     @BindView(R.id.progressBar) View progressBar;
     @BindView(R.id.webViewHolder) FrameLayout webViewHolder;
 
