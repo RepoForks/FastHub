@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ForegroundImageView">
+        <attr name="android:foreground"/>
+    </declare-styleable>
+    <declare-styleable name="AspectRatioView">
+        <attr name="aspectRatio" format="float"/>
+    </declare-styleable>
+
+    <declare-styleable name="DrawShadowFrameLayout">
+        <attr name="shadowDrawable" format="reference"/>
+        <attr name="shadowVisible" format="boolean"/>
+    </declare-styleable>
+    <declare-styleable name="MarkdownEditor">
+        <attr name="layout">/</attr>
+    </declare-styleable>
+    <declare-styleable name="FontTextView">
+        <attr name="drawableColor" format="color"/>
+    </declare-styleable>
+</resources>

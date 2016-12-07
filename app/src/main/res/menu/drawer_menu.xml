@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item android:title="@string/action">
+
+        <menu>
+            <item
+                android:id="@+id/rateUs"
+                android:icon="@drawable/ic_star"
+                android:title="@string/rate_fa"/>
+            <item
+                android:id="@+id/settings"
+                android:icon="@drawable/ic_settings"
+                android:title="@string/settings"/>
+        </menu>
+
+    </item>
+
+</menu>

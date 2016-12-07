@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    android:id="@+id/coordinatorLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.modules.contentviewer.gists.GistsContentView">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        android:theme="@style/ToolbarStyleDark"
+        app:elevation="0dp">
+
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:background="?colorPrimary"
+            app:layout_scrollFlags="scroll|enterAlways"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?colorPrimary"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:minHeight="?actionBarSize"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_xs_large">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.fastaccess.ui.widgets.AvatarLayout
+                    android:id="@+id/avatarLayout"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="top"
+                    android:transitionName="@string/image_transition"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:layout_marginStart="@dimen/spacing_s_large"
+                    android:orientation="vertical">
+
+                    <com.fastaccess.ui.widgets.FontTextView
+                        android:id="@+id/title"
+                        style="@style/TextAppearance.AppCompat.Subhead"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="6"
+                        android:textColor="@color/primary_text"
+                        tools:text="One must invent the visitor in order to Bliss happens when you follow art so compassionately that whatsoever you are luring is your relativity.praise the sinner of remarkable vision."/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingTop="@dimen/spacing_normal">
+
+                        <com.fastaccess.ui.widgets.FontTextView
+                            android:id="@+id/size"
+                            style="@style/TextAppearance.AppCompat.Small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start|center"
+                            android:layout_marginEnd="@dimen/spacing_xs_large"
+                            tools:text="50 minutes ago"/>
+
+                        <com.fastaccess.ui.widgets.FontTextView
+                            android:id="@+id/date"
+                            style="@style/TextAppearance.AppCompat.Small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="@dimen/spacing_xs_large"
+                            tools:text="50 minutes ago"/>
+
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?colorPrimary"
+            app:tabSelectedTextColor="?colorAccent"
+            app:tabTextColor="?colorPrimaryDark"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@drawable/toolbar_shadow"/>
+    </android.support.design.widget.AppBarLayout>
+
+    <com.fastaccess.ui.widgets.ViewPagerView
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/scroll_behavior"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_comment"
+        android:tint="@color/white"
+        app:fabSize="auto"
+        app:layout_behavior="@string/quick_return_behavior"/>
+
+</android.support.design.widget.CoordinatorLayout>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest package="com.fastaccess"
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <application
+        android:name=".App"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/LightTheme"
+        tools:replace="android:allowBackup">
+        <activity
+            android:name=".ui.modules.main.MainView"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.modules.login.LoginView"
+            android:configChanges="keyboard|orientation|screenSize"
+            android:label="@string/app_name"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data
+                    android:host="fast-for-github.firebaseapp.com"
+                    android:scheme="https"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.modules.contentviewer.gists.GistsContentView"
+            android:label="@string/gist"/>
+
+        <activity
+            android:name=".ui.modules.comment.CommentsView"
+            android:configChanges="keyboard|orientation|screenSize"
+            android:label="@string/write"/>
+
+        <activity
+            android:name=".ui.modules.viewer.FilesViewerView"
+            android:configChanges="keyboard|orientation|screenSize"
+            android:label="@string/viewer"/>
+
+        <activity
+            android:name=".ui.modules.main.gists.create.CreateGistView"
+            android:configChanges="keyboard|orientation|screenSize"
+            android:label="@string/create_gist"/>
+
+        <activity
+            android:name=".ui.modules.user.UserPagerView"
+            android:label="@string/user"/>
+
+        <meta-data
+            android:name="DATABASE"
+            android:value="FASTHUB.db"/>
+        <meta-data
+            android:name="VERSION"
+            android:value="1"/>
+        <meta-data
+            android:name="QUERY_LOG"
+            android:value="true"/>
+        <meta-data
+            android:name="DOMAIN_PACKAGE_NAME"
+            android:value="com.fastaccess.data.dao"/>
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_github"/>
+
+    </application>
+
+</manifest>
