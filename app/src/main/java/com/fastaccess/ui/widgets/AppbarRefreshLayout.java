@@ -18,6 +18,6 @@ public class AppbarRefreshLayout extends SwipeRefreshLayout {
 
     public AppbarRefreshLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setColorSchemeResources(R.color.primary, R.color.primary_dark, R.color.primary_light, R.color.accent);
+        setColorSchemeResources(R.color.bluish_primary, R.color.bluish_primary_dark, R.color.bluish_primary_light, R.color.bluish_accent);
     }
 }

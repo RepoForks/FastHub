@@ -33,17 +33,16 @@ public class HomePresenter extends BasePresenter<HomeMvp.View> implements HomeMv
             return;
         }
         manageSubscription(
-                RxHelper.getObserver(RestClient.getReceivedEvents(page).asObservable())
+                RxHelper.getObserver(
+                        RestClient.getReceivedEvents(page))
                         .doOnSubscribe(() -> sendToView(HomeMvp.View::onShowProgress))
                         .doOnNext(response -> {
                             lastPage = response.getLast();
-                            if (response.getItems() != null) {
-                                if (getCurrentPage() == 1) {
-                                    eventsModels.clear();
-                                    manageSubscription(EventsModel.save(response.getItems()).subscribe());
-                                }
-                                eventsModels.addAll(response.getItems());
+                            if (getCurrentPage() == 1) {
+                                eventsModels.clear();
+                                manageSubscription(EventsModel.save(response.getItems()).subscribe());
                             }
+                            eventsModels.addAll(response.getItems());
                             sendToView(HomeMvp.View::onNotifyAdapter);
                         })
                         .onErrorReturn(throwable -> {

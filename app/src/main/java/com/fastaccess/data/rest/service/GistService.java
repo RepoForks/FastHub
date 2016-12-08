@@ -14,6 +14,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import rx.Observable;
@@ -52,5 +53,17 @@ public interface GistService {
 
     @DELETE("gists/{gist_id}/comments/{id}")
     Observable<Response<Boolean>> deleteGistComment(@Path("gist_id") String gistId, @Path("id") long id);
+
+    @GET("gists/{gist_id}/star")
+    Observable<Response<Boolean>> checkGistStar(@Path("gist_id") @NonNull String gistId);
+
+    @PUT("gists/{gist_id}/star")
+    Observable<Response<Boolean>> starGist(@Path("gist_id") @NonNull String gistId);
+
+    @DELETE("gists/{gist_id}/star")
+    Observable<Response<Boolean>> unStarGist(@Path("gist_id") @NonNull String gistId);
+
+    @POST("gists/{gist_id}/forks")
+    Observable<Response<GistsModel>> forkGist(@Path("gist_id") @NonNull String gistId);
 
 }

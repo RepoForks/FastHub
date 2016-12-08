@@ -20,6 +20,10 @@ public interface GistsContentMvp {
         void onSuccessDeleted();
 
         void onErrorDeleting();
+
+        void onGistStarred(boolean isStarred);
+
+        void onGistForked(boolean isForked);
     }
 
     interface Presenter extends BaseMvp.FAPresenter<View> {
@@ -29,5 +33,15 @@ public interface GistsContentMvp {
         void onActivityCreated(@Nullable Intent intent);
 
         void onDeleteGist();
+
+        boolean isOwner();
+
+        void onStarGist();
+
+        void onForkGist();
+
+        boolean isForked();
+
+        boolean isStarred();
     }
 }

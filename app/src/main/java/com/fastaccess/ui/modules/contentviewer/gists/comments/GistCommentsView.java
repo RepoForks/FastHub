@@ -8,6 +8,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 
 import com.fastaccess.R;
+import com.fastaccess.data.dao.ActorModel;
 import com.fastaccess.data.dao.CommentsModel;
 import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.Bundler;
@@ -143,6 +144,17 @@ public class GistCommentsView extends BaseFragment<GistCommentsMvp.View, GistCom
 
     @Override public void onShowProgressDialog() {
         if (navigationCallback != null) navigationCallback.showProgress(0);
+    }
+
+    @Override public void onTagUser(@NonNull ActorModel user) {
+        Intent intent = new Intent(getContext(), CommentsView.class);
+        intent.putExtras(Bundler
+                .start()
+                .put(BundleConstant.ID, gistId)
+                .put(BundleConstant.EXTRA, "@" + user.getLogin())
+                .put(BundleConstant.EXTRA_TYPE, BundleConstant.NEW_COMMENT_EXTRA)
+                .end());
+        startActivityForResult(intent, BundleConstant.REQUEST_CODE);
     }
 
     @Override public void onDestroyView() {

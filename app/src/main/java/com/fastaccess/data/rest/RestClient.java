@@ -61,6 +61,22 @@ public class RestClient {
         return RestProvider.createService(GistService.class).getGistComments(id, page);
     }
 
+    public static Observable<Response<Boolean>> isGistStarred(@NonNull String gistId) {
+        return RestProvider.createService(GistService.class).checkGistStar(gistId);
+    }
+
+    public static Observable<Response<Boolean>> starGist(@NonNull String gistId) {
+        return RestProvider.createService(GistService.class).starGist(gistId);
+    }
+
+    public static Observable<Response<Boolean>> unStarGist(@NonNull String gistId) {
+        return RestProvider.createService(GistService.class).unStarGist(gistId);
+    }
+
+    public static Observable<Response<GistsModel>> forkGist(@NonNull String gistId) {
+        return RestProvider.createService(GistService.class).forkGist(gistId);
+    }
+
     public static Observable<CommentsModel> createComment(@NonNull String gistId, @NonNull CommentRequestModel comment) {
         return RestProvider.createService(GistService.class).createGistComment(gistId, comment);
     }

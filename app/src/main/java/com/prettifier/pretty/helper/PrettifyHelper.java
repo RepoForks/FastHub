@@ -1,4 +1,6 @@
-package com.prettifier.pretty.utils;
+package com.prettifier.pretty.helper;
+
+import android.support.annotation.NonNull;
 
 /**
  * This Class was created by Patrick J
@@ -6,9 +8,9 @@ package com.prettifier.pretty.utils;
  * have a look at the README.md
  */
 
-public class SourceUtils {
+public class PrettifyHelper {
 
-    private final static String HTML_CONTENT =
+    @NonNull private final static String HTML_CONTENT =
             "<!DOCTYPE html>\n" +
                     "<html>\n" +
                     "<head>\n" +
@@ -22,11 +24,15 @@ public class SourceUtils {
                     "</html>";
 
 
-    public static String generateContent(String source) {
-        return String.format(HTML_CONTENT, getStyle(), source);
+    @NonNull public static String generateContent(@NonNull String source) {
+        return String.format(HTML_CONTENT, getStyle(), getFormattedSource(source));
     }
 
-    private static String getStyle() {
+    @NonNull private static String getFormattedSource(@NonNull String source) {
+        return source.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+    }
+
+    @NonNull private static String getStyle() {
         return "prettify.css";
     }
 

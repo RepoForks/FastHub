@@ -141,8 +141,11 @@ public class GistCommentsPresenter extends BasePresenter<GistCommentsMvp.View> i
 
     @Override public void onItemClick(int position, View v, CommentsModel item) {
         if (item.getUser() != null) {
-            if (item.getUser().getLogin().equals(UserModel.getUser().getLogin())) {
+            UserModel userModel = UserModel.getUser();
+            if (userModel != null && item.getUser().getLogin().equals(userModel.getLogin())) {
                 if (getView() != null) getView().onEditComment(item);
+            } else {
+                if (getView() != null) getView().onTagUser(item.getUser());
             }
         }
     }
@@ -150,6 +153,8 @@ public class GistCommentsPresenter extends BasePresenter<GistCommentsMvp.View> i
     @Override public void onItemLongClick(int position, View v, CommentsModel item) {
         if (item.getUser() != null && TextUtils.equals(item.getUser().getLogin(), UserModel.getUser().getLogin())) {
             if (getView() != null) getView().onShowDeleteMsg(item.getId());
+        } else {
+            onItemClick(position, v, item);
         }
     }
 }

@@ -3,7 +3,6 @@ package com.fastaccess.data.dao;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.fastaccess.helper.Logger;
 import com.fastaccess.provider.paperdb.RxPaperBook;
@@ -497,7 +496,7 @@ public class UserModel implements Parcelable {
         return login != null ? login.hashCode() : 0;
     }
 
-    @Nullable public static UserModel getUser() {
+    public static UserModel getUser() {
         return RxPaperBook.with(BOOK_NAME).getBook().read(BOOK_KEY);
     }
 

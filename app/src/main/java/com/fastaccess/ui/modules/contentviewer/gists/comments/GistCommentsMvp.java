@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 
+import com.fastaccess.data.dao.ActorModel;
 import com.fastaccess.data.dao.CommentsModel;
 import com.fastaccess.provider.rest.implementation.OnLoadMore;
 import com.fastaccess.ui.adapter.CommentsAdapter;
@@ -45,6 +46,8 @@ public interface GistCommentsMvp {
         void onShowDeleteMsg(long id);
 
         void onShowProgressDialog();
+
+        void onTagUser(@NonNull ActorModel user);
     }
 
     interface Presenter extends BaseMvp.FAPresenter<View>,

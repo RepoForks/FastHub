@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -15,7 +16,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.fastaccess.helper.ActivityHelper;
-import com.prettifier.pretty.utils.SourceUtils;
+import com.fastaccess.helper.InputHelper;
+import com.prettifier.pretty.helper.PrettifyHelper;
 
 
 public class PrettifyWebView extends NestedWebView {
@@ -60,14 +62,14 @@ public class PrettifyWebView extends NestedWebView {
         setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
     }
 
-    public void setOnContentChangedListener(OnContentChangedListener onContentChangedListener) {
+    public void setOnContentChangedListener(@NonNull OnContentChangedListener onContentChangedListener) {
         this.onContentChangedListener = onContentChangedListener;
     }
 
-    public void setSource(String source) {
-        if (source != null && !(source.length() == 0)) {
+    public void setSource(@NonNull String source) {
+        if (!InputHelper.isEmpty(source)) {
             this.content = source;
-            String page = SourceUtils.generateContent(source);
+            String page = PrettifyHelper.generateContent(source);
             post(() -> loadDataWithBaseURL("file:///android_asset/highlight/", page, "text/html", "utf-8", null));
         } else Log.e(getClass().getSimpleName(), "Source can't be null or empty.");
     }

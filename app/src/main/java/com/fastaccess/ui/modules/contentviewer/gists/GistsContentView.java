@@ -11,8 +11,8 @@ import android.support.v4.view.ViewPager;
 import android.text.format.Formatter;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
-import com.fastaccess.App;
 import com.fastaccess.R;
 import com.fastaccess.data.dao.GistsModel;
 import com.fastaccess.helper.ActivityHelper;
@@ -25,6 +25,7 @@ import com.fastaccess.ui.base.BaseActivity;
 import com.fastaccess.ui.modules.contentviewer.gists.comments.GistCommentsView;
 import com.fastaccess.ui.widgets.AvatarLayout;
 import com.fastaccess.ui.widgets.FontTextView;
+import com.fastaccess.ui.widgets.ForegroundImageView;
 import com.fastaccess.ui.widgets.QuickReturnFooterBehavior;
 import com.fastaccess.ui.widgets.ViewPagerView;
 import com.fastaccess.ui.widgets.dialog.MessageDialogView;
@@ -47,6 +48,8 @@ public class GistsContentView extends BaseActivity<GistsContentMvp.View, GistsCo
     @BindView(R.id.pager) ViewPagerView pager;
     @BindView(R.id.tabs) TabLayout tabs;
     @BindView(R.id.fab) FloatingActionButton fab;
+    @BindView(R.id.startGist) ForegroundImageView startGist;
+    @BindView(R.id.forkGist) ForegroundImageView forkGist;
 
     @OnClick(R.id.fab) void onAddComment() {
         GistCommentsView view = (GistCommentsView) pager.getAdapter().instantiateItem(pager, 0);
@@ -58,6 +61,18 @@ public class GistsContentView extends BaseActivity<GistsContentMvp.View, GistsCo
     @OnClick(R.id.title) void onTitleClick() {
         if (getPresenter().getGist() != null && !InputHelper.isEmpty(getPresenter().getGist().getDescription()))
             showMessage(getString(R.string.details), getPresenter().getGist().getDescription());
+    }
+
+    @OnClick({R.id.startGist, R.id.forkGist}) public void onGistActions(View view) {
+        view.setEnabled(false);
+        switch (view.getId()) {
+            case R.id.startGist:
+                getPresenter().onStarGist();
+                break;
+            case R.id.forkGist:
+                getPresenter().onForkGist();
+                break;
+        }
     }
 
     @Override protected int layout() {
@@ -115,14 +130,14 @@ public class GistsContentView extends BaseActivity<GistsContentMvp.View, GistsCo
                 hideShowFab();
             }
         });
+        onGistForked(getPresenter().isForked());
+        onGistStarred(getPresenter().isStarred());
         hideShowFab();
     }
 
     @Override public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.gist_menu, menu);
-        boolean showOwnerItems = getPresenter().getGist() != null && getPresenter().getGist().getOwner() != null &&
-                getPresenter().getGist().getOwner().getLogin().equals(App.getUser().getLogin());
-        menu.findItem(R.id.deleteGist).setVisible(showOwnerItems);
+        menu.findItem(R.id.deleteGist).setVisible(getPresenter().isOwner());
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -167,6 +182,16 @@ public class GistsContentView extends BaseActivity<GistsContentMvp.View, GistsCo
     @Override public void onErrorDeleting() {
         hideProgress();
         showMessage(getString(R.string.error), getString(R.string.error_deleting_gist));
+    }
+
+    @Override public void onGistStarred(boolean isStarred) {
+        startGist.tintDrawable(isStarred ? R.color.carrot : R.color.black);
+        startGist.setEnabled(true);
+    }
+
+    @Override public void onGistForked(boolean isForked) {
+        forkGist.tintDrawable(isForked ? R.color.carrot : R.color.black);
+        forkGist.setEnabled(true);
     }
 
     private void hideShowFab() {

@@ -41,7 +41,7 @@
             android:layout_gravity="center"
             android:text="@string/cancel"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            android:textColor="@color/primary"/>
+            android:textColor="@color/bluish_primary"/>
 
         <com.fastaccess.ui.widgets.FontButton
             android:id="@+id/ok"
@@ -51,7 +51,7 @@
             android:layout_gravity="center"
             android:text="@string/submit"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            android:textColor="@color/accent"/>
+            android:textColor="@color/bluish_accent"/>
 
     </LinearLayout>
 

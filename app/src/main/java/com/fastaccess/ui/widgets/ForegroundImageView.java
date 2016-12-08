@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -11,6 +13,7 @@ import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 
 import com.fastaccess.R;
+import com.fastaccess.helper.ViewHelper;
 
 
 /**
@@ -113,5 +116,13 @@ public class ForegroundImageView extends AppCompatImageView {
         if (foreground != null) {
             foreground.draw(canvas);
         }
+    }
+
+    public void tintDrawable(@ColorRes int colorRes) {
+        tintDrawableFromColor(ContextCompat.getColor(getContext(), colorRes));
+    }
+
+    public void tintDrawableFromColor(@ColorInt int color) {
+        ViewHelper.tintDrawable(getDrawable(), color);
     }
 }
