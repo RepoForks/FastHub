@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.fastaccess.data.dao.ProfilePagerAdapterModel;
+import com.fastaccess.data.dao.FragmentPagerAdapterModel;
 
 import java.util.List;
 
@@ -12,11 +12,11 @@ import java.util.List;
  * Created by Kosh on 03 Dec 2016, 9:25 AM
  */
 
-public class ProfilePagerAdapter extends FragmentStatePagerAdapter {
+public class FragmentsPagerAdapter extends FragmentStatePagerAdapter {
 
-    private List<ProfilePagerAdapterModel> fragments;
+    private List<FragmentPagerAdapterModel> fragments;
 
-    public ProfilePagerAdapter(FragmentManager fm, List<ProfilePagerAdapterModel> fragments) {
+    public FragmentsPagerAdapter(FragmentManager fm, List<FragmentPagerAdapterModel> fragments) {
         super(fm);
         this.fragments = fragments;
     }

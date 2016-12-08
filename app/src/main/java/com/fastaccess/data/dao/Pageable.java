@@ -4,6 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +19,8 @@ public class Pageable<M extends Parcelable> implements Parcelable {
     private int next;
     private int prev;
     private int last;
+    @SerializedName("total_count") private int totalCount;
+    @SerializedName("incomplete_results") private boolean incompleteResults;
     private List<M> items;
 
     public int getFirst() {
@@ -60,6 +64,22 @@ public class Pageable<M extends Parcelable> implements Parcelable {
         this.items = items;
     }
 
+    public int getTotalCount() {
+        return totalCount;
+    }
+
+    public void setTotalCount(int totalCount) {
+        this.totalCount = totalCount;
+    }
+
+    public boolean isIncompleteResults() {
+        return incompleteResults;
+    }
+
+    public void setIncompleteResults(boolean incompleteResults) {
+        this.incompleteResults = incompleteResults;
+    }
+
     public Pageable() {}
 
     @Override public int describeContents() { return 0; }
@@ -69,7 +89,9 @@ public class Pageable<M extends Parcelable> implements Parcelable {
         dest.writeInt(this.next);
         dest.writeInt(this.prev);
         dest.writeInt(this.last);
-        dest.writeList(this.items);
+        dest.writeInt(this.totalCount);
+        dest.writeByte(this.incompleteResults ? (byte) 1 : (byte) 0);
+        dest.writeTypedList(this.items);
     }
 
     protected Pageable(Parcel in) {
@@ -77,8 +99,9 @@ public class Pageable<M extends Parcelable> implements Parcelable {
         this.next = in.readInt();
         this.prev = in.readInt();
         this.last = in.readInt();
-        this.items = new ArrayList<>();
-        in.readList(this.items, items.getClass().getClassLoader());
+        this.totalCount = in.readInt();
+        this.incompleteResults = in.readByte() != 0;
+        in.readList(this.items, this.items.getClass().getClassLoader());
     }
 
     public static final Creator<Pageable> CREATOR = new Creator<Pageable>() {

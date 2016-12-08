@@ -27,4 +27,8 @@ public class OnLoadMore<P> extends InfiniteScroll {
             presenter.onCallApi(page + 1, parameter);
         }
     }
+
+    public void setParameter(@Nullable P parameter) {
+        this.parameter = parameter;
+    }
 }

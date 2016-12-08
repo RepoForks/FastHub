@@ -9,10 +9,10 @@ import android.view.MenuItem;
 import android.widget.ProgressBar;
 
 import com.fastaccess.R;
-import com.fastaccess.data.dao.ProfilePagerAdapterModel;
+import com.fastaccess.data.dao.FragmentPagerAdapterModel;
 import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.InputHelper;
-import com.fastaccess.ui.adapter.ProfilePagerAdapter;
+import com.fastaccess.ui.adapter.FragmentsPagerAdapter;
 import com.fastaccess.ui.base.BaseActivity;
 import com.fastaccess.ui.widgets.ViewPagerView;
 
@@ -65,8 +65,8 @@ public class UserPagerView extends BaseActivity<UserPagerMvp.View, UserPagerPres
         }
         setTitle(login);
         onInvalidateMenuItem();
-        ProfilePagerAdapter adapter = new ProfilePagerAdapter(getSupportFragmentManager(),
-                ProfilePagerAdapterModel.buildFragments(this, login));
+        FragmentsPagerAdapter adapter = new FragmentsPagerAdapter(getSupportFragmentManager(),
+                FragmentPagerAdapterModel.buildForProfile(this, login));
         tabs.setTabGravity(TabLayout.GRAVITY_FILL);
         tabs.setTabMode(TabLayout.MODE_SCROLLABLE);
         pager.setAdapter(adapter);

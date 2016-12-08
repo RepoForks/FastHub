@@ -63,6 +63,9 @@
         <activity
             android:name=".ui.modules.user.UserPagerView"
             android:label="@string/user"/>
+        <activity
+            android:name=".ui.modules.search.SearchView"
+            android:label="@string/search"/>
 
         <meta-data
             android:name="DATABASE"

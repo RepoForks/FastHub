@@ -95,4 +95,8 @@
     <string name="unfollow">Unfollow</string>
     <string name="press_again_to_exit">Press once again to exit!</string>
     <string name="archive_file_detected_error">Archive file detected, Please download the file to view its content.</string>
+    <string name="minimum_three_chars">Minimum Characters (3)</string>
+    <string name="issues">Issues</string>
+    <string name="users">Users</string>
+    <string name="code">Code</string>
 </resources>

@@ -12,6 +12,7 @@ public class ActorModel implements Parcelable {
     @SerializedName("gravatar_id") private String gravatarId;
     @SerializedName("url") private String url;
     @SerializedName("avatar_url") private String avatarUrl;
+    private double score;
 
     public int getId() { return id;}
 
@@ -37,6 +38,16 @@ public class ActorModel implements Parcelable {
 
     public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl;}
 
+    public ActorModel() {}
+
+    public double getScore() {
+        return score;
+    }
+
+    public void setScore(double score) {
+        this.score = score;
+    }
+
     @Override public int describeContents() { return 0; }
 
     @Override public void writeToParcel(Parcel dest, int flags) {
@@ -46,9 +57,8 @@ public class ActorModel implements Parcelable {
         dest.writeString(this.gravatarId);
         dest.writeString(this.url);
         dest.writeString(this.avatarUrl);
+        dest.writeDouble(this.score);
     }
-
-    public ActorModel() {}
 
     protected ActorModel(Parcel in) {
         this.id = in.readInt();
@@ -57,9 +67,10 @@ public class ActorModel implements Parcelable {
         this.gravatarId = in.readString();
         this.url = in.readString();
         this.avatarUrl = in.readString();
+        this.score = in.readDouble();
     }
 
-    public static final Parcelable.Creator<ActorModel> CREATOR = new Parcelable.Creator<ActorModel>() {
+    public static final Creator<ActorModel> CREATOR = new Creator<ActorModel>() {
         @Override public ActorModel createFromParcel(Parcel source) {return new ActorModel(source);}
 
         @Override public ActorModel[] newArray(int size) {return new ActorModel[size];}

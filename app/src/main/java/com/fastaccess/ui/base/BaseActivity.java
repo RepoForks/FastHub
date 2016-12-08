@@ -151,6 +151,7 @@ public abstract class BaseActivity<V extends BaseMvp.FAView, P extends BasePrese
     @Override public void onSetupToolbar(@NonNull Toolbar toolbar, @DrawableRes int drawableRes) {
         setupToolbarAndStatusBar(toolbar);
         setToolbarIcon(drawableRes);
+        supportInvalidateOptionsMenu();
     }
 
     @Override public void showProgress(@StringRes int resId) {

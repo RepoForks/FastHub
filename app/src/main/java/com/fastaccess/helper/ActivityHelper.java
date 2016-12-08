@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -66,6 +67,13 @@ public class ActivityHelper {
     public static void start(Activity activity, Intent intent, View sharedElement) {
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
                 sharedElement, ViewHelper.getTransitionName(sharedElement));
+        activity.startActivity(intent, options.toBundle());
+    }
+
+    public static void startReveal(Activity activity, Intent intent, View sharedElement) {
+        Rect rect = ViewHelper.getLayoutPosition(sharedElement);
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeClipRevealAnimation(sharedElement, rect.centerX(), rect.centerY(), sharedElement
+                .getWidth(), sharedElement.getHeight());
         activity.startActivity(intent, options.toBundle());
     }
 

@@ -8,6 +8,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.Toast;
@@ -18,6 +19,7 @@ import com.fastaccess.helper.PrefGetter;
 import com.fastaccess.ui.base.BaseActivity;
 import com.fastaccess.ui.modules.main.gists.create.CreateGistView;
 import com.fastaccess.ui.modules.main.home.HomeView;
+import com.fastaccess.ui.modules.search.SearchView;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -88,10 +90,17 @@ public class MainView extends BaseActivity<MainMvp.View, MainPresenter> implemen
 
     }
 
+    @Override public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.search_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
     @Override public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             onOpenDrawer();
             return true;
+        } else if (item.getItemId() == R.id.search) {
+            startActivity(new Intent(this, SearchView.class));
         }
         return super.onOptionsItemSelected(item);
     }

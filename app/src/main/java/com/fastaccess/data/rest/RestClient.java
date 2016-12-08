@@ -9,11 +9,14 @@ import com.fastaccess.data.dao.CommentsModel;
 import com.fastaccess.data.dao.CreateGistModel;
 import com.fastaccess.data.dao.EventsModel;
 import com.fastaccess.data.dao.GistsModel;
+import com.fastaccess.data.dao.IssueModel;
 import com.fastaccess.data.dao.Pageable;
 import com.fastaccess.data.dao.RepoModel;
+import com.fastaccess.data.dao.SearchCodeModel;
 import com.fastaccess.data.dao.UserModel;
 import com.fastaccess.data.rest.service.GistService;
 import com.fastaccess.data.rest.service.RestService;
+import com.fastaccess.data.rest.service.SearchService;
 import com.fastaccess.provider.rest.RestProvider;
 
 import okhttp3.ResponseBody;
@@ -117,5 +120,21 @@ public class RestClient {
         return !isFollowing ? RestProvider.getUserRestService().followUser(username) : RestProvider.getUserRestService().unfollowUser(username);
     }
 
+    public static Observable<Pageable<UserModel>> searchUsers(@NonNull String query, int page) {
+        return RestProvider.createService(SearchService.class).searchUsers(query, page);
+    }
+
+    public static Observable<Pageable<RepoModel>> searchRepos(@NonNull String query, int page) {
+        return RestProvider.createService(SearchService.class).searchRepositories(query, page);
+    }
+
+    public static Observable<Pageable<IssueModel>> searchIssues(@NonNull String query, int page) {
+        return RestProvider.createService(SearchService.class).searchIssues(query, page);
+    }
+
+    public static Observable<Pageable<SearchCodeModel>> searchCode(@NonNull String query, int page) {
+        return RestProvider.createService(SearchService.class).searchCode(query, page);
+    }
 }
+
 
