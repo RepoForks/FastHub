@@ -10,7 +10,6 @@ import com.fastaccess.data.dao.ActorModel;
 import com.fastaccess.data.dao.RepoModel;
 import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.Bundler;
-import com.fastaccess.provider.rest.RestProvider;
 import com.fastaccess.ui.modules.user.UserPagerView;
 
 public class IntentsManager {
@@ -36,14 +35,14 @@ public class IntentsManager {
     private static final int URI_ISSUE_COMMENT = 15;
 
     private final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-    private final GitskariosUriManager gitsakriosUriManager = new GitskariosUriManager();
+    private final UriManager gitsakriosUriManager = new UriManager();
     private Context context;
 
     public IntentsManager(Context context) {
         this.context = context;
         int i = 1000;
 
-        String host = RestProvider.REST_URL;
+        String host = "github.com";
 
         uriMatcher.addURI(host, "", URI_BASE + i);
         uriMatcher.addURI(host, "*/*/releases", URI_RELEASES);

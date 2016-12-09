@@ -9,13 +9,14 @@ import com.fastaccess.data.dao.CommitModel;
 import com.fastaccess.data.dao.FilesListModel;
 import com.fastaccess.data.dao.IssueModel;
 import com.fastaccess.data.dao.RepoModel;
+import com.fastaccess.helper.Logger;
 
 import java.util.Arrays;
 
 import io.mola.galimatias.GalimatiasParseException;
 import io.mola.galimatias.URL;
 
-public class GitskariosUriManager {
+public class UriManager {
 
     public static final String[] RESERVED_KEYS = new String[]{
             "/notifications", "/settings", "/blog", "/explore", "/dashboard", "/repositories", "/site",
@@ -24,7 +25,6 @@ public class GitskariosUriManager {
 
     public boolean isReserved(String uri) throws GalimatiasParseException {
         URL url = URL.parse(uri);
-
         return Arrays.asList(RESERVED_KEYS).contains(url.path());
     }
 
@@ -53,6 +53,7 @@ public class GitskariosUriManager {
         ActorModel user = new ActorModel();
         URL parsedUrl = URL.parse(url);
         user.setLogin(parsedUrl.pathSegments().get(0));
+        Logger.e(user.getLogin());
         return user;
     }
 
@@ -60,6 +61,7 @@ public class GitskariosUriManager {
         try {
             return getUser(uri.toString());
         } catch (GalimatiasParseException e) {
+            e.printStackTrace();
             return null;
         }
     }
