@@ -1,4 +1,4 @@
-package com.fastaccess.ui.modules.search.repos;
+package com.fastaccess.ui.modules.search.issues;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,7 +10,7 @@ import com.fastaccess.R;
 import com.fastaccess.helper.InputHelper;
 import com.fastaccess.helper.Logger;
 import com.fastaccess.provider.rest.implementation.OnLoadMore;
-import com.fastaccess.ui.adapter.ReposAdapter;
+import com.fastaccess.ui.adapter.IssuesAdapter;
 import com.fastaccess.ui.base.BaseFragment;
 import com.fastaccess.ui.widgets.StateLayout;
 import com.fastaccess.ui.widgets.recyclerview.DynamicRecyclerView;
@@ -22,17 +22,17 @@ import icepick.State;
  * Created by Kosh on 03 Dec 2016, 3:56 PM
  */
 
-public class SearchReposView extends BaseFragment<SearchReposMvp.View, SearchReposPresenter> implements SearchReposMvp.View {
+public class SearchIssuesView extends BaseFragment<SearchIssuesMvp.View, SearchIssuesPresenter> implements SearchIssuesMvp.View {
 
     @State String searchQuery;
     @BindView(R.id.recycler) DynamicRecyclerView recycler;
     @BindView(R.id.refresh) SwipeRefreshLayout refresh;
     @BindView(R.id.stateLayout) StateLayout stateLayout;
     private OnLoadMore<String> onLoadMore;
-    private ReposAdapter adapter;
+    private IssuesAdapter adapter;
 
-    public static SearchReposView newInstance() {
-        return new SearchReposView();
+    public static SearchIssuesView newInstance() {
+        return new SearchIssuesView();
     }
 
     @Override public void onNotifyAdapter() {
@@ -53,13 +53,13 @@ public class SearchReposView extends BaseFragment<SearchReposMvp.View, SearchRep
         stateLayout.setOnReloadListener(this);
         refresh.setOnRefreshListener(this);
         recycler.setEmptyView(stateLayout, refresh);
-        adapter = new ReposAdapter(getPresenter().getRepos(), false, true);
+        adapter = new IssuesAdapter(getPresenter().getIssues());
         adapter.setListener(getPresenter());
         recycler.setAdapter(adapter);
     }
 
-    @NonNull @Override public SearchReposPresenter providePresenter() {
-        return new SearchReposPresenter();
+    @NonNull @Override public SearchIssuesPresenter providePresenter() {
+        return new SearchIssuesPresenter();
     }
 
     @Override public void onHideProgress() {
@@ -81,7 +81,7 @@ public class SearchReposView extends BaseFragment<SearchReposMvp.View, SearchRep
     @Override public void onSetSearchQuery(@NonNull String query) {
         this.searchQuery = query;
         getLoadMore().reset();
-        getPresenter().getRepos().clear();
+        getPresenter().getIssues().clear();
         onNotifyAdapter();
         if (!InputHelper.isEmpty(query)) {
             recycler.removeOnScrollListener(getLoadMore());

@@ -99,4 +99,6 @@
     <string name="issues">Issues</string>
     <string name="users">Users</string>
     <string name="code">Code</string>
+    <string name="by">by</string>
+    <string name="n_a">N/A</string>
 </resources>

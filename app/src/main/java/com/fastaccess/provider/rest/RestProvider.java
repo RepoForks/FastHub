@@ -31,7 +31,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RestProvider {
 
     public static final int PAGE_SIZE = 30;
-    private static final String REST_URL = "https://api.github.com/";
+    public static final String REST_URL = "https://api.github.com/";
     private static Gson gson;
 
     @NonNull private static HttpLoggingInterceptor loggingInterceptor(@NonNull HttpLoggingInterceptor.Level level) {

@@ -14,6 +14,8 @@ import com.fastaccess.ui.widgets.SpannableBuilder;
 import com.fastaccess.ui.widgets.recyclerview.BaseRecyclerAdapter;
 import com.fastaccess.ui.widgets.recyclerview.BaseViewHolder;
 
+import java.text.NumberFormat;
+
 import butterknife.BindString;
 import butterknife.BindView;
 
@@ -54,8 +56,9 @@ public class ReposViewHolder extends BaseViewHolder<RepoModel> {
             avatarLayout.setVisibility(View.VISIBLE);
             avatarLayout.setUrl(avatar, login);
         }
-        stars.setText(String.format("%s", repo.getStargazersCount()));
-        forks.setText(String.format("%s", repo.getForks()));
+        NumberFormat numberFormat = NumberFormat.getNumberInstance();
+        stars.setText(numberFormat.format(repo.getStargazersCount()));
+        forks.setText(numberFormat.format(repo.getForks()));
         date.setText(ParseDateFormat.getTimeAgo(repo.getUpdatedAt()));
     }
 

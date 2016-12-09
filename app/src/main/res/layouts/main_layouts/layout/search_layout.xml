@@ -10,7 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/transparent"
-        android:focusableInTouchMode="true"
         android:theme="@style/ToolbarStyleDark"
         app:elevation="0dp">
 
@@ -66,8 +65,8 @@
             android:background="?colorPrimary"
             android:clipToPadding="false"
             android:paddingStart="@dimen/keyline_1"
-            app:tabMode="scrollable"
             app:tabGravity="fill"
+            app:tabMode="scrollable"
             app:tabSelectedTextColor="?colorAccent"
             app:tabTextColor="@color/light_primary_dark"/>
 

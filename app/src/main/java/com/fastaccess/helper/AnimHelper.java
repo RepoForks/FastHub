@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.v4.view.ViewCompat;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewPropertyAnimator;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -19,7 +20,6 @@ import android.view.animation.LinearInterpolator;
 import java.util.Arrays;
 import java.util.List;
 
-import io.codetail.animation.ViewAnimationUtils;
 
 /**
  * Created by Kosh on 27 May 2016, 9:04 PM

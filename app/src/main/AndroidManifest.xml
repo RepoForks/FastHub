@@ -63,9 +63,30 @@
         <activity
             android:name=".ui.modules.user.UserPagerView"
             android:label="@string/user"/>
+
         <activity
             android:name=".ui.modules.search.SearchView"
-            android:label="@string/search"/>
+            android:label="@string/search"
+            android:windowSoftInputMode="stateAlwaysVisible"/>
+
+        <activity
+            android:name=".ui.modules.interceptor.InterceptorView"
+            android:theme="@android:style/Theme.NoDisplay">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <data
+                    android:host="github.com"
+                    android:scheme="http"/>
+                <data
+                    android:host="github.com"
+                    android:scheme="https"/>
+                <data android:pathPattern=".*"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+            </intent-filter>
+        </activity>
 
         <meta-data
             android:name="DATABASE"

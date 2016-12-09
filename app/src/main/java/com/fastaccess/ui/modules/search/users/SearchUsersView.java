@@ -46,6 +46,9 @@ public class SearchUsersView extends BaseFragment<SearchUsersMvp.View, SearchUse
     }
 
     @Override protected void onFragmentCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            stateLayout.hideProgress();
+        }
         getLoadMore().setCurrent_page(getPresenter().getCurrentPage(), getPresenter().getPreviousTotal());
         stateLayout.setOnReloadListener(this);
         refresh.setOnRefreshListener(this);

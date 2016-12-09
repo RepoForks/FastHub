@@ -7,6 +7,8 @@ import android.widget.EditText;
 import com.fastaccess.R;
 import com.fastaccess.helper.InputHelper;
 import com.fastaccess.ui.base.mvp.presenter.BasePresenter;
+import com.fastaccess.ui.modules.search.code.SearchCodeView;
+import com.fastaccess.ui.modules.search.issues.SearchIssuesView;
 import com.fastaccess.ui.modules.search.repos.SearchReposView;
 import com.fastaccess.ui.modules.search.users.SearchUsersView;
 
@@ -21,8 +23,8 @@ public class SearchPresenter extends BasePresenter<SearchMvp.View> implements Se
         if (!isEmpty) {
             SearchReposView repos = (SearchReposView) viewPager.getAdapter().instantiateItem(viewPager, 0);
             SearchUsersView users = (SearchUsersView) viewPager.getAdapter().instantiateItem(viewPager, 1);
-            SearchUsersView issues = (SearchUsersView) viewPager.getAdapter().instantiateItem(viewPager, 2);
-            SearchUsersView code = (SearchUsersView) viewPager.getAdapter().instantiateItem(viewPager, 3);
+            SearchIssuesView issues = (SearchIssuesView) viewPager.getAdapter().instantiateItem(viewPager, 2);
+            SearchCodeView code = (SearchCodeView) viewPager.getAdapter().instantiateItem(viewPager, 3);
             repos.onSetSearchQuery(InputHelper.toString(editText));
             users.onSetSearchQuery(InputHelper.toString(editText));
             issues.onSetSearchQuery(InputHelper.toString(editText));

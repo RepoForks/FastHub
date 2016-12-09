@@ -10,10 +10,6 @@ import android.text.style.URLSpan;
 import android.view.View;
 
 import com.fastaccess.helper.InputHelper;
-import com.fastaccess.helper.ParseDateFormat;
-
-import java.util.Date;
-import java.util.Locale;
 
 import static android.graphics.Typeface.BOLD;
 
@@ -99,16 +95,5 @@ public class SpannableBuilder extends SpannableStringBuilder {
         return this;
     }
 
-    public SpannableBuilder append(final Date date) {
-        final CharSequence time = ParseDateFormat.getTimeAgo(date);
-        final int timeLength = time.length();
-        if (length() > 0 && timeLength > 0 && Character.isUpperCase(time.charAt(0))) {
-            append(time.subSequence(0, 1).toString().toLowerCase(Locale.getDefault()));
-            append(time.subSequence(1, timeLength));
-        } else
-            append(time);
-
-        return this;
-    }
 }
 

@@ -11,6 +11,8 @@ import com.fastaccess.ui.modules.main.profile.gists.ProfileGistsView;
 import com.fastaccess.ui.modules.main.profile.overview.ProfileOverviewView;
 import com.fastaccess.ui.modules.main.profile.repos.ProfileReposView;
 import com.fastaccess.ui.modules.main.profile.starred.ProfileStarredView;
+import com.fastaccess.ui.modules.search.code.SearchCodeView;
+import com.fastaccess.ui.modules.search.issues.SearchIssuesView;
 import com.fastaccess.ui.modules.search.repos.SearchReposView;
 import com.fastaccess.ui.modules.search.users.SearchUsersView;
 
@@ -62,8 +64,8 @@ public class FragmentPagerAdapterModel {
         List<FragmentPagerAdapterModel> fragments = new ArrayList<>();
         fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.repos), SearchReposView.newInstance()));
         fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.users), SearchUsersView.newInstance()));
-        fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.issues), SearchUsersView.newInstance()));
-        fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.code), SearchUsersView.newInstance()));
+        fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.issues), SearchIssuesView.newInstance()));
+        fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.code), SearchCodeView.newInstance()));
         return fragments;
     }
 }
