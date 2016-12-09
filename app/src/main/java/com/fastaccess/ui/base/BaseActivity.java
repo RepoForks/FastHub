@@ -148,12 +148,6 @@ public abstract class BaseActivity<V extends BaseMvp.FAView, P extends BasePrese
         }
     }
 
-    @Override public void onSetupToolbar(@NonNull Toolbar toolbar, @DrawableRes int drawableRes) {
-        setupToolbarAndStatusBar(toolbar);
-        setToolbarIcon(drawableRes);
-        supportInvalidateOptionsMenu();
-    }
-
     @Override public void showProgress(@StringRes int resId) {
         if (resId != 0) {
             getProgressDialog().setMessage(getString(resId));
@@ -207,8 +201,8 @@ public abstract class BaseActivity<V extends BaseMvp.FAView, P extends BasePrese
         }
     }
 
-    protected void hideShadow() {
-        if (view != null) view.setVisibility(View.GONE);
+    protected void hideShowShadow(boolean show) {
+        if (view != null) view.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     protected void changeAppColor(boolean isTransparent) {

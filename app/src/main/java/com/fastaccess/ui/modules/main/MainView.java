@@ -29,7 +29,7 @@ import it.sephiroth.android.library.bottomnavigation.BottomNavigation;
 
 public class MainView extends BaseActivity<MainMvp.View, MainPresenter> implements MainMvp.View {
 
-    @MainMvp.NavigationType @State int navType;
+    @MainMvp.NavigationType @State int navType = MainMvp.FEEDS;
 
     @BindView(R.id.container) FrameLayout container;
     @BindView(R.id.fab) FloatingActionButton fab;
@@ -73,7 +73,7 @@ public class MainView extends BaseActivity<MainMvp.View, MainPresenter> implemen
     @Override protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.LightTheme);
         super.onCreate(savedInstanceState);
-        Logger.e(savedInstanceState);
+        setToolbarIcon(R.drawable.ic_menu);
         getPresenter().onActivityStarted(savedInstanceState, this, bottomNavigation, navigation);
         Logger.e(PrefGetter.getToken());
         if (null != savedInstanceState) {
@@ -87,7 +87,7 @@ public class MainView extends BaseActivity<MainMvp.View, MainPresenter> implemen
             }
         }
         onHideShowFab();
-
+        hideShowShadow(navType != MainMvp.PROFILE);
     }
 
     @Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -121,6 +121,7 @@ public class MainView extends BaseActivity<MainMvp.View, MainPresenter> implemen
         //noinspection WrongConstant
         if (bottomNavigation.getSelectedIndex() != navType) bottomNavigation.setSelectedIndex(navType, true);
         this.navType = navType;
+        hideShowShadow(navType != MainMvp.PROFILE);
         getPresenter().onModuleChanged(getSupportFragmentManager(), navType);
         onHideShowFab();
     }
@@ -151,10 +152,6 @@ public class MainView extends BaseActivity<MainMvp.View, MainPresenter> implemen
 
     @Override public void onOpenRate() {
 
-    }
-
-    @Override public void onHideToolbarShadow() {
-        hideShadow();
     }
 
     @Override public void onHideShowFab() {

@@ -50,8 +50,6 @@ public interface MainMvp {
 
         void onOpenRate();
 
-        void onHideToolbarShadow();
-
         void onHideShowFab();
     }
 

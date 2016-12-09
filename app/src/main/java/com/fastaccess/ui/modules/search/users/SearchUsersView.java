@@ -23,13 +23,13 @@ import icepick.State;
  */
 
 public class SearchUsersView extends BaseFragment<SearchUsersMvp.View, SearchUsersPresenter> implements SearchUsersMvp.View {
-
+    @State String searchQuery;
     @BindView(R.id.recycler) DynamicRecyclerView recycler;
     @BindView(R.id.refresh) SwipeRefreshLayout refresh;
     @BindView(R.id.stateLayout) StateLayout stateLayout;
     private OnLoadMore<String> onLoadMore;
     private UsersAdapter adapter;
-    @State String searchQuery;
+
 
     public static SearchUsersView newInstance() {
         return new SearchUsersView();

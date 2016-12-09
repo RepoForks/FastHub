@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.fastaccess.R;
 import com.fastaccess.data.dao.RepoModel;
 import com.fastaccess.helper.ParseDateFormat;
+import com.fastaccess.ui.widgets.AvatarLayout;
 import com.fastaccess.ui.widgets.FontTextView;
 import com.fastaccess.ui.widgets.SpannableBuilder;
 import com.fastaccess.ui.widgets.recyclerview.BaseRecyclerAdapter;
@@ -26,6 +27,7 @@ public class ReposViewHolder extends BaseViewHolder<RepoModel> {
     @BindView(R.id.date) FontTextView date;
     @BindView(R.id.stars) FontTextView stars;
     @BindView(R.id.forks) FontTextView forks;
+    @BindView(R.id.avatarLayout) AvatarLayout avatarLayout;
     @BindString(R.string.forked) String forked;
 
     private ReposViewHolder(@NonNull View itemView, @Nullable BaseRecyclerAdapter adapter) {
@@ -37,10 +39,20 @@ public class ReposViewHolder extends BaseViewHolder<RepoModel> {
     }
 
     public void bind(@NonNull RepoModel repo, boolean isStarred) {
+        bind(repo, isStarred, false);
+    }
+
+    public void bind(@NonNull RepoModel repo, boolean isStarred, boolean withImage) {
         if (repo.isFork()) {
             title.setText(SpannableBuilder.builder().bold(forked).append(" ").append(repo.getName()));
         } else {
             title.setText(!isStarred ? repo.getName() : repo.getFullName());
+        }
+        if (withImage) {
+            String avatar = repo.getOwner() != null ? repo.getOwner().getAvatarUrl() : null;
+            String login = repo.getOwner() != null ? repo.getOwner().getLogin() : null;
+            avatarLayout.setVisibility(View.VISIBLE);
+            avatarLayout.setUrl(avatar, login);
         }
         stars.setText(String.format("%s", repo.getStargazersCount()));
         forks.setText(String.format("%s", repo.getForks()));

@@ -13,6 +13,4 @@
         <include layout="@layout/small_grid_refresh_list"/>
     </LinearLayout>
 
-    <include layout="@layout/appbar_elevation_dark"/>
-
 </com.fastaccess.ui.widgets.NestedCoordinatorLayout>

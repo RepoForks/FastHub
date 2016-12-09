@@ -1,4 +1,4 @@
-package com.fastaccess.ui.modules.main.gists;
+package com.fastaccess.ui.modules.search.repos;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,60 +7,55 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 
 import com.fastaccess.R;
+import com.fastaccess.helper.InputHelper;
 import com.fastaccess.helper.Logger;
 import com.fastaccess.provider.rest.implementation.OnLoadMore;
-import com.fastaccess.ui.adapter.GistsAdapter;
+import com.fastaccess.ui.adapter.ReposAdapter;
 import com.fastaccess.ui.base.BaseFragment;
 import com.fastaccess.ui.widgets.StateLayout;
 import com.fastaccess.ui.widgets.recyclerview.DynamicRecyclerView;
 
 import butterknife.BindView;
+import icepick.State;
 
 /**
- * Created by Kosh on 11 Nov 2016, 12:36 PM
+ * Created by Kosh on 03 Dec 2016, 3:56 PM
  */
 
-public class GistsView extends BaseFragment<GistsMvp.View, GistsPresenter> implements GistsMvp.View {
+public class SearchReposView extends BaseFragment<SearchReposMvp.View, SearchReposPresenter> implements SearchReposMvp.View {
 
-    public static final String TAG = GistsView.class.getSimpleName();
-
+    @State String searchQuery;
     @BindView(R.id.recycler) DynamicRecyclerView recycler;
     @BindView(R.id.refresh) SwipeRefreshLayout refresh;
     @BindView(R.id.stateLayout) StateLayout stateLayout;
+    private OnLoadMore<String> onLoadMore;
+    private ReposAdapter adapter;
 
-    private GistsAdapter adapter;
-    private OnLoadMore onLoadMore;
-
-    public static GistsView newInstance() {
-        return new GistsView();
-    }
-
-    @Override protected int fragmentLayout() {
-        return R.layout.feeds_layout;
-    }
-
-    @Override protected void onFragmentCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        refresh.setOnRefreshListener(this);
-        stateLayout.setOnReloadListener(this);
-        recycler.setEmptyView(stateLayout, refresh);
-        adapter = new GistsAdapter(getPresenter().getGists());
-        adapter.setListener(getPresenter());
-        getLoadMore().setCurrent_page(getPresenter().getCurrentPage(), getPresenter().getPreviousTotal());
-        recycler.setAdapter(adapter);
-        recycler.addOnScrollListener(getLoadMore());
-        if (getPresenter().getGists().isEmpty()) {
-            onRefresh();
-        }
-    }
-
-    @Override public void onRefresh() {
-        getPresenter().onCallApi(1, null);
+    public static SearchReposView newInstance() {
+        return new SearchReposView();
     }
 
     @Override public void onNotifyAdapter() {
         Logger.e();
         onHideProgress();
         adapter.notifyDataSetChanged();
+    }
+
+    @Override protected int fragmentLayout() {
+        return R.layout.small_grid_refresh_list;
+    }
+
+    @Override protected void onFragmentCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        stateLayout.setOnReloadListener(this);
+        refresh.setOnRefreshListener(this);
+        recycler.setEmptyView(stateLayout, refresh);
+        adapter = new ReposAdapter(getPresenter().getRepos(), false, true);
+        adapter.setListener(getPresenter());
+        recycler.setAdapter(adapter);
+    }
+
+    @NonNull @Override public SearchReposPresenter providePresenter() {
+        return new SearchReposPresenter();
     }
 
     @Override public void onHideProgress() {
@@ -79,20 +74,28 @@ public class GistsView extends BaseFragment<GistsMvp.View, GistsPresenter> imple
         if (navigationCallback != null) navigationCallback.showMessage(getString(R.string.error), message);
     }
 
-    @NonNull @Override public GistsPresenter providePresenter() {
-        return new GistsPresenter();
+    @Override public void onSetSearchQuery(@NonNull String query) {
+        this.searchQuery = query;
+        getLoadMore().reset();
+        getPresenter().getRepos().clear();
+        onNotifyAdapter();
+        if (!InputHelper.isEmpty(query)) {
+            recycler.removeOnScrollListener(getLoadMore());
+            recycler.addOnScrollListener(getLoadMore());
+            onRefresh();
+        }
     }
 
-    @NonNull @Override public OnLoadMore getLoadMore() {
+    @NonNull @Override public OnLoadMore<String> getLoadMore() {
         if (onLoadMore == null) {
-            onLoadMore = new OnLoadMore(getPresenter());
+            onLoadMore = new OnLoadMore<>(getPresenter(), searchQuery);
         }
+        onLoadMore.setParameter(searchQuery);
         return onLoadMore;
     }
 
-    @Override public void onDestroyView() {
-        recycler.removeOnScrollListener(getLoadMore());
-        super.onDestroyView();
+    @Override public void onRefresh() {
+        getPresenter().onCallApi(1, searchQuery);
     }
 
     @Override public void onClick(View view) {

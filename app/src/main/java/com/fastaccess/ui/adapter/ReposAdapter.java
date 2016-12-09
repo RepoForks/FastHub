@@ -16,10 +16,16 @@ import java.util.List;
 
 public class ReposAdapter extends BaseRecyclerAdapter<RepoModel, ReposViewHolder, BaseViewHolder.OnItemClickListener<RepoModel>> {
     private boolean isStarred;
+    private boolean withImage;
 
     public ReposAdapter(@NonNull List<RepoModel> data, boolean isStarred) {
+        this(data, isStarred, false);
+    }
+
+    public ReposAdapter(@NonNull List<RepoModel> data, boolean isStarred, boolean withImage) {
         super(data);
         this.isStarred = isStarred;
+        this.withImage = withImage;
     }
 
     @Override protected ReposViewHolder viewHolder(ViewGroup parent, int viewType) {
@@ -27,6 +33,6 @@ public class ReposAdapter extends BaseRecyclerAdapter<RepoModel, ReposViewHolder
     }
 
     @Override protected void onBindView(ReposViewHolder holder, int position) {
-        holder.bind(getItem(position), isStarred);
+        holder.bind(getItem(position), isStarred, withImage);
     }
 }

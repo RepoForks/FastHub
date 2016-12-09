@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.fastaccess.R;
@@ -25,7 +24,6 @@ import butterknife.BindView;
 public class ProfileView extends BaseFragment<ProfileMvp.View, ProfilePresenter> implements ProfileMvp.View {
 
     public static final String TAG = ProfileView.class.getSimpleName();
-    @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.tabs) TabLayout tabs;
     @BindView(R.id.pager) ViewPagerView pager;
 
@@ -36,14 +34,13 @@ public class ProfileView extends BaseFragment<ProfileMvp.View, ProfilePresenter>
     }
 
     @Override protected int fragmentLayout() {
-        return R.layout.tabbed_pager_layout;
+        return R.layout.inner_tabbed_pager_layout;
     }
 
     @Override protected void onFragmentCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         if (getArguments() == null) {
             throw new RuntimeException("Bundle is null?");
         }
-        navigationCallback.onSetupToolbar(toolbar, R.drawable.ic_menu);
         String login = getArguments().getString(BundleConstant.EXTRA);
         if (login == null) {
             throw new RuntimeException("user is null?");

@@ -3,9 +3,7 @@ package com.fastaccess.ui.modules.main.home;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.fastaccess.R;
@@ -26,9 +24,6 @@ public class HomeView extends BaseFragment<HomeMvp.View, HomePresenter> implemen
 
     public static final String TAG = HomeView.class.getSimpleName();
 
-    @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.toolbarShadow) View toolbarShadow;
-    @BindView(R.id.appbar) AppBarLayout appbar;
     @BindView(R.id.recycler) DynamicRecyclerView recycler;
     @BindView(R.id.refresh) SwipeRefreshLayout refresh;
     @BindView(R.id.stateLayout) StateLayout stateLayout;
@@ -44,7 +39,6 @@ public class HomeView extends BaseFragment<HomeMvp.View, HomePresenter> implemen
     }
 
     @Override protected void onFragmentCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        if (navigationCallback != null) navigationCallback.onSetupToolbar(toolbar, R.drawable.ic_menu);
         stateLayout.setOnReloadListener(this);
         refresh.setOnRefreshListener(this);
         recycler.setEmptyView(stateLayout, refresh);
@@ -103,4 +97,5 @@ public class HomeView extends BaseFragment<HomeMvp.View, HomePresenter> implemen
     @Override public void onClick(View view) {
         onRefresh();
     }
+
 }

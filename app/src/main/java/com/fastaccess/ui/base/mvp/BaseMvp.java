@@ -1,10 +1,8 @@
 package com.fastaccess.ui.base.mvp;
 
-import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import android.support.v7.widget.Toolbar;
 
 import com.fastaccess.ui.widgets.dialog.MessageDialogView;
 
@@ -39,8 +37,6 @@ public interface BaseMvp {
         void showMessage(@NonNull String titleRes, @NonNull String msgRes);
 
         void onHomeClicked();
-
-        void onSetupToolbar(@NonNull Toolbar toolbar, @DrawableRes int drawableRes);
 
         boolean isLoggedIn();
     }
