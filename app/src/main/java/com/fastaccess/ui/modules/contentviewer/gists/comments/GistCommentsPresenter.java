@@ -112,7 +112,7 @@ public class GistCommentsPresenter extends BasePresenter<GistCommentsMvp.View> i
             long commId = bundle.getLong(BundleConstant.EXTRA, 0);
             String gistId = bundle.getString(BundleConstant.ID);
             if (commId != 0 && gistId != null) {
-                manageSubscription(RxHelper.getObserver(RestClient.deleteComment(gistId, commId))
+                manageSubscription(RxHelper.getObserver(RestClient.deleteGistComment(gistId, commId))
                         .doOnSubscribe(() -> sendToView(GistCommentsMvp.View::onShowProgressDialog))
                         .doOnNext(booleanResponse -> sendToView(view -> view.onHandleCommentDelete(booleanResponse, commId)))
                         .onErrorReturn(throwable -> {

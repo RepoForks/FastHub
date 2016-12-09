@@ -17,7 +17,6 @@ public class BasePresenter<V extends BaseMvp.FAView> extends TiPresenter<V> impl
 
     private RxTiPresenterSubscriptionHandler subscriptionHandler = new RxTiPresenterSubscriptionHandler(this);
 
-
     @Override public boolean isAttached() {
         return isViewAttached();
     }
@@ -27,6 +26,8 @@ public class BasePresenter<V extends BaseMvp.FAView> extends TiPresenter<V> impl
     }
 
     @Override public void manageSubscription(@Nullable Subscription subscription) {
-        if (subscription != null) subscriptionHandler.manageSubscription(subscription);
+        if (subscription != null) {
+            subscriptionHandler.manageSubscription(subscription);
+        }
     }
 }

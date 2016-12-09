@@ -28,7 +28,7 @@ public class UILProvider {
                     .defaultDisplayImageOptions(getOptions())
                     .diskCache(new LimitedAgeDiskCache(context.getCacheDir(), AlarmManager.INTERVAL_DAY))
                     .build();
-            ImageLoader.getInstance().init(config);
+            imageLoader.init(config);
         }
     }
 

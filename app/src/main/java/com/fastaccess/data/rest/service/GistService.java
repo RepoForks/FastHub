@@ -39,6 +39,9 @@ public interface GistService {
     Observable<Pageable<GistsModel>> getUserGists(@NonNull @Path("username") String username,
                                                   @Query("per_page") int perPage, @Query("page") int page);
 
+    @GET("gists/{id}")
+    Observable<GistsModel> getGist(@Path("id") String id);
+
     @GET("gists/{id}/comments")
     Observable<Pageable<CommentsModel>> getGistComments(@NonNull @Path("id") String id, @Query("page") int page);
 

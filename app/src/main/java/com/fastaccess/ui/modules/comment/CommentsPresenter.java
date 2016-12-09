@@ -75,7 +75,7 @@ public class CommentsPresenter extends BasePresenter<CommentsMvp.View> implement
         if (!InputHelper.isEmpty(savedText)) {
             CommentRequestModel requestModel = new CommentRequestModel();
             requestModel.setBody(savedText.toString());
-            manageSubscription(RxHelper.getObserver(RestClient.editComment(gistId, id, requestModel))
+            manageSubscription(RxHelper.getObserver(RestClient.editGistComment(gistId, id, requestModel))
                     .doOnSubscribe(() -> sendToView(CommentsMvp.View::onShowProgress))
                     .doOnNext(commentsModel -> sendToView(view -> view.onSendResultAndFinish(commentsModel, false)))
                     .onErrorReturn(throwable -> {
@@ -91,7 +91,7 @@ public class CommentsPresenter extends BasePresenter<CommentsMvp.View> implement
         if (!InputHelper.isEmpty(savedText)) {
             CommentRequestModel requestModel = new CommentRequestModel();
             requestModel.setBody(savedText.toString());
-            manageSubscription(RxHelper.getObserver(RestClient.createComment(gistId, requestModel))
+            manageSubscription(RxHelper.getObserver(RestClient.createGistComment(gistId, requestModel))
                     .doOnSubscribe(() -> sendToView(CommentsMvp.View::onShowProgress))
                     .doOnNext(commentsModel -> sendToView(view -> view.onSendResultAndFinish(commentsModel, true)))
                     .onErrorReturn(throwable -> {

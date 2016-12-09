@@ -1,6 +1,7 @@
 package com.fastaccess.ui.modules.viewer;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -9,6 +10,9 @@ import android.widget.FrameLayout;
 import android.widget.ScrollView;
 
 import com.fastaccess.R;
+import com.fastaccess.data.dao.FilesListModel;
+import com.fastaccess.helper.BundleConstant;
+import com.fastaccess.helper.Bundler;
 import com.fastaccess.helper.InputHelper;
 import com.fastaccess.provider.markdown.MarkDownProvider;
 import com.fastaccess.ui.base.BaseFragment;
@@ -31,6 +35,13 @@ public class ViewerView extends BaseFragment<ViewerMvp.View, ViewerPresenter> im
     @BindView(R.id.progressBar) View progressBar;
     @BindView(R.id.webViewHolder) FrameLayout webViewHolder;
 
+    public static ViewerView newInstance(@NonNull String id, @NonNull String url) {
+        FilesListModel filesListModel = new FilesListModel();
+        filesListModel.setId(id);
+        filesListModel.setFilename(url);
+        filesListModel.setRawUrl(url);
+        return newInstance(Bundler.start().put(BundleConstant.EXTRA, (Parcelable) filesListModel).end());
+    }
 
     public static ViewerView newInstance(@NonNull Bundle bundle) {
         ViewerView fragmentView = new ViewerView();

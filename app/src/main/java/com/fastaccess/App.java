@@ -1,7 +1,7 @@
 package com.fastaccess;
 
 import android.app.Activity;
-import android.support.multidex.MultiDexApplication;
+import android.app.Application;
 
 import com.fastaccess.data.dao.UserModel;
 import com.fastaccess.helper.TypeFaceHelper;
@@ -13,7 +13,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
  * Created by Kosh on 10 Nov 2016, 3:40 PM
  */
 
-public class App extends MultiDexApplication {
+public class App extends Application {
     private static App instance;
     private static UserModel userModel;
 

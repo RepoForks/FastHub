@@ -1,6 +1,5 @@
 package com.fastaccess.ui.base;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
@@ -28,6 +27,7 @@ import com.fastaccess.ui.base.mvp.BaseMvp;
 import com.fastaccess.ui.base.mvp.presenter.BasePresenter;
 import com.fastaccess.ui.modules.login.LoginView;
 import com.fastaccess.ui.widgets.dialog.MessageDialogView;
+import com.fastaccess.ui.widgets.dialog.ProgressDialogFragment;
 
 import net.grandcentrix.thirtyinch.TiActivity;
 
@@ -42,7 +42,6 @@ import icepick.Icepick;
 public abstract class BaseActivity<V extends BaseMvp.FAView, P extends BasePresenter<V>> extends TiActivity<P, V> implements
         BaseMvp.FAView, BaseMvp.NavigationCallback {
 
-    private ProgressDialog progressDialog;
     private Toast toast;
 
     @LayoutRes protected abstract int layout();
@@ -149,23 +148,26 @@ public abstract class BaseActivity<V extends BaseMvp.FAView, P extends BasePrese
     }
 
     @Override public void showProgress(@StringRes int resId) {
+        String msg = getString(R.string.in_progress);
         if (resId != 0) {
-            getProgressDialog().setMessage(getString(resId));
+            msg = getString(resId);
         }
-        if (!getProgressDialog().isShowing()) getProgressDialog().show();
+        ProgressDialogFragment fragment = (ProgressDialogFragment) AppHelper.getFragmentByTag(getSupportFragmentManager(), "ProgressDialogFragment");
+        if (fragment == null) {
+            ProgressDialogFragment.newInstance(msg, false).show(getSupportFragmentManager(), "ProgressDialogFragment");
+        } else if (fragment.getDialog() != null && !fragment.getDialog().isShowing()) {
+            fragment.show(getSupportFragmentManager(), "ProgressDialogFragment");
+        } else {
+            ProgressDialogFragment.newInstance(msg, false).show(getSupportFragmentManager(), "ProgressDialogFragment");
+        }
     }
 
     @Override public void hideProgress() {
-        if (getProgressDialog().isShowing()) getProgressDialog().dismiss();
-    }
-
-    @NonNull private ProgressDialog getProgressDialog() {
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setCancelable(false);
-            progressDialog.setMessage(getString(R.string.in_progress));
+        ProgressDialogFragment fragment = (ProgressDialogFragment) AppHelper.getFragmentByTag(getSupportFragmentManager(),
+                "ProgressDialogFragment");
+        if (fragment != null) {
+            fragment.dismiss();
         }
-        return progressDialog;
     }
 
     @Override public void finish() {
@@ -186,7 +188,6 @@ public abstract class BaseActivity<V extends BaseMvp.FAView, P extends BasePrese
             setSupportActionBar(toolbar);
             if (canBack()) {
                 if (getSupportActionBar() != null) {
-                    toolbar.setNavigationOnClickListener(v -> supportFinishAfterTransition());
                     getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
                     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 }

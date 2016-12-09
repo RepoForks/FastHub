@@ -60,6 +60,10 @@ public class RestClient {
         return RestProvider.createService(GistService.class).getUserGists(login, RestProvider.PAGE_SIZE, page);
     }
 
+    public static Observable<GistsModel> getGist(@NonNull String gistId) {
+        return RestProvider.createService(GistService.class).getGist(gistId);
+    }
+
     public static Observable<Pageable<CommentsModel>> getGistComments(@NonNull String id, int page) {
         return RestProvider.createService(GistService.class).getGistComments(id, page);
     }
@@ -80,15 +84,15 @@ public class RestClient {
         return RestProvider.createService(GistService.class).forkGist(gistId);
     }
 
-    public static Observable<CommentsModel> createComment(@NonNull String gistId, @NonNull CommentRequestModel comment) {
+    public static Observable<CommentsModel> createGistComment(@NonNull String gistId, @NonNull CommentRequestModel comment) {
         return RestProvider.createService(GistService.class).createGistComment(gistId, comment);
     }
 
-    public static Observable<CommentsModel> editComment(@NonNull String gistId, long commentId, @NonNull CommentRequestModel comment) {
+    public static Observable<CommentsModel> editGistComment(@NonNull String gistId, long commentId, @NonNull CommentRequestModel comment) {
         return RestProvider.createService(GistService.class).editGistComment(gistId, commentId, comment);
     }
 
-    public static Observable<Response<Boolean>> deleteComment(@NonNull String gistId, long commentId) {
+    public static Observable<Response<Boolean>> deleteGistComment(@NonNull String gistId, long commentId) {
         return RestProvider.createService(GistService.class).deleteGistComment(gistId, commentId);
     }
 

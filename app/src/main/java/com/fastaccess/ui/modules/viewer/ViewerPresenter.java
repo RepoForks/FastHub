@@ -60,8 +60,7 @@ public class ViewerPresenter extends BasePresenter<ViewerMvp.View> implements Vi
                                     view.onSetCode(downloadedStream);
                                 }
                             });
-                        }
-                        if (downloadedStream == null) {
+                        } else {
                             onWorkOnline(filesListModel);
                         }
                     }));

@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.widget.ProgressBar;
 
 import com.fastaccess.R;
+import com.fastaccess.helper.InputHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -81,6 +82,9 @@ public class StateLayout extends NestedScrollView {
             this.adapterSize = adapterCount;
             layoutState = SHOW_RELOAD_STATE;
             reload.setVisibility(VISIBLE);
+            if (InputHelper.isEmpty(emptyText)) {
+                emptyText.setText(R.string.no_data);
+            }
             emptyText.setVisibility(VISIBLE);
             setVisibility(VISIBLE);
         }

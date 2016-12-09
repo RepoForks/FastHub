@@ -2,6 +2,7 @@ package com.fastaccess.ui.modules.contentviewer.gists;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.fastaccess.App;
@@ -36,11 +37,18 @@ public class GistsContentPresenter extends BasePresenter<GistsContentMvp.View> i
         }
         Bundle bundle = intent.getExtras();
         gist = bundle.getParcelable(BundleConstant.ITEM);
+        String gistId = bundle.getString(BundleConstant.EXTRA_ID);
         if (gist != null) {
-            manageSubscription(RxHelper.getObserver(RestClient.isGistStarred(gist.getGistId()))
-                    .doOnNext(booleanResponse -> {
-                        isGistStarred = booleanResponse.code() == 204;
-                        sendToView(view -> view.onGistStarred(isGistStarred));
+            checkStarring(gist.getGistId());
+        } else if (gistId != null) {
+            checkStarring(gistId);
+            manageSubscription(RxHelper.getObserver(RestClient.getGist(gistId))
+                    .doOnSubscribe(() -> sendToView(GistsContentMvp.View::onShowProgress))
+                    .doOnNext(gistsModel -> {
+                        if (gistsModel != null) {
+                            this.gist = gistsModel;
+                        }
+                        sendToView(GistsContentMvp.View::onSetupDetails);
                     })
                     .onErrorReturn(throwable -> {
                         sendToView(view -> view.onShowMessage(throwable.getMessage()));
@@ -117,5 +125,29 @@ public class GistsContentPresenter extends BasePresenter<GistsContentMvp.View> i
 
     @Override public boolean isStarred() {
         return isGistStarred;
+    }
+
+    @Override public void checkStarring(@NonNull String gistId) {
+        manageSubscription(RxHelper.getObserver(RestClient.isGistStarred(gistId))
+                .doOnNext(booleanResponse -> {
+                    isGistStarred = booleanResponse.code() == 204;
+                    sendToView(view -> view.onGistStarred(isGistStarred));
+                })
+                .onErrorReturn(throwable -> {
+                    sendToView(view -> view.onShowMessage(throwable.getMessage()));
+                    onWorkOffline(gistId);
+                    return null;
+                })
+                .subscribe());
+    }
+
+    @Override public void onWorkOffline(@NonNull String gistId) {
+        manageSubscription(GistsModel.getGist(gistId)
+                .subscribe(gistsModel -> {
+                    if (gistsModel != null) {
+                        this.gist = gistsModel;
+                    }
+                    sendToView(GistsContentMvp.View::onSetupDetails);
+                }));
     }
 }

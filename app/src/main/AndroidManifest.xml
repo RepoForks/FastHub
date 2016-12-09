@@ -44,7 +44,12 @@
         <activity
             android:name=".ui.modules.contentviewer.gists.GistsContentView"
             android:label="@string/gist"
-            android:parentActivityName=".ui.modules.main.MainView"/>
+            android:parentActivityName=".ui.modules.main.MainView">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.modules.main.MainView"/>
+
+        </activity>
 
         <activity
             android:name=".ui.modules.comment.CommentsView"
@@ -55,7 +60,12 @@
             android:name=".ui.modules.viewer.FilesViewerView"
             android:configChanges="keyboard|orientation|screenSize"
             android:label="@string/viewer"
-            android:parentActivityName=".ui.modules.main.MainView"/>
+            android:parentActivityName=".ui.modules.main.MainView">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.modules.main.MainView"/>
+
+        </activity>
 
         <activity
             android:name=".ui.modules.main.gists.create.CreateGistView"
@@ -65,16 +75,36 @@
         <activity
             android:name=".ui.modules.user.UserPagerView"
             android:label="@string/user"
-            android:parentActivityName=".ui.modules.main.MainView"/>
+            android:parentActivityName=".ui.modules.main.MainView">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.modules.main.MainView"/>
+
+        </activity>
 
         <activity
             android:name=".ui.modules.search.SearchView"
             android:label="@string/search"
             android:parentActivityName=".ui.modules.main.MainView"
-            android:windowSoftInputMode="stateAlwaysVisible"/>
+            android:windowSoftInputMode="stateAlwaysVisible">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.modules.main.MainView"/>
+
+        </activity>
 
         <activity
-            android:name=".ui.modules.interceptor.InterceptorView"
+            android:name=".ui.modules.repo.RepoPagerView"
+            android:label="@string/repo"
+            android:parentActivityName=".ui.modules.main.MainView">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.modules.main.MainView"/>
+
+        </activity>
+
+        <activity
+            android:name=".ui.modules.interceptor.SchemeInterceptorView"
             android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
@@ -85,6 +115,14 @@
                 <data
                     android:host="github.com"
                     android:scheme="https"/>
+
+                <data
+                    android:host="gist.github.com"
+                    android:scheme="http"/>
+                <data
+                    android:host="gist.github.com"
+                    android:scheme="https"/>
+
                 <data android:pathPattern=".*"/>
 
                 <category android:name="android.intent.category.DEFAULT"/>

@@ -104,35 +104,9 @@ public class GistsContentView extends BaseActivity<GistsContentMvp.View, GistsCo
         if (savedInstanceState == null) {
             getPresenter().onActivityCreated(getIntent());
         }
-        GistsModel gistsModel = getPresenter().getGist();
-        if (gistsModel == null) {
-            finish();
-            return;
+        if (getPresenter().getGist() != null) {
+            onSetupDetails();
         }
-        String url = gistsModel.getOwner() != null ? gistsModel.getOwner().getAvatarUrl() :
-                     gistsModel.getUser() != null ? gistsModel.getUser().getAvatarUrl() : "";
-        String login = gistsModel.getOwner() != null ? gistsModel.getOwner().getLogin() :
-                       gistsModel.getUser() != null ? gistsModel.getUser().getLogin() : "";
-        avatarLayout.setUrl(url, login);
-        title.setText(gistsModel.getDisplayTitle(false));
-        date.setText(ParseDateFormat.getTimeAgo(gistsModel.getCreatedAt()));
-        size.setText(Formatter.formatFileSize(this, gistsModel.getSize()));
-        pager.setAdapter(new GistsPagerAdapter(getSupportFragmentManager(), gistsModel, this));
-        tabs.setupWithViewPager(pager);
-        QuickReturnFooterBehavior quickReturnFooterBehavior = (QuickReturnFooterBehavior)
-                ((CoordinatorLayout.LayoutParams) fab.getLayoutParams()).getBehavior();
-        pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                if (quickReturnFooterBehavior != null) {
-                    quickReturnFooterBehavior.setEnabled(position == 0);
-                }
-                hideShowFab();
-            }
-        });
-        onGistForked(getPresenter().isForked());
-        onGistStarred(getPresenter().isStarred());
-        hideShowFab();
     }
 
     @Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -169,18 +143,22 @@ public class GistsContentView extends BaseActivity<GistsContentMvp.View, GistsCo
         showProgress(0);
     }
 
-    @Override public void onShowMessage(String message) {
+    @Override public void onHideProgress() {
         hideProgress();
+    }
+
+    @Override public void onShowMessage(String message) {
+        onHideProgress();
         showMessage(getString(R.string.error), message);
     }
 
     @Override public void onSuccessDeleted() {
-        hideProgress();
+        onHideProgress();
         finish();
     }
 
     @Override public void onErrorDeleting() {
-        hideProgress();
+        onHideProgress();
         showMessage(getString(R.string.error), getString(R.string.error_deleting_gist));
     }
 
@@ -192,6 +170,39 @@ public class GistsContentView extends BaseActivity<GistsContentMvp.View, GistsCo
     @Override public void onGistForked(boolean isForked) {
         forkGist.tintDrawable(isForked ? R.color.carrot : R.color.black);
         forkGist.setEnabled(true);
+    }
+
+    @Override public void onSetupDetails() {
+        onHideProgress();
+        GistsModel gistsModel = getPresenter().getGist();
+        if (gistsModel == null) {
+            finish();
+            return;
+        }
+        String url = gistsModel.getOwner() != null ? gistsModel.getOwner().getAvatarUrl() :
+                     gistsModel.getUser() != null ? gistsModel.getUser().getAvatarUrl() : "";
+        String login = gistsModel.getOwner() != null ? gistsModel.getOwner().getLogin() :
+                       gistsModel.getUser() != null ? gistsModel.getUser().getLogin() : "";
+        avatarLayout.setUrl(url, login);
+        title.setText(gistsModel.getDisplayTitle(false));
+        date.setText(ParseDateFormat.getTimeAgo(gistsModel.getCreatedAt()));
+        size.setText(Formatter.formatFileSize(this, gistsModel.getSize()));
+        pager.setAdapter(new GistsPagerAdapter(getSupportFragmentManager(), gistsModel, this));
+        tabs.setupWithViewPager(pager);
+        QuickReturnFooterBehavior quickReturnFooterBehavior = (QuickReturnFooterBehavior)
+                ((CoordinatorLayout.LayoutParams) fab.getLayoutParams()).getBehavior();
+        pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                if (quickReturnFooterBehavior != null) {
+                    quickReturnFooterBehavior.setEnabled(position == 0);
+                }
+                hideShowFab();
+            }
+        });
+        onGistForked(getPresenter().isForked());
+        onGistStarred(getPresenter().isStarred());
+        hideShowFab();
     }
 
     private void hideShowFab() {

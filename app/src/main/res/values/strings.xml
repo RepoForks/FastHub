@@ -101,4 +101,5 @@
     <string name="code">Code</string>
     <string name="by">by</string>
     <string name="n_a">N/A</string>
+    <string name="repo">Repository</string>
 </resources>

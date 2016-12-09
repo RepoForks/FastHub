@@ -1,6 +1,7 @@
 package com.fastaccess.ui.modules.contentviewer.gists;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.fastaccess.data.dao.GistsModel;
@@ -15,6 +16,8 @@ public interface GistsContentMvp {
     interface View extends BaseMvp.FAView {
         void onShowProgress();
 
+        void onHideProgress();
+
         void onShowMessage(String message);
 
         void onSuccessDeleted();
@@ -24,6 +27,8 @@ public interface GistsContentMvp {
         void onGistStarred(boolean isStarred);
 
         void onGistForked(boolean isForked);
+
+        void onSetupDetails();
     }
 
     interface Presenter extends BaseMvp.FAPresenter<View> {
@@ -43,5 +48,9 @@ public interface GistsContentMvp {
         boolean isForked();
 
         boolean isStarred();
+
+        void checkStarring(@NonNull String gistId);
+
+        void onWorkOffline(@NonNull String gistId);
     }
 }
