@@ -21,9 +21,8 @@ import butterknife.BindView;
 public class CodeViewHolder extends BaseViewHolder<SearchCodeModel> {
 
     @BindView(R.id.title) FontTextView title;
-    @BindView(R.id.date) FontTextView date;
     @BindView(R.id.avatarLayout) AvatarLayout avatarLayout;
-    @BindView(R.id.repo) FontTextView repo;
+    @BindView(R.id.details) FontTextView details;
 
     private CodeViewHolder(@NonNull View itemView, @Nullable BaseRecyclerAdapter adapter) {
         super(itemView, adapter);
@@ -35,6 +34,6 @@ public class CodeViewHolder extends BaseViewHolder<SearchCodeModel> {
 
     @Override public void bind(@NonNull SearchCodeModel codeMode) {
         title.setText(codeMode.getRepository() != null ? codeMode.getRepository().getFullName() : "N/A");
-        repo.setText(codeMode.getName());
+        details.setText(codeMode.getName());
     }
 }

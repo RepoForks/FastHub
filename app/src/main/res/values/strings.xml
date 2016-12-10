@@ -112,4 +112,8 @@
     <string name="re_open">Re-Open</string>
     <string name="close">Close</string>
     <string name="success_re_opened">Successfully re-opened.</string>
+    <string name="lock_issue_details">Locking the conversation means:\nOther users can’t add new comments to this issue.\nYou and other collaborators with access to this repository can still leave comments that others can see.\nYou can always unlock this issue again in the future.\n</string>
+    <string name="unlock_issue_details">Unlocking the conversation means:\nEveryone will be able to comment on this issue once more.\nYou can always lock this issue again in the future.\n</string>
+    <string name="lock_issue">Lock Issue</string>
+    <string name="unlock_issue">Unlock Issue</string>
 </resources>

@@ -43,38 +43,15 @@
                 android:textStyle="bold"
                 tools:text="When one acquires music and afterlife, one is able to capture heaven."/>
 
-            <com.fastaccess.ui.widgets.AutoLinearLayout
-                android:layout_width="match_parent"
+            <com.fastaccess.ui.widgets.FontTextView
+                android:id="@+id/details"
+                style="@style/TextAppearance.AppCompat.Small"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_normal"
-                app:auto_gravity="start"
-                app:auto_orientation="horizontal">
+                android:textColor="@color/secondary_text"
+                app:drawableColor="@color/secondary_text"
+                tools:text="1000"/>
 
-                <com.fastaccess.ui.widgets.FontTextView
-                    android:id="@+id/repo"
-                    style="@style/TextAppearance.AppCompat.Small"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="start|center"
-                    android:textColor="@color/secondary_text"
-                    app:drawableColor="@color/secondary_text"
-                    tools:text="1000"/>
-
-                <com.fastaccess.ui.widgets.FontTextView
-                    android:id="@+id/date"
-                    style="@style/TextAppearance.AppCompat.Small"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginEnd="@dimen/spacing_normal"
-                    android:layout_marginStart="@dimen/spacing_normal"
-                    android:gravity="start|center"
-                    android:textColor="@color/secondary_text"
-                    app:drawableColor="@color/secondary_text"
-                    tools:text="50 minutes ago"/>
-
-            </com.fastaccess.ui.widgets.AutoLinearLayout>
         </LinearLayout>
     </LinearLayout>
 

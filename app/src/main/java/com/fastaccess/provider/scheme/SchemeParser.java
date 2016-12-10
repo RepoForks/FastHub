@@ -9,7 +9,7 @@ import android.text.TextUtils;
 
 import com.fastaccess.helper.InputHelper;
 import com.fastaccess.ui.modules.contentviewer.gists.GistsContentView;
-import com.fastaccess.ui.modules.issues.IssuesDetailsView;
+import com.fastaccess.ui.modules.issue.IssuePagerView;
 import com.fastaccess.ui.modules.user.UserPagerView;
 
 import java.util.List;
@@ -119,6 +119,6 @@ public class SchemeParser {
             return null;
         }
         if (issueNumber < 1) return null;
-        return IssuesDetailsView.createIntent(context, repo, owner, issueNumber);
+        return IssuePagerView.createIntent(context, repo, owner, issueNumber);
     }
 }

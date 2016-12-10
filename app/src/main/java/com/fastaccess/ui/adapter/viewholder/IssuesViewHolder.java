@@ -24,9 +24,8 @@ import butterknife.BindView;
 public class IssuesViewHolder extends BaseViewHolder<IssueModel> {
 
     @BindView(R.id.title) FontTextView title;
-    @BindView(R.id.date) FontTextView date;
     @BindView(R.id.avatarLayout) AvatarLayout avatarLayout;
-    @BindView(R.id.repo) FontTextView repo;
+    @BindView(R.id.details) FontTextView details;
     @BindString(R.string.by) String by;
 
 
@@ -40,8 +39,7 @@ public class IssuesViewHolder extends BaseViewHolder<IssueModel> {
 
     @Override public void bind(@NonNull IssueModel issueModel) {
         title.setText(issueModel.getTitle());
-        repo.setText(String.format("#%s", issueModel.getNumber()));
-        date.setText(SpannableBuilder.builder().append(issueModel.getState().getStatus()).append(" ").append(by).append(" ")
+        details.setText(SpannableBuilder.builder().append(issueModel.getState().getStatus()).append(" ").append(by).append(" ")
                 .append(issueModel.getUser().getLogin()).append(" ").append(ParseDateFormat.getTimeAgo(issueModel.getCreatedAt())));
     }
 }

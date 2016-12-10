@@ -1,4 +1,4 @@
-package com.fastaccess.ui.modules.issues;
+package com.fastaccess.ui.modules.issue;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,7 +12,7 @@ import com.fastaccess.ui.base.mvp.BaseMvp;
  * Created by Kosh on 10 Dec 2016, 9:21 AM
  */
 
-public interface IssuesDetailsMvp {
+public interface IssuePagerMvp {
 
     interface View extends BaseMvp.FAView {
         void onShowProgress();
@@ -38,7 +38,13 @@ public interface IssuesDetailsMvp {
 
         boolean isOwner();
 
-        void onOpenCloseIssue(@Nullable Bundle bundle);
+        boolean isLocked();
+
+        void onHandleConfirmDialog(@Nullable Bundle bundle);
+
+        void onOpenCloseIssue();
+
+        void onLockUnlockIssue();
     }
 
 }

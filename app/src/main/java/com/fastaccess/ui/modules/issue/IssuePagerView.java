@@ -1,4 +1,4 @@
-package com.fastaccess.ui.modules.issues;
+package com.fastaccess.ui.modules.issue;
 
 import android.content.Context;
 import android.content.Intent;
@@ -39,7 +39,7 @@ import butterknife.OnClick;
  * Created by Kosh on 10 Dec 2016, 9:23 AM
  */
 
-public class IssuesDetailsView extends BaseActivity<IssuesDetailsMvp.View, IssueDetailsPresenter> implements IssuesDetailsMvp.View {
+public class IssuePagerView extends BaseActivity<IssuePagerMvp.View, IssuePagerPresenter> implements IssuePagerMvp.View {
 
     @BindView(R.id.startGist) ForegroundImageView startGist;
     @BindView(R.id.forkGist) ForegroundImageView forkGist;
@@ -52,7 +52,7 @@ public class IssuesDetailsView extends BaseActivity<IssuesDetailsMvp.View, Issue
     @BindView(R.id.fab) FloatingActionButton fab;
 
     public static Intent createIntent(@NonNull Context context, @NonNull String repoId, @NonNull String login, int number) {
-        Intent intent = new Intent(context, IssuesDetailsView.class);
+        Intent intent = new Intent(context, IssuePagerView.class);
         intent.putExtras(Bundler.start()
                 .put(BundleConstant.ID, number)
                 .put(BundleConstant.EXTRA_ID, login)
@@ -73,7 +73,7 @@ public class IssuesDetailsView extends BaseActivity<IssuesDetailsMvp.View, Issue
             repoId = String.valueOf(issueModel.getRepository().getRepoId());
         }
         issueModel.setRepoId(repoId);
-        Intent intent = new Intent(context, IssuesDetailsView.class);
+        Intent intent = new Intent(context, IssuePagerView.class);
         intent.putExtras(Bundler.start()
                 .put(BundleConstant.ITEM, issueModel)
                 .end());
@@ -105,8 +105,8 @@ public class IssuesDetailsView extends BaseActivity<IssuesDetailsMvp.View, Issue
         return false;
     }
 
-    @NonNull @Override public IssueDetailsPresenter providePresenter() {
-        return new IssueDetailsPresenter();
+    @NonNull @Override public IssuePagerPresenter providePresenter() {
+        return new IssuePagerPresenter();
     }
 
     @Override protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +123,7 @@ public class IssuesDetailsView extends BaseActivity<IssuesDetailsMvp.View, Issue
     @Override public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.issue_menu, menu);
         menu.findItem(R.id.closeIssue).setVisible(getPresenter().isOwner());
+        menu.findItem(R.id.lockIssue).setVisible(getPresenter().isOwner());
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -139,18 +140,29 @@ public class IssuesDetailsView extends BaseActivity<IssuesDetailsMvp.View, Issue
                     Bundler.start().put(BundleConstant.EXTRA, true).end())
                     .show(getSupportFragmentManager(), MessageDialogView.TAG);
             return true;
+        } else if (item.getItemId() == R.id.lockIssue) {
+            MessageDialogView.newInstance(
+                    getPresenter().isLocked() ? getString(R.string.unlock_issue) : getString(R.string.lock_issue),
+                    getPresenter().isLocked() ? getString(R.string.unlock_issue_details) : getString(R.string.lock_issue_details),
+                    Bundler.start().put(BundleConstant.EXTRA_ID, true).end())
+                    .show(getSupportFragmentManager(), MessageDialogView.TAG);
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem item = menu.findItem(R.id.closeIssue);
+        MenuItem closeIssue = menu.findItem(R.id.closeIssue);
+        MenuItem lockIssue = menu.findItem(R.id.lockIssue);
         boolean isOwner = getPresenter().isOwner();
+        boolean isLocked = getPresenter().isLocked();
         menu.findItem(R.id.closeIssue).setVisible(isOwner);
+        menu.findItem(R.id.lockIssue).setVisible(isOwner);
         if (isOwner) {
-            //noinspection ConstantConditions ( getIssue at this stage is not null but AS does not understand. )
-            item.setTitle(getPresenter().getIssue().getState() == IssueState.closed ? getString(R.string.re_open) : getString(R.string.close));
+            //noinspection ConstantConditions ( getIssue at this stage is not null but AS doesn't know. )
+            closeIssue.setTitle(getPresenter().getIssue().getState() == IssueState.closed ? getString(R.string.re_open) : getString(R.string.close));
+            lockIssue.setTitle(isLocked ? getString(R.string.unlock_issue) : getString(R.string.lock_issue));
         }
+
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -189,15 +201,21 @@ public class IssuesDetailsView extends BaseActivity<IssuesDetailsMvp.View, Issue
 
         QuickReturnFooterBehavior quickReturnFooterBehavior = (QuickReturnFooterBehavior)
                 ((CoordinatorLayout.LayoutParams) fab.getLayoutParams()).getBehavior();
-        pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                if (quickReturnFooterBehavior != null) {
-                    quickReturnFooterBehavior.setEnabled(position == 1);
+        if (!getPresenter().isLocked() && !getPresenter().isOwner()) {
+            pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+                @Override public void onPageSelected(int position) {
+                    super.onPageSelected(position);
+                    if (quickReturnFooterBehavior != null) {
+                        quickReturnFooterBehavior.setEnabled(position == 1);
+                    }
+                    hideShowFab();
                 }
-                hideShowFab();
+            });
+        } else {
+            if (quickReturnFooterBehavior != null) {
+                quickReturnFooterBehavior.setEnabled(false);
             }
-        });
+        }
         hideShowFab();
     }
 
@@ -219,15 +237,18 @@ public class IssuesDetailsView extends BaseActivity<IssuesDetailsMvp.View, Issue
         }
     }
 
-
     @Override public void onMessageDialogActionClicked(boolean isOk, @Nullable Bundle bundle) {
         super.onMessageDialogActionClicked(isOk, bundle);
         if (isOk) {
-            getPresenter().onOpenCloseIssue(bundle);
+            getPresenter().onHandleConfirmDialog(bundle);
         }
     }
 
     private void hideShowFab() {
+        if (getPresenter().isLocked() && !getPresenter().isOwner()) {
+            fab.hide();
+            return;
+        }
         if (pager.getCurrentItem() == 0) {
             fab.show();
         } else {

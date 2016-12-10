@@ -150,6 +150,14 @@ public class RestClient {
         return RestProvider.createService(IssueService.class).getIssue(login, repoId, number);
     }
 
+    public static Observable<Response<Boolean>> lockIssue(@NonNull String login, @NonNull String repoId, long number) {
+        return RestProvider.createService(IssueService.class).lockIssue(login, repoId, number);
+    }
+
+    public static Observable<Response<Boolean>> unLockIssue(@NonNull String login, @NonNull String repoId, long number) {
+        return RestProvider.createService(IssueService.class).unlockIssue(login, repoId, number);
+    }
+
     public static Observable<IssueModel> editIssue(@NonNull String login, @NonNull String repoId,
                                                    long number, @NonNull IssueRequestModel model) {
         return RestProvider.createService(IssueService.class).editIssue(login, repoId, number, model);

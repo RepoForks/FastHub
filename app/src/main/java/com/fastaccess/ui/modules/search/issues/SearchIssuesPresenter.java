@@ -10,7 +10,7 @@ import com.fastaccess.helper.Bundler;
 import com.fastaccess.helper.Logger;
 import com.fastaccess.helper.RxHelper;
 import com.fastaccess.ui.base.mvp.presenter.BasePresenter;
-import com.fastaccess.ui.modules.issues.IssuesDetailsView;
+import com.fastaccess.ui.modules.issue.IssuePagerView;
 
 import java.util.ArrayList;
 
@@ -77,7 +77,7 @@ public class SearchIssuesPresenter extends BasePresenter<SearchIssuesMvp.View> i
 
     @Override public void onItemClick(int position, View v, IssueModel item) {
         Logger.e(Bundler.start().put("item",item).end().size());
-        IssuesDetailsView.createIntentForOffline(v.getContext(), item);
+        IssuePagerView.createIntentForOffline(v.getContext(), item);
     }
 
     @Override public void onItemLongClick(int position, View v, IssueModel item) {
