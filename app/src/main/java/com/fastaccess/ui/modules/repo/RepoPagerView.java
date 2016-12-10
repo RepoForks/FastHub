@@ -62,6 +62,17 @@ public class RepoPagerView extends BaseActivity<RepoPagerMvp.View, RepoPagerPres
     }
 
     @Override public void onInitAdapter() {
+        hideProgress();
+        //TODO init adapter & send Files to Viewer.
         tabs.setupWithViewPager(pager);
+    }
+
+    @Override public void onShowProgress() {
+        showProgress(0);
+    }
+
+    @Override public void onShowMessage(@NonNull String msg) {
+        hideProgress();
+        showMessage(getString(R.string.error), msg);
     }
 }

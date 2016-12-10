@@ -32,7 +32,6 @@ public class RestProvider {
 
     public static final int PAGE_SIZE = 30;
     public static final String REST_URL = "https://api.github.com/";
-    private static Gson gson;
 
     @NonNull private static HttpLoggingInterceptor loggingInterceptor(@NonNull HttpLoggingInterceptor.Level level) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
@@ -107,13 +106,10 @@ public class RestProvider {
 
     @NonNull private static OkHttpClient getHttpClient() {
         return new OkHttpClient.Builder()
+                .retryOnConnectionFailure(false)
                 .addInterceptor(loggingInterceptor(HttpLoggingInterceptor.Level.BODY))
                 .addInterceptor(new PaginationInterceptor())
                 .addInterceptor(chain -> {
-//                    String[] headers = {
-////                            "application/vnd.github.html+json",
-//                            "application/vnd.github.raw+json"
-//                    };
                     Request original = chain.request();
                     Request.Builder requestBuilder = original.newBuilder()
                             .header("Accept", "application/json")
@@ -122,9 +118,6 @@ public class RestProvider {
                     if (!InputHelper.isEmpty(PrefGetter.getToken())) {
                         requestBuilder.header("Authorization", "token " + PrefGetter.getToken());
                     }
-//                    if (original.header("Accept") == null) {
-//                        requestBuilder.addHeader("Accept", TextUtils.join(",", headers));
-//                    }
                     requestBuilder.method(original.method(), original.body());
                     Request request = requestBuilder.build();
                     return chain.proceed(request);
@@ -133,13 +126,10 @@ public class RestProvider {
     }
 
     @NonNull private static Gson getGson() {
-        if (gson == null) {
-            gson = new GsonBuilder()
-                    .setPrettyPrinting()
-                    .excludeFieldsWithModifiers(Modifier.FINAL, Modifier.TRANSIENT, Modifier.STATIC)
-                    .create();
-        }
-        return gson;
+        return new GsonBuilder()
+                .setPrettyPrinting()
+                .excludeFieldsWithModifiers(Modifier.FINAL, Modifier.TRANSIENT, Modifier.STATIC)
+                .create();
     }
 
     public static long downloadFile(@NonNull Context context, @NonNull String url) {

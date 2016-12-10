@@ -102,4 +102,14 @@
     <string name="by">by</string>
     <string name="n_a">N/A</string>
     <string name="repo">Repository</string>
+    <string name="star">Star</string>
+    <string name="close_issue">Close Issue</string>
+    <string name="re_open_issue">Re-Open Issue</string>
+    <string name="error_closing_issue">Error in closing issue, Please try again later.</string>
+    <string name="error_re_opening_issue">Error re-opening issue, Please try again later.</string>
+    <string name="success_closed">Successfully closed issue.</string>
+    <string name="issue">Issue</string>
+    <string name="re_open">Re-Open</string>
+    <string name="close">Close</string>
+    <string name="success_re_opened">Successfully re-opened.</string>
 </resources>

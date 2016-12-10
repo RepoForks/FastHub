@@ -49,7 +49,7 @@ public abstract class BaseActivity<V extends BaseMvp.FAView, P extends BasePrese
     protected abstract boolean hasSlideExitAnimation();
 
     @Nullable @BindView(R.id.toolbar) Toolbar toolbar;
-    @Nullable @BindView(R.id.toolbarShadow) View view;
+    @Nullable @BindView(R.id.toolbarShadow) View shadowView;
     @Nullable @BindView(R.id.drawerLayout) protected DrawerLayout drawerLayout;
 
     protected abstract boolean isTransparent();
@@ -93,7 +93,7 @@ public abstract class BaseActivity<V extends BaseMvp.FAView, P extends BasePrese
     @Override public boolean onOptionsItemSelected(MenuItem item) {
         if (canBack()) {
             if (item.getItemId() == android.R.id.home) {
-                supportFinishAfterTransition();
+                onBackPressed();
             }
         }
         return super.onOptionsItemSelected(item);
@@ -152,19 +152,20 @@ public abstract class BaseActivity<V extends BaseMvp.FAView, P extends BasePrese
         if (resId != 0) {
             msg = getString(resId);
         }
-        ProgressDialogFragment fragment = (ProgressDialogFragment) AppHelper.getFragmentByTag(getSupportFragmentManager(), "ProgressDialogFragment");
+        ProgressDialogFragment fragment = (ProgressDialogFragment) AppHelper.getFragmentByTag(getSupportFragmentManager(),
+                ProgressDialogFragment.TAG);
         if (fragment == null) {
-            ProgressDialogFragment.newInstance(msg, false).show(getSupportFragmentManager(), "ProgressDialogFragment");
+            ProgressDialogFragment.newInstance(msg, false).show(getSupportFragmentManager(), ProgressDialogFragment.TAG);
         } else if (fragment.getDialog() != null && !fragment.getDialog().isShowing()) {
-            fragment.show(getSupportFragmentManager(), "ProgressDialogFragment");
+            fragment.show(getSupportFragmentManager(), ProgressDialogFragment.TAG);
         } else {
-            ProgressDialogFragment.newInstance(msg, false).show(getSupportFragmentManager(), "ProgressDialogFragment");
+            ProgressDialogFragment.newInstance(msg, false).show(getSupportFragmentManager(), ProgressDialogFragment.TAG);
         }
     }
 
     @Override public void hideProgress() {
         ProgressDialogFragment fragment = (ProgressDialogFragment) AppHelper.getFragmentByTag(getSupportFragmentManager(),
-                "ProgressDialogFragment");
+                ProgressDialogFragment.TAG);
         if (fragment != null) {
             fragment.dismiss();
         }
@@ -183,7 +184,7 @@ public abstract class BaseActivity<V extends BaseMvp.FAView, P extends BasePrese
     private void onFinishWithAnimation() {if (hasSlideExitAnimation()) overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);}
 
     private void setupToolbarAndStatusBar(@Nullable Toolbar toolbar) {
-        changeAppColor(isTransparent());
+        changeStatusBarColor(isTransparent());
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             if (canBack()) {
@@ -203,10 +204,10 @@ public abstract class BaseActivity<V extends BaseMvp.FAView, P extends BasePrese
     }
 
     protected void hideShowShadow(boolean show) {
-        if (view != null) view.setVisibility(show ? View.VISIBLE : View.GONE);
+        if (shadowView != null) shadowView.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
-    protected void changeAppColor(boolean isTransparent) {
+    protected void changeStatusBarColor(boolean isTransparent) {
         if (!isTransparent) {
             getWindow().setStatusBarColor(ViewHelper.getPrimaryDarkColor(this));
         }

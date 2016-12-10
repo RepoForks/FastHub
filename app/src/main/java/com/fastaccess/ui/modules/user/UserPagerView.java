@@ -1,5 +1,7 @@
 package com.fastaccess.ui.modules.user;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
@@ -11,6 +13,7 @@ import android.widget.ProgressBar;
 import com.fastaccess.R;
 import com.fastaccess.data.dao.FragmentPagerAdapterModel;
 import com.fastaccess.helper.BundleConstant;
+import com.fastaccess.helper.Bundler;
 import com.fastaccess.helper.InputHelper;
 import com.fastaccess.ui.adapter.FragmentsPagerAdapter;
 import com.fastaccess.ui.base.BaseActivity;
@@ -29,6 +32,18 @@ public class UserPagerView extends BaseActivity<UserPagerMvp.View, UserPagerPres
     @BindView(R.id.tabs) TabLayout tabs;
     @BindView(R.id.pager) ViewPagerView pager;
     @State String login;
+
+    public static void startActivity(@NonNull Context context, @NonNull String login) {
+        Intent intent = new Intent(context, UserPagerView.class);
+        intent.putExtras(Bundler.start().put(BundleConstant.EXTRA, login).end());
+        context.startActivity(intent);
+    }
+
+    public static Intent createIntent(@NonNull Context context, @NonNull String login) {
+        Intent intent = new Intent(context, UserPagerView.class);
+        intent.putExtras(Bundler.start().put(BundleConstant.EXTRA, login).end());
+        return intent;
+    }
 
     @Override protected int layout() {
         return R.layout.tabbed_pager_layout;

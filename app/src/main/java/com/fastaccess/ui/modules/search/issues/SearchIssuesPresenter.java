@@ -6,8 +6,11 @@ import android.view.View;
 
 import com.fastaccess.data.dao.IssueModel;
 import com.fastaccess.data.rest.RestClient;
+import com.fastaccess.helper.Bundler;
+import com.fastaccess.helper.Logger;
 import com.fastaccess.helper.RxHelper;
 import com.fastaccess.ui.base.mvp.presenter.BasePresenter;
+import com.fastaccess.ui.modules.issues.IssuesDetailsView;
 
 import java.util.ArrayList;
 
@@ -73,8 +76,11 @@ public class SearchIssuesPresenter extends BasePresenter<SearchIssuesMvp.View> i
     }
 
     @Override public void onItemClick(int position, View v, IssueModel item) {
-
+        Logger.e(Bundler.start().put("item",item).end().size());
+        IssuesDetailsView.createIntentForOffline(v.getContext(), item);
     }
 
-    @Override public void onItemLongClick(int position, View v, IssueModel item) {}
+    @Override public void onItemLongClick(int position, View v, IssueModel item) {
+        onItemClick(position, v, item);
+    }
 }

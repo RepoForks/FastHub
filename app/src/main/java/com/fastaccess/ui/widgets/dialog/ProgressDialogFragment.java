@@ -16,6 +16,8 @@ import com.fastaccess.helper.Bundler;
 
 public class ProgressDialogFragment extends DialogFragment {
 
+    public static final String TAG = ProgressDialogFragment.class.getSimpleName();
+
     public static ProgressDialogFragment newInstance(@NonNull Resources resources, @StringRes int msgId, boolean isCancelable) {
         return newInstance(resources.getString(msgId), isCancelable);
     }

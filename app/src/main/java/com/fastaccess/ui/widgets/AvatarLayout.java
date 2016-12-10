@@ -1,7 +1,6 @@
 package com.fastaccess.ui.widgets;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
@@ -13,8 +12,6 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
 import com.fastaccess.R;
-import com.fastaccess.helper.BundleConstant;
-import com.fastaccess.helper.Bundler;
 import com.fastaccess.helper.InputHelper;
 import com.fastaccess.ui.modules.user.UserPagerView;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -38,9 +35,7 @@ public class AvatarLayout extends FrameLayout implements ImageLoadingListener {
 
     @OnClick(R.id.avatar) void onClick(View view) {
         if (InputHelper.isEmpty(login)) return;
-        Intent intent = new Intent(view.getContext(), UserPagerView.class);
-        intent.putExtras(Bundler.start().put(BundleConstant.EXTRA, login).end());
-        view.getContext().startActivity(intent);
+        UserPagerView.startActivity(view.getContext(), login);
     }
 
     public AvatarLayout(@NonNull Context context) {

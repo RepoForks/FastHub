@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.fastaccess.data.dao.RepoModel;
 import com.fastaccess.ui.base.mvp.BaseMvp;
 
 /**
@@ -17,6 +18,10 @@ public interface RepoPagerMvp {
         void onFinishActivity();
 
         void onInitAdapter();
+
+        void onShowProgress();
+
+        void onShowMessage(@NonNull String msg);
     }
 
     interface Presenter extends BaseMvp.FAPresenter<View> {
@@ -25,5 +30,7 @@ public interface RepoPagerMvp {
         @NonNull String repoId();
 
         @NonNull String login();
+
+        @Nullable RepoModel getRepo();
     }
 }

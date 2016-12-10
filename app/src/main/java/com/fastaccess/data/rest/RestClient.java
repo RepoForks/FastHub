@@ -10,11 +10,13 @@ import com.fastaccess.data.dao.CreateGistModel;
 import com.fastaccess.data.dao.EventsModel;
 import com.fastaccess.data.dao.GistsModel;
 import com.fastaccess.data.dao.IssueModel;
+import com.fastaccess.data.dao.IssueRequestModel;
 import com.fastaccess.data.dao.Pageable;
 import com.fastaccess.data.dao.RepoModel;
 import com.fastaccess.data.dao.SearchCodeModel;
 import com.fastaccess.data.dao.UserModel;
 import com.fastaccess.data.rest.service.GistService;
+import com.fastaccess.data.rest.service.IssueService;
 import com.fastaccess.data.rest.service.RestService;
 import com.fastaccess.data.rest.service.SearchService;
 import com.fastaccess.provider.rest.RestProvider;
@@ -138,6 +140,19 @@ public class RestClient {
 
     public static Observable<Pageable<SearchCodeModel>> searchCode(@NonNull String query, int page) {
         return RestProvider.createService(SearchService.class).searchCode(query, page);
+    }
+
+    public static Observable<RepoModel> getRepo(@NonNull String login, @NonNull String repoId) {
+        return RestProvider.getRestService().getRepo(login, repoId);
+    }
+
+    public static Observable<IssueModel> getIssue(@NonNull String login, @NonNull String repoId, long number) {
+        return RestProvider.createService(IssueService.class).getIssue(login, repoId, number);
+    }
+
+    public static Observable<IssueModel> editIssue(@NonNull String login, @NonNull String repoId,
+                                                   long number, @NonNull IssueRequestModel model) {
+        return RestProvider.createService(IssueService.class).editIssue(login, repoId, number, model);
     }
 }
 

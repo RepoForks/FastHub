@@ -7,10 +7,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.fastaccess.helper.BundleConstant;
-import com.fastaccess.helper.Bundler;
 import com.fastaccess.helper.InputHelper;
 import com.fastaccess.ui.modules.contentviewer.gists.GistsContentView;
+import com.fastaccess.ui.modules.issues.IssuesDetailsView;
 import com.fastaccess.ui.modules.user.UserPagerView;
 
 import java.util.List;
@@ -29,7 +28,6 @@ public class SchemeParser {
     private static final String HOST_DEFAULT = "github.com";
     private static final String HOST_GISTS = "gist.github.com";
     private static final String PROTOCOL_HTTPS = "https";
-
 
     public static void launchUri(@NonNull Context context, @NonNull Intent data) {
         Intent intent = convert(context, data);
@@ -77,12 +75,10 @@ public class SchemeParser {
     }
 
     static private Intent getIntentForURI(@NonNull Context context, @NonNull Uri data) {
-        Intent intent = null;
         if (HOST_GISTS.equals(data.getHost())) {
             String gist = getGistId(data);
             if (gist != null) {
-                intent = new Intent(context, GistsContentView.class);
-                intent.putExtras(Bundler.start().put(BundleConstant.EXTRA_ID, gist).end());
+                return GistsContentView.createIntent(context, gist);
             }
         } else if (HOST_DEFAULT.equals(data.getHost())) {
 //            CommitMatch commit = CommitUriMatcher.getCommit(data);
@@ -90,10 +86,10 @@ public class SchemeParser {
 //                return CommitViewActivity.createIntent(commit.repository, commit.commit);
 //            }
 //
-//            Issue issue = IssueUriMatcher.getIssue(data);
-//            if (issue != null) {
-//                return IssuesViewActivity.createIntent(issue, issue.repository());
-//            }
+            Intent issueIntent = getIssueIntent(context, data);
+            if (issueIntent != null) {
+                return issueIntent;
+            }
 //
 //            Repository repository = RepositoryUriMatcher.getRepository(data);
 //            if (repository != null) {
@@ -101,10 +97,28 @@ public class SchemeParser {
 //            }
             String login = getUser(data);
             if (login != null) {
-                intent = new Intent(context, UserPagerView.class);
-                intent.putExtras(Bundler.start().put(BundleConstant.EXTRA, login).end());
+                return UserPagerView.createIntent(context, login);
             }
         }
-        return intent;
+        return null;
+    }
+
+    private static Intent getIssueIntent(@NonNull Context context, @NonNull Uri uri) {
+        List<String> segments = uri.getPathSegments();
+        if (segments == null || segments.size() < 4) return null;
+        if (!"issues".equals(segments.get(2)) && !"pull".equals(segments.get(2))) return null;
+        String owner = segments.get(0);
+        String repo = segments.get(1);
+        String number = segments.get(3);
+        if (TextUtils.isEmpty(number))
+            return null;
+        int issueNumber;
+        try {
+            issueNumber = Integer.parseInt(number);
+        } catch (NumberFormatException nfe) {
+            return null;
+        }
+        if (issueNumber < 1) return null;
+        return IssuesDetailsView.createIntent(context, repo, owner, issueNumber);
     }
 }

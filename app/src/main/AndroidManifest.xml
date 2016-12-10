@@ -43,13 +43,7 @@
         </activity>
         <activity
             android:name=".ui.modules.contentviewer.gists.GistsContentView"
-            android:label="@string/gist"
-            android:parentActivityName=".ui.modules.main.MainView">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.modules.main.MainView"/>
-
-        </activity>
+            android:label="@string/gist"/>
 
         <activity
             android:name=".ui.modules.comment.CommentsView"
@@ -59,13 +53,7 @@
         <activity
             android:name=".ui.modules.viewer.FilesViewerView"
             android:configChanges="keyboard|orientation|screenSize"
-            android:label="@string/viewer"
-            android:parentActivityName=".ui.modules.main.MainView">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.modules.main.MainView"/>
-
-        </activity>
+            android:label="@string/viewer"/>
 
         <activity
             android:name=".ui.modules.main.gists.create.CreateGistView"
@@ -74,37 +62,25 @@
 
         <activity
             android:name=".ui.modules.user.UserPagerView"
-            android:label="@string/user"
-            android:parentActivityName=".ui.modules.main.MainView">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.modules.main.MainView"/>
-
-        </activity>
+            android:label="@string/user"/>
 
         <activity
             android:name=".ui.modules.search.SearchView"
             android:label="@string/search"
-            android:parentActivityName=".ui.modules.main.MainView"
-            android:windowSoftInputMode="stateAlwaysVisible">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.modules.main.MainView"/>
-
-        </activity>
+            android:windowSoftInputMode="stateAlwaysVisible"/>
 
         <activity
             android:name=".ui.modules.repo.RepoPagerView"
-            android:label="@string/repo"
-            android:parentActivityName=".ui.modules.main.MainView">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.modules.main.MainView"/>
+            android:label="@string/repo"/>
 
-        </activity>
+        <activity
+            android:name=".ui.modules.issues.IssuesDetailsView"
+            android:label="@string/issue"/>
 
         <activity
             android:name=".ui.modules.interceptor.SchemeInterceptorView"
+            android:configChanges="keyboard|orientation|screenSize"
+            android:excludeFromRecents="true"
             android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
@@ -130,18 +106,6 @@
             </intent-filter>
         </activity>
 
-        <meta-data
-            android:name="DATABASE"
-            android:value="FASTHUB.db"/>
-        <meta-data
-            android:name="VERSION"
-            android:value="1"/>
-        <meta-data
-            android:name="QUERY_LOG"
-            android:value="true"/>
-        <meta-data
-            android:name="DOMAIN_PACKAGE_NAME"
-            android:value="com.fastaccess.data.dao"/>
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_github"/>

@@ -2,11 +2,16 @@ package com.fastaccess.data.dao;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import com.fastaccess.data.dao.types.IssueState;
+import com.fastaccess.provider.paperdb.RxPaperBook;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
+
+import rx.Completable;
+import rx.Single;
 
 /**
  * Created by Kosh on 08 Dec 2016, 9:02 PM
@@ -14,27 +19,31 @@ import java.util.List;
 
 public class IssueModel implements Parcelable {
 
+    private final static transient String BOOK_NAME = IssueModel.class.getSimpleName();
+
     private String url;
     private String body;
     private String title;
-    private int id;
+    private long id;
     private int comments;
     private int number;
     private boolean locked;
     private IssueState state;
-    private ActorModel user;
-    private ActorModel assignee;
-    private List<ActorModel> assignees;
+    private UserModel user;
+    private UserModel assignee;
+    private List<UserModel> assignees;
     private List<LabelModel> labels;
     private MilestoneModel milestone;
     private RepoModel repository;
+    @SerializedName("repository_url") private String repoUrl;
     @SerializedName("body_html") private String bodyHtml;
     @SerializedName("html_url") private String htmlUrl;
     @SerializedName("pull_request") private PullRequestModel pullRequest;
     @SerializedName("closed_at") private String closedAt;
     @SerializedName("created_at") private String createdAt;
     @SerializedName("updated_at") private String updatedAt;
-    @SerializedName("closed_by") private ActorModel closedBy;
+    @SerializedName("closed_by") private UserModel closedBy;
+    private String repoId;
 
     public String getUrl() {
         return url;
@@ -68,11 +77,11 @@ public class IssueModel implements Parcelable {
         this.title = title;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -108,27 +117,27 @@ public class IssueModel implements Parcelable {
         this.state = state;
     }
 
-    public ActorModel getUser() {
+    public UserModel getUser() {
         return user;
     }
 
-    public void setUser(ActorModel user) {
+    public void setUser(UserModel user) {
         this.user = user;
     }
 
-    public ActorModel getAssignee() {
+    public UserModel getAssignee() {
         return assignee;
     }
 
-    public void setAssignee(ActorModel assignee) {
+    public void setAssignee(UserModel assignee) {
         this.assignee = assignee;
     }
 
-    public List<ActorModel> getAssignees() {
+    public List<UserModel> getAssignees() {
         return assignees;
     }
 
-    public void setAssignees(List<ActorModel> assignees) {
+    public void setAssignees(List<UserModel> assignees) {
         this.assignees = assignees;
     }
 
@@ -188,11 +197,11 @@ public class IssueModel implements Parcelable {
         this.updatedAt = updatedAt;
     }
 
-    public ActorModel getClosedBy() {
+    public UserModel getClosedBy() {
         return closedBy;
     }
 
-    public void setClosedBy(ActorModel closedBy) {
+    public void setClosedBy(UserModel closedBy) {
         this.closedBy = closedBy;
     }
 
@@ -206,13 +215,43 @@ public class IssueModel implements Parcelable {
 
     public IssueModel() {}
 
+    public static Completable save(@NonNull IssueModel issueModel) {
+        return RxPaperBook.with(BOOK_NAME).write(issueModel.getId() + "", issueModel);
+    }
+
+    public static Single<IssueModel> getIssue(long issueNumber, @NonNull String login, @NonNull String repoId) {
+        return RxPaperBook.with(BOOK_NAME).read(getSafeKey(issueNumber, login, repoId));
+    }
+
+    private static String getSafeKey(long issueNumber, @NonNull String login, @NonNull String repoId) {
+        String key = login + "_" + repoId + "_" + issueNumber;
+        return key.length() < 80 ? key : key.substring(0, 80);
+    }
+
+
+    public String getRepoUrl() {
+        return repoUrl;
+    }
+
+    public void setRepoUrl(String repoUrl) {
+        this.repoUrl = repoUrl;
+    }
+
+    public void setRepoId(String repoId) {
+        this.repoId = repoId;
+    }
+
+    public String getRepoId() {
+        return repoId;
+    }
+
     @Override public int describeContents() { return 0; }
 
     @Override public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.url);
         dest.writeString(this.body);
         dest.writeString(this.title);
-        dest.writeInt(this.id);
+        dest.writeLong(this.id);
         dest.writeInt(this.comments);
         dest.writeInt(this.number);
         dest.writeByte(this.locked ? (byte) 1 : (byte) 0);
@@ -223,6 +262,7 @@ public class IssueModel implements Parcelable {
         dest.writeTypedList(this.labels);
         dest.writeParcelable(this.milestone, flags);
         dest.writeParcelable(this.repository, flags);
+        dest.writeString(this.repoUrl);
         dest.writeString(this.bodyHtml);
         dest.writeString(this.htmlUrl);
         dest.writeParcelable(this.pullRequest, flags);
@@ -230,31 +270,34 @@ public class IssueModel implements Parcelable {
         dest.writeString(this.createdAt);
         dest.writeString(this.updatedAt);
         dest.writeParcelable(this.closedBy, flags);
+        dest.writeString(this.repoId);
     }
 
     protected IssueModel(Parcel in) {
         this.url = in.readString();
         this.body = in.readString();
         this.title = in.readString();
-        this.id = in.readInt();
+        this.id = in.readLong();
         this.comments = in.readInt();
         this.number = in.readInt();
         this.locked = in.readByte() != 0;
         int tmpState = in.readInt();
         this.state = tmpState == -1 ? null : IssueState.values()[tmpState];
-        this.user = in.readParcelable(ActorModel.class.getClassLoader());
-        this.assignee = in.readParcelable(ActorModel.class.getClassLoader());
-        this.assignees = in.createTypedArrayList(ActorModel.CREATOR);
+        this.user = in.readParcelable(UserModel.class.getClassLoader());
+        this.assignee = in.readParcelable(UserModel.class.getClassLoader());
+        this.assignees = in.createTypedArrayList(UserModel.CREATOR);
         this.labels = in.createTypedArrayList(LabelModel.CREATOR);
         this.milestone = in.readParcelable(MilestoneModel.class.getClassLoader());
         this.repository = in.readParcelable(RepoModel.class.getClassLoader());
+        this.repoUrl = in.readString();
         this.bodyHtml = in.readString();
         this.htmlUrl = in.readString();
         this.pullRequest = in.readParcelable(PullRequestModel.class.getClassLoader());
         this.closedAt = in.readString();
         this.createdAt = in.readString();
         this.updatedAt = in.readString();
-        this.closedBy = in.readParcelable(ActorModel.class.getClassLoader());
+        this.closedBy = in.readParcelable(UserModel.class.getClassLoader());
+        this.repoId = in.readString();
     }
 
     public static final Creator<IssueModel> CREATOR = new Creator<IssueModel>() {

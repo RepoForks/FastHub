@@ -40,6 +40,7 @@ public class GistsContentPresenter extends BasePresenter<GistsContentMvp.View> i
         String gistId = bundle.getString(BundleConstant.EXTRA_ID);
         if (gist != null) {
             checkStarring(gist.getGistId());
+            sendToView(GistsContentMvp.View::onSetupDetails);
         } else if (gistId != null) {
             checkStarring(gistId);
             manageSubscription(RxHelper.getObserver(RestClient.getGist(gistId))
@@ -55,6 +56,8 @@ public class GistsContentPresenter extends BasePresenter<GistsContentMvp.View> i
                         return null;
                     })
                     .subscribe());
+        } else {
+            sendToView(GistsContentMvp.View::onSetupDetails); // tell the activity to finish!
         }
     }
 

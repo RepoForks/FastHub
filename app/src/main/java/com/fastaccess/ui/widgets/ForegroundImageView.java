@@ -3,6 +3,7 @@ package com.fastaccess.ui.widgets;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
@@ -11,14 +12,14 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
+import android.view.Gravity;
+import android.widget.Toast;
 
 import com.fastaccess.R;
+import com.fastaccess.helper.Logger;
 import com.fastaccess.helper.ViewHelper;
 
 
-/**
- * Created by Kosh on 22/11/15 2:29 PM. Fast Access
- */
 public class ForegroundImageView extends AppCompatImageView {
     private Drawable foreground;
 
@@ -27,7 +28,15 @@ public class ForegroundImageView extends AppCompatImageView {
     }
 
     public ForegroundImageView(Context context, AttributeSet attrs) {
-        super(context, attrs, 0);
+        this(context, attrs, 0);
+        setOnLongClickListener(view -> {
+            Logger.e();
+            Toast toast = Toast.makeText(getContext(), getContentDescription(), Toast.LENGTH_SHORT);
+            Rect rect = ViewHelper.getLayoutPosition(view);
+            toast.setGravity(Gravity.TOP, (int) rect.left, (int) rect.exactCenterY());
+            toast.show();
+            return true;
+        });
     }
 
     public ForegroundImageView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -40,23 +49,11 @@ public class ForegroundImageView extends AppCompatImageView {
         a.recycle();
     }
 
-    /**
-     * Supply a drawable resource that is to be rendered on top of all of the child views in the frame layout.
-     *
-     * @param drawableResId
-     *         The drawable resource to be drawn on top of the children.
-     */
     public void setForegroundResource(@DrawableRes int drawableResId) {
         if (isInEditMode()) return;
         setForeground(ContextCompat.getDrawable(getContext(), drawableResId));
     }
 
-    /**
-     * Supply a Drawable that is to be rendered on top of all of the child views in the frame layout.
-     *
-     * @param drawable
-     *         The Drawable to be drawn on top of the children.
-     */
     public void setForeground(Drawable drawable) {
         if (foreground == drawable) {
             return;

@@ -1,0 +1,237 @@
+package com.fastaccess.ui.modules.issues;
+
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+
+import com.fastaccess.R;
+import com.fastaccess.data.dao.IssueModel;
+import com.fastaccess.data.dao.UserModel;
+import com.fastaccess.data.dao.types.IssueState;
+import com.fastaccess.helper.ActivityHelper;
+import com.fastaccess.helper.BundleConstant;
+import com.fastaccess.helper.Bundler;
+import com.fastaccess.helper.Logger;
+import com.fastaccess.helper.ParseDateFormat;
+import com.fastaccess.ui.base.BaseActivity;
+import com.fastaccess.ui.widgets.AvatarLayout;
+import com.fastaccess.ui.widgets.FontTextView;
+import com.fastaccess.ui.widgets.ForegroundImageView;
+import com.fastaccess.ui.widgets.QuickReturnFooterBehavior;
+import com.fastaccess.ui.widgets.SpannableBuilder;
+import com.fastaccess.ui.widgets.ViewPagerView;
+import com.fastaccess.ui.widgets.dialog.MessageDialogView;
+
+import butterknife.BindView;
+import butterknife.OnClick;
+
+/**
+ * Created by Kosh on 10 Dec 2016, 9:23 AM
+ */
+
+public class IssuesDetailsView extends BaseActivity<IssuesDetailsMvp.View, IssueDetailsPresenter> implements IssuesDetailsMvp.View {
+
+    @BindView(R.id.startGist) ForegroundImageView startGist;
+    @BindView(R.id.forkGist) ForegroundImageView forkGist;
+    @BindView(R.id.avatarLayout) AvatarLayout avatarLayout;
+    @BindView(R.id.title) FontTextView title;
+    @BindView(R.id.size) FontTextView size;
+    @BindView(R.id.date) FontTextView date;
+    @BindView(R.id.tabs) TabLayout tabs;
+    @BindView(R.id.pager) ViewPagerView pager;
+    @BindView(R.id.fab) FloatingActionButton fab;
+
+    public static Intent createIntent(@NonNull Context context, @NonNull String repoId, @NonNull String login, int number) {
+        Intent intent = new Intent(context, IssuesDetailsView.class);
+        intent.putExtras(Bundler.start()
+                .put(BundleConstant.ID, number)
+                .put(BundleConstant.EXTRA_ID, login)
+                .put(BundleConstant.EXTRA2_ID, repoId)
+                .end());
+        return intent;
+
+    }
+
+    public static void createIntentForOffline(@NonNull Context context, @NonNull IssueModel issueModel) {
+        String repoId;
+        if (issueModel.getRepository() == null) {
+            Uri uri = Uri.parse(issueModel.getRepoUrl());
+            repoId = uri.getLastPathSegment();
+            Logger.e(uri.getLastPathSegment());
+
+        } else {
+            repoId = String.valueOf(issueModel.getRepository().getRepoId());
+        }
+        issueModel.setRepoId(repoId);
+        Intent intent = new Intent(context, IssuesDetailsView.class);
+        intent.putExtras(Bundler.start()
+                .put(BundleConstant.ITEM, issueModel)
+                .end());
+        context.startActivity(intent);
+
+    }
+
+    @OnClick(R.id.fab) void onAddComment() {
+        //TODO
+    }
+
+    @Override protected int layout() {
+        return R.layout.gists_content_activity;
+    }
+
+    @Override protected boolean hasSlideExitAnimation() {
+        return true;
+    }
+
+    @Override protected boolean isTransparent() {
+        return false;
+    }
+
+    @Override protected boolean canBack() {
+        return true;
+    }
+
+    @Override protected boolean isSecured() {
+        return false;
+    }
+
+    @NonNull @Override public IssueDetailsPresenter providePresenter() {
+        return new IssueDetailsPresenter();
+    }
+
+    @Override protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState == null) {
+            getPresenter().onActivityCreated(getIntent());
+        } else {
+            onSetupIssue();
+        }
+        startGist.setVisibility(View.GONE);
+        forkGist.setVisibility(View.GONE);
+    }
+
+    @Override public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.issue_menu, menu);
+        menu.findItem(R.id.closeIssue).setVisible(getPresenter().isOwner());
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.share) {
+            if (getPresenter().getIssue() != null) ActivityHelper.shareUrl(this, getPresenter().getIssue().getHtmlUrl());
+            return true;
+        } else if (item.getItemId() == R.id.closeIssue) {
+            IssueModel issueModel = getPresenter().getIssue();
+            if (issueModel == null) return true;
+            MessageDialogView.newInstance(
+                    issueModel.getState() == IssueState.open ? getString(R.string.close_issue) : getString(R.string.re_open_issue),
+                    getString(R.string.confirm_message),
+                    Bundler.start().put(BundleConstant.EXTRA, true).end())
+                    .show(getSupportFragmentManager(), MessageDialogView.TAG);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.closeIssue);
+        boolean isOwner = getPresenter().isOwner();
+        menu.findItem(R.id.closeIssue).setVisible(isOwner);
+        if (isOwner) {
+            //noinspection ConstantConditions ( getIssue at this stage is not null but AS does not understand. )
+            item.setTitle(getPresenter().getIssue().getState() == IssueState.closed ? getString(R.string.re_open) : getString(R.string.close));
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override public void onShowProgress() {
+        showProgress(0);
+    }
+
+    @Override public void onHideProgress() {
+        hideProgress();
+    }
+
+    @Override public void onShowMessage(String message) {
+        hideProgress();
+        showMessage(getString(R.string.error), message);
+    }
+
+    @Override public void onSetupIssue() {
+        hideProgress();
+        if (getPresenter().getIssue() == null) {
+            finish();
+            return;
+        }
+        supportInvalidateOptionsMenu();
+        IssueModel issueModel = getPresenter().getIssue();
+        setTitle(String.format("%s #%s", getString(R.string.issue), issueModel.getNumber()));
+        UserModel actorModel = issueModel.getUser();
+        title.setText(issueModel.getTitle());
+        if (actorModel != null) {
+            date.setVisibility(View.GONE);
+            size.setText(SpannableBuilder.builder().append(issueModel.getState().getStatus()).append(" ").append(getString(R.string.by))
+                    .append(" ").append(actorModel.getLogin()).append(" ")
+                    .append(ParseDateFormat.getTimeAgo(issueModel.getCreatedAt())));
+            avatarLayout.setUrl(actorModel.getAvatarUrl(), actorModel.getLogin());
+        }
+//        tabs.setupWithViewPager(pager);
+
+        QuickReturnFooterBehavior quickReturnFooterBehavior = (QuickReturnFooterBehavior)
+                ((CoordinatorLayout.LayoutParams) fab.getLayoutParams()).getBehavior();
+        pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                if (quickReturnFooterBehavior != null) {
+                    quickReturnFooterBehavior.setEnabled(position == 1);
+                }
+                hideShowFab();
+            }
+        });
+        hideShowFab();
+    }
+
+    @Override public void showSuccessIssueActionMsg(boolean isClose) {
+        hideProgress();
+        if (isClose) {
+            showMessage(getString(R.string.success), getString(R.string.success_closed));
+        } else {
+            showMessage(getString(R.string.success), getString(R.string.success_re_opened));
+        }
+    }
+
+    @Override public void showErrorIssueActionMsg(boolean isClose) {
+        hideProgress();
+        if (isClose) {
+            showMessage(getString(R.string.error), getString(R.string.error_closing_issue));
+        } else {
+            showMessage(getString(R.string.error), getString(R.string.error_re_opening_issue));
+        }
+    }
+
+
+    @Override public void onMessageDialogActionClicked(boolean isOk, @Nullable Bundle bundle) {
+        super.onMessageDialogActionClicked(isOk, bundle);
+        if (isOk) {
+            getPresenter().onOpenCloseIssue(bundle);
+        }
+    }
+
+    private void hideShowFab() {
+        if (pager.getCurrentItem() == 0) {
+            fab.show();
+        } else {
+            fab.hide();
+        }
+    }
+}

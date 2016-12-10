@@ -1,5 +1,7 @@
 package com.fastaccess.ui.modules.contentviewer.gists;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -50,6 +52,12 @@ public class GistsContentView extends BaseActivity<GistsContentMvp.View, GistsCo
     @BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.startGist) ForegroundImageView startGist;
     @BindView(R.id.forkGist) ForegroundImageView forkGist;
+
+    public static Intent createIntent(@NonNull Context context, @NonNull String gistId) {
+        Intent intent = new Intent(context, GistsContentView.class);
+        intent.putExtras(Bundler.start().put(BundleConstant.EXTRA_ID, gistId).end());
+        return intent;
+    }
 
     @OnClick(R.id.fab) void onAddComment() {
         GistCommentsView view = (GistCommentsView) pager.getAdapter().instantiateItem(pager, 0);
@@ -103,9 +111,10 @@ public class GistsContentView extends BaseActivity<GistsContentMvp.View, GistsCo
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
             getPresenter().onActivityCreated(getIntent());
-        }
-        if (getPresenter().getGist() != null) {
-            onSetupDetails();
+        } else {
+            if (getPresenter().getGist() != null) {
+                onSetupDetails();
+            }
         }
     }
 
