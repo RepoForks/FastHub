@@ -21,6 +21,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.HttpException;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -39,19 +40,23 @@ public class RestProvider {
         return interceptor;
     }
 
-    @NonNull private static Retrofit getRetrofit() {
+    @NonNull private static Retrofit getRetrofit(boolean isRaw) {
         return new Retrofit.Builder()
                 .baseUrl(REST_URL)
-                .client(getHttpClient())
-                .addConverterFactory(GsonConverterFactory.create(getGson()))
+                .client(getHttpClient(isRaw))
+                .addConverterFactory(!isRaw ? GsonConverterFactory.create(getGson()) : new StringConverter())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
+    }
+
+    @NonNull private static Retrofit getRetrofit() {
+        return getRetrofit(false);
     }
 
     @NonNull private static Retrofit getRetrofit(String baseUrl) {
         return new Retrofit.Builder()
                 .baseUrl(baseUrl.endsWith("/") ? baseUrl : baseUrl + "/")
-                .client(getHttpClient())
+                .client(getHttpClient(false))
                 .addConverterFactory(new StringConverter())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
@@ -60,7 +65,7 @@ public class RestProvider {
     @NonNull private static Retrofit getRetrofit(@NonNull Gson gson) {
         return new Retrofit.Builder()
                 .baseUrl(REST_URL)
-                .client(getHttpClient())
+                .client(getHttpClient(false))
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
@@ -68,7 +73,7 @@ public class RestProvider {
 
     @NonNull public static UserRestService getLoginRestService() {
         return new Retrofit.Builder()
-                .client(getHttpClient())
+                .client(getHttpClient(false))
                 .baseUrl("https://github.com/login/oauth/")
                 .addConverterFactory(GsonConverterFactory.create(getGson()))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
@@ -96,15 +101,19 @@ public class RestProvider {
         return getRetrofit(baseUrl).create(service);
     }
 
+    @NonNull public static <S> S createService(@NonNull Class<S> service, boolean isRaw) {
+        return getRetrofit(isRaw).create(service);
+    }
+
     @NonNull public static <S> S createService(@NonNull Class<S> service) {
-        return getRetrofit().create(service);
+        return createService(service, false);
     }
 
     @NonNull public static <S> S createService(@NonNull Class<S> service, @NonNull Gson gson) {
         return getRetrofit(gson).create(service);
     }
 
-    @NonNull private static OkHttpClient getHttpClient() {
+    @NonNull private static OkHttpClient getHttpClient(boolean isRaw) {
         return new OkHttpClient.Builder()
                 .retryOnConnectionFailure(false)
                 .addInterceptor(loggingInterceptor(HttpLoggingInterceptor.Level.BODY))
@@ -112,9 +121,8 @@ public class RestProvider {
                 .addInterceptor(chain -> {
                     Request original = chain.request();
                     Request.Builder requestBuilder = original.newBuilder()
-                            .header("Accept", "application/json")
-                            .header("Content-type", "application/json")
-                            .method(original.method(), original.body());
+                            .header("Accept", !isRaw ? "application/vnd.github.v3+json" : "application/vnd.github.VERSION.raw")
+                            .header("Content-type", !isRaw ? "application/vnd.github.v3+json" : "application/vnd.github.VERSION.raw; charset=utf-8");
                     if (!InputHelper.isEmpty(PrefGetter.getToken())) {
                         requestBuilder.header("Authorization", "token " + PrefGetter.getToken());
                     }
@@ -140,5 +148,13 @@ public class RestProvider {
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         return downloadManager.enqueue(request);
+    }
+
+    public static int getCode(Throwable throwable) {
+        if (throwable instanceof HttpException) {
+            return ((HttpException) throwable).code();
+
+        }
+        return -1;
     }
 }

@@ -8,6 +8,7 @@ import com.fastaccess.data.dao.RepoModel;
 import com.fastaccess.data.rest.RestClient;
 import com.fastaccess.helper.RxHelper;
 import com.fastaccess.ui.base.mvp.presenter.BasePresenter;
+import com.fastaccess.ui.modules.repo.RepoPagerView;
 
 import java.util.ArrayList;
 
@@ -73,8 +74,10 @@ public class SearchReposPresenter extends BasePresenter<SearchReposMvp.View> imp
     }
 
     @Override public void onItemClick(int position, View v, RepoModel item) {
-
+        RepoPagerView.startRepoPager(v.getContext(), item);
     }
 
-    @Override public void onItemLongClick(int position, View v, RepoModel item) {}
+    @Override public void onItemLongClick(int position, View v, RepoModel item) {
+        onItemClick(position, v, item);
+    }
 }

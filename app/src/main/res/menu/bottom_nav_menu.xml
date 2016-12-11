@@ -4,7 +4,7 @@
       android:layout_width="wrap_content"
       app:bbn_itemAnimationDuration="200"
       app:bbn_itemColorActive="?colorAccent"
-      app:bbn_itemColorInactive="@color/light_primary_dark"
+      app:bbn_itemColorInactive="@color/primary_dark"
       app:bbn_rippleColor="@color/transparent">
 
     <item

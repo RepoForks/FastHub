@@ -17,7 +17,7 @@ public class MilestoneModel implements Parcelable {
     private String description;
     private int id;
     private int number;
-    private ActorModel creator;
+    private UserModel creator;
     @SerializedName("html_url") private String htmlUr;
     @SerializedName("open_issues") private int openIssues;
     @SerializedName("closed_issues") private int closedIssues;
@@ -74,11 +74,11 @@ public class MilestoneModel implements Parcelable {
         this.number = number;
     }
 
-    public ActorModel getCreator() {
+    public UserModel getCreator() {
         return creator;
     }
 
-    public void setCreator(ActorModel creator) {
+    public void setCreator(UserModel creator) {
         this.creator = creator;
     }
 
@@ -166,7 +166,7 @@ public class MilestoneModel implements Parcelable {
         this.description = in.readString();
         this.id = in.readInt();
         this.number = in.readInt();
-        this.creator = in.readParcelable(ActorModel.class.getClassLoader());
+        this.creator = in.readParcelable(UserModel.class.getClassLoader());
         this.htmlUr = in.readString();
         this.openIssues = in.readInt();
         this.closedIssues = in.readInt();

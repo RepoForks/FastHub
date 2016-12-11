@@ -22,7 +22,7 @@ public class CommentsModel implements Parcelable {
     private final static transient String BOOK_NAME = CommentsModel.class.getSimpleName();
 
     private long id;
-    private ActorModel user;
+    private UserModel user;
     private String url;
     private String body;
     @SerializedName("body_html") private String bodyHtml;
@@ -38,11 +38,11 @@ public class CommentsModel implements Parcelable {
         this.id = id;
     }
 
-    public ActorModel getUser() {
+    public UserModel getUser() {
         return user;
     }
 
-    public void setUser(ActorModel user) {
+    public void setUser(UserModel user) {
         this.user = user;
     }
 
@@ -111,7 +111,7 @@ public class CommentsModel implements Parcelable {
 
     protected CommentsModel(Parcel in) {
         this.id = in.readLong();
-        this.user = in.readParcelable(ActorModel.class.getClassLoader());
+        this.user = in.readParcelable(UserModel.class.getClassLoader());
         this.url = in.readString();
         this.body = in.readString();
         this.bodyHtml = in.readString();

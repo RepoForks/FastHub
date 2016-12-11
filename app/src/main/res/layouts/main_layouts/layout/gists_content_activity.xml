@@ -18,13 +18,13 @@
         android:theme="@style/ToolbarStyleDark"
         app:elevation="0dp">
 
+        <include layout="@layout/gist_content_header_layout"/>
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
-            android:background="?colorPrimary"
-            app:layout_scrollFlags="scroll|enterAlways">
+            android:background="?colorPrimary">
 
             <com.fastaccess.ui.widgets.ForegroundImageView
                 android:id="@+id/startGist"
@@ -48,8 +48,6 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_fork"/>
         </android.support.v7.widget.Toolbar>
-
-        <include layout="@layout/gist_content_header_layout"/>
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs"

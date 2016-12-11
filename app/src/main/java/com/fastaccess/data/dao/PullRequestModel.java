@@ -29,25 +29,25 @@ public class PullRequestModel implements Parcelable {
     private boolean mergable;
     private boolean merged;
     private IssueState state;
-    private ActorModel ActorModel;
-    private ActorModel assignee;
+    private UserModel userModel;
+    private UserModel assignee;
     private List<Label> labels;
     private MilestoneModel milestone;
-    private CommentsModel base;
-    private CommentsModel head;
+    private CommitModel base;
+    private CommitModel head;
     @SerializedName("body_html") private String bodyHtml;
     @SerializedName("html_url") private String htmlUrl;
     @SerializedName("pull_request") private PullRequestModel pullRequest;
     @SerializedName("closed_at") private String closedAt;
     @SerializedName("created_at") private String createdAt;
     @SerializedName("updated_at") private String updatedAt;
-    @SerializedName("closed_by") private ActorModel closedBy;
+    @SerializedName("closed_by") private UserModel closedBy;
     @SerializedName("changed_files") private int changedFiles;
     @SerializedName("diff_url") private String diffUrl;
     @SerializedName("patch_url") private String patchUrl;
     @SerializedName("merge_commit_sha") private String mergeCommitSha;
     @SerializedName("merged_at") private String mergedAt;
-    @SerializedName("merged_by") private ActorModel mergedBy;
+    @SerializedName("merged_by") private UserModel mergedBy;
 
     public String getUrl() {
         return url;
@@ -153,19 +153,19 @@ public class PullRequestModel implements Parcelable {
         this.state = state;
     }
 
-    public com.fastaccess.data.dao.ActorModel getActorModel() {
-        return ActorModel;
+    public UserModel getUserModel() {
+        return userModel;
     }
 
-    public void setActorModel(com.fastaccess.data.dao.ActorModel actorModel) {
-        ActorModel = actorModel;
+    public void setUserModel(UserModel userModel) {
+        this.userModel = userModel;
     }
 
-    public com.fastaccess.data.dao.ActorModel getAssignee() {
+    public UserModel getAssignee() {
         return assignee;
     }
 
-    public void setAssignee(com.fastaccess.data.dao.ActorModel assignee) {
+    public void setAssignee(com.fastaccess.data.dao.UserModel assignee) {
         this.assignee = assignee;
     }
 
@@ -185,19 +185,19 @@ public class PullRequestModel implements Parcelable {
         this.milestone = milestone;
     }
 
-    public CommentsModel getBase() {
+    public CommitModel getBase() {
         return base;
     }
 
-    public void setBase(CommentsModel base) {
+    public void setBase(CommitModel base) {
         this.base = base;
     }
 
-    public CommentsModel getHead() {
+    public CommitModel getHead() {
         return head;
     }
 
-    public void setHead(CommentsModel head) {
+    public void setHead(CommitModel head) {
         this.head = head;
     }
 
@@ -249,11 +249,11 @@ public class PullRequestModel implements Parcelable {
         this.updatedAt = updatedAt;
     }
 
-    public com.fastaccess.data.dao.ActorModel getClosedBy() {
+    public UserModel getClosedBy() {
         return closedBy;
     }
 
-    public void setClosedBy(com.fastaccess.data.dao.ActorModel closedBy) {
+    public void setClosedBy(com.fastaccess.data.dao.UserModel closedBy) {
         this.closedBy = closedBy;
     }
 
@@ -297,11 +297,11 @@ public class PullRequestModel implements Parcelable {
         this.mergedAt = mergedAt;
     }
 
-    public com.fastaccess.data.dao.ActorModel getMergedBy() {
+    public UserModel getMergedBy() {
         return mergedBy;
     }
 
-    public void setMergedBy(com.fastaccess.data.dao.ActorModel mergedBy) {
+    public void setMergedBy(com.fastaccess.data.dao.UserModel mergedBy) {
         this.mergedBy = mergedBy;
     }
 
@@ -321,7 +321,7 @@ public class PullRequestModel implements Parcelable {
         dest.writeByte(this.mergable ? (byte) 1 : (byte) 0);
         dest.writeByte(this.merged ? (byte) 1 : (byte) 0);
         dest.writeInt(this.state == null ? -1 : this.state.ordinal());
-        dest.writeParcelable(this.ActorModel, flags);
+        dest.writeParcelable(this.userModel, flags);
         dest.writeParcelable(this.assignee, flags);
         dest.writeList(this.labels);
         dest.writeParcelable(this.milestone, flags);
@@ -359,26 +359,26 @@ public class PullRequestModel implements Parcelable {
         this.merged = in.readByte() != 0;
         int tmpState = in.readInt();
         this.state = tmpState == -1 ? null : IssueState.values()[tmpState];
-        this.ActorModel = in.readParcelable(com.fastaccess.data.dao.ActorModel.class.getClassLoader());
-        this.assignee = in.readParcelable(com.fastaccess.data.dao.ActorModel.class.getClassLoader());
+        this.userModel = in.readParcelable(UserModel.class.getClassLoader());
+        this.assignee = in.readParcelable(UserModel.class.getClassLoader());
         this.labels = new ArrayList<Label>();
         in.readList(this.labels, Label.class.getClassLoader());
         this.milestone = in.readParcelable(MilestoneModel.class.getClassLoader());
-        this.base = in.readParcelable(CommentsModel.class.getClassLoader());
-        this.head = in.readParcelable(CommentsModel.class.getClassLoader());
+        this.base = in.readParcelable(CommitModel.class.getClassLoader());
+        this.head = in.readParcelable(CommitModel.class.getClassLoader());
         this.bodyHtml = in.readString();
         this.htmlUrl = in.readString();
         this.pullRequest = in.readParcelable(PullRequestModel.class.getClassLoader());
         this.closedAt = in.readString();
         this.createdAt = in.readString();
         this.updatedAt = in.readString();
-        this.closedBy = in.readParcelable(com.fastaccess.data.dao.ActorModel.class.getClassLoader());
+        this.closedBy = in.readParcelable(UserModel.class.getClassLoader());
         this.changedFiles = in.readInt();
         this.diffUrl = in.readString();
         this.patchUrl = in.readString();
         this.mergeCommitSha = in.readString();
         this.mergedAt = in.readString();
-        this.mergedBy = in.readParcelable(com.fastaccess.data.dao.ActorModel.class.getClassLoader());
+        this.mergedBy = in.readParcelable(UserModel.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<PullRequestModel> CREATOR = new Parcelable.Creator<PullRequestModel>() {

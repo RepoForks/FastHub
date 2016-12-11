@@ -35,6 +35,7 @@ public class ProgressDialogFragment extends DialogFragment {
         ProgressDialog progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage(getArguments().getString("msg"));
         progressDialog.setCancelable(getArguments().getBoolean("isCancelable"));
+        setCancelable(getArguments().getBoolean("isCancelable"));
         return progressDialog;
     }
 }

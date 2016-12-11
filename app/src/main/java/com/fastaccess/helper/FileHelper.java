@@ -1,6 +1,7 @@
 package com.fastaccess.helper;
 
 import android.os.Environment;
+import android.webkit.MimeTypeMap;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,5 +43,9 @@ public class FileHelper {
             }
         }
         return new File(folderName(), generateFileName(path));
+    }
+
+    public static String getExtension(String file) {
+        return MimeTypeMap.getFileExtensionFromUrl(file);
     }
 }

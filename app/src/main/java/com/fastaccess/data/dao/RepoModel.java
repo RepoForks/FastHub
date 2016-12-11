@@ -24,7 +24,7 @@ public class RepoModel implements Parcelable {
     @SerializedName("id") private long repoId;
     @SerializedName("name") private String name;
     @SerializedName("full_name") private String fullName;
-    @SerializedName("owner") private ActorModel owner;
+    @SerializedName("owner") private UserModel owner;
     @SerializedName("private") private boolean privateX;
     @SerializedName("html_url") private String htmlUrl;
     @SerializedName("description") private String description;
@@ -89,9 +89,16 @@ public class RepoModel implements Parcelable {
     @SerializedName("watchers") private long watchers;
     @SerializedName("default_branch") private String defaultBranch;
     @SerializedName("permissions") private RepoPermissionsModel permissions;
+    @SerializedName("organization") private UserModel organization;
+    @SerializedName("parent") private RepoModel parent;
+    @SerializedName("source") private RepoModel source;
 
     public RepoModel(long repoId) {
         this.repoId = repoId;
+    }
+
+    public RepoModel(String name) {
+        this.name = name;
     }
 
     public long getRepoId() {
@@ -118,11 +125,11 @@ public class RepoModel implements Parcelable {
         this.fullName = fullName;
     }
 
-    public ActorModel getOwner() {
+    public UserModel getOwner() {
         return owner;
     }
 
-    public void setOwner(ActorModel owner) {
+    public void setOwner(UserModel owner) {
         this.owner = owner;
     }
 
@@ -638,6 +645,124 @@ public class RepoModel implements Parcelable {
         this.permissions = permissions;
     }
 
+    public RepoModel() {}
+
+    @Override public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RepoModel repoModel = (RepoModel) o;
+
+        return repoId == repoModel.repoId || (name != null && name.equals(repoModel.name));
+
+    }
+
+    @Override public int hashCode() {
+        return (int) (repoId ^ (repoId >>> 32));
+    }
+
+    public static Completable save(@NonNull String login, List<RepoModel> repos) {
+        return RxPaperBook.with(BOOK_NAME).write(login, repos);
+    }
+
+    @NonNull public static Single<ArrayList<RepoModel>> getRepos(String login) {
+        return RxPaperBook.with(BOOK_NAME).read(login, new ArrayList<>());
+    }
+
+    @Nullable public static Observable<RepoModel> getRepo(long repoId, @NonNull String login) {
+        return getRepos(login).toObservable()
+                .map(gists -> {
+                    if (gists != null && !gists.isEmpty()) {
+                        int index = gists.indexOf(new RepoModel(repoId));
+                        Logger.e(index, gists.size());
+                        if (index != -1) return gists.get(index);
+                    }
+                    return null;
+                });
+
+    }
+
+    @Nullable public static Observable<RepoModel> getRepo(@NonNull String repoId, @NonNull String login) {
+        return getRepos(login).toObservable()
+                .map(gists -> {
+                    if (gists != null && !gists.isEmpty()) {
+                        int index = gists.indexOf(new RepoModel(repoId));
+                        Logger.e(index, gists.size());
+                        if (index != -1) return gists.get(index);
+                    }
+                    return null;
+                });
+
+    }
+
+    public static Completable deleteRepo(@NonNull String login) {
+        return RxPaperBook.with(BOOK_NAME).delete(login);
+    }
+
+    public static Completable saveStarred(@NonNull String login, List<RepoModel> repos) {
+        return RxPaperBook.with(STARRED_BOOK_NAME).write(login, repos);
+    }
+
+    @NonNull public static Single<ArrayList<RepoModel>> getStarredRepos(String login) {
+        return RxPaperBook.with(STARRED_BOOK_NAME).read(login, new ArrayList<>());
+    }
+
+    @Nullable public static Observable<RepoModel> getStarredRepo(long repoId, @NonNull String login) {
+        return getStarredRepos(login).toObservable()
+                .map(gists -> {
+                    if (gists != null && !gists.isEmpty()) {
+                        int index = gists.indexOf(new RepoModel(repoId));
+                        if (index != -1) {
+                            return gists.get(index);
+                        }
+                    }
+                    return null;
+                });
+
+    }
+
+    @Nullable public static Observable<RepoModel> getStarredRepo(@NonNull String repoId, @NonNull String login) {
+        return getStarredRepos(login).toObservable()
+                .map(gists -> {
+                    if (gists != null && !gists.isEmpty()) {
+                        int index = gists.indexOf(new RepoModel(repoId));
+                        if (index != -1) {
+                            return gists.get(index);
+                        }
+                    }
+                    return null;
+                });
+
+    }
+
+    public static Completable deleteStarredRepo(@NonNull String login) {
+        return RxPaperBook.with(STARRED_BOOK_NAME).delete(login);
+    }
+
+    public UserModel getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(UserModel organization) {
+        this.organization = organization;
+    }
+
+    public RepoModel getParent() {
+        return parent;
+    }
+
+    public void setParent(RepoModel parent) {
+        this.parent = parent;
+    }
+
+    public RepoModel getSource() {
+        return source;
+    }
+
+    public void setSource(RepoModel source) {
+        this.source = source;
+    }
+
     @Override public int describeContents() { return 0; }
 
     @Override public void writeToParcel(Parcel dest, int flags) {
@@ -709,15 +834,16 @@ public class RepoModel implements Parcelable {
         dest.writeLong(this.watchers);
         dest.writeString(this.defaultBranch);
         dest.writeParcelable(this.permissions, flags);
+        dest.writeParcelable(this.organization, flags);
+        dest.writeParcelable(this.parent, flags);
+        dest.writeParcelable(this.source, flags);
     }
 
-    public RepoModel() {}
-
     protected RepoModel(Parcel in) {
-        this.repoId = in.readInt();
+        this.repoId = in.readLong();
         this.name = in.readString();
         this.fullName = in.readString();
-        this.owner = in.readParcelable(ActorModel.class.getClassLoader());
+        this.owner = in.readParcelable(UserModel.class.getClassLoader());
         this.privateX = in.readByte() != 0;
         this.htmlUrl = in.readString();
         this.description = in.readString();
@@ -766,22 +892,25 @@ public class RepoModel implements Parcelable {
         this.cloneUrl = in.readString();
         this.svnUrl = in.readString();
         this.homepage = in.readString();
-        this.size = in.readInt();
-        this.stargazersCount = in.readInt();
-        this.watchersCount = in.readInt();
+        this.size = in.readLong();
+        this.stargazersCount = in.readLong();
+        this.watchersCount = in.readLong();
         this.language = in.readString();
         this.hasIssues = in.readByte() != 0;
         this.hasDownloads = in.readByte() != 0;
         this.hasWiki = in.readByte() != 0;
         this.hasPages = in.readByte() != 0;
-        this.forksCount = in.readInt();
+        this.forksCount = in.readLong();
         this.mirrorUrl = in.readString();
-        this.openIssuesCount = in.readInt();
-        this.forks = in.readInt();
-        this.openIssues = in.readInt();
-        this.watchers = in.readInt();
+        this.openIssuesCount = in.readLong();
+        this.forks = in.readLong();
+        this.openIssues = in.readLong();
+        this.watchers = in.readLong();
         this.defaultBranch = in.readString();
         this.permissions = in.readParcelable(RepoPermissionsModel.class.getClassLoader());
+        this.organization = in.readParcelable(UserModel.class.getClassLoader());
+        this.parent = in.readParcelable(RepoModel.class.getClassLoader());
+        this.source = in.readParcelable(RepoModel.class.getClassLoader());
     }
 
     public static final Creator<RepoModel> CREATOR = new Creator<RepoModel>() {
@@ -789,69 +918,4 @@ public class RepoModel implements Parcelable {
 
         @Override public RepoModel[] newArray(int size) {return new RepoModel[size];}
     };
-
-    @Override public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        RepoModel repoModel = (RepoModel) o;
-
-        return repoId == repoModel.repoId;
-
-    }
-
-    @Override public int hashCode() {
-        return (int) (repoId ^ (repoId >>> 32));
-    }
-
-    public static Completable save(@NonNull String login, List<RepoModel> repos) {
-        return RxPaperBook.with(BOOK_NAME).write(login, repos);
-    }
-
-    @NonNull public static Single<ArrayList<RepoModel>> getRepos(String login) {
-        return RxPaperBook.with(BOOK_NAME).read(login, new ArrayList<>());
-    }
-
-    @Nullable public static Observable<RepoModel> getRepo(long repoId, @NonNull String login) {
-        return getRepos(login).toObservable()
-                .map(gists -> {
-                    if (gists != null && !gists.isEmpty()) {
-                        int index = gists.indexOf(new RepoModel(repoId));
-                        Logger.e(index, gists.size());
-                        if (index != -1) return gists.get(index);
-                    }
-                    return null;
-                });
-
-    }
-
-    public static Completable deleteRepo(@NonNull String login) {
-        return RxPaperBook.with(BOOK_NAME).delete(login);
-    }
-
-    public static Completable saveStarred(@NonNull String login, List<RepoModel> repos) {
-        return RxPaperBook.with(STARRED_BOOK_NAME).write(login, repos);
-    }
-
-
-    @NonNull public static Single<ArrayList<RepoModel>> getStarredRepos(String login) {
-        return RxPaperBook.with(STARRED_BOOK_NAME).read(login, new ArrayList<>());
-    }
-
-    @Nullable public static Observable<RepoModel> getStarredRepo(long repoId, @NonNull String login) {
-        return getStarredRepos(login).toObservable()
-                .map(gists -> {
-                    if (gists != null && !gists.isEmpty()) {
-                        int index = gists.indexOf(new RepoModel(repoId));
-                        Logger.e(index, gists.size());
-                        return gists.get(index);
-                    }
-                    return null;
-                });
-
-    }
-
-    public static Completable deleteStarredRepo(@NonNull String login) {
-        return RxPaperBook.with(STARRED_BOOK_NAME).delete(login);
-    }
 }

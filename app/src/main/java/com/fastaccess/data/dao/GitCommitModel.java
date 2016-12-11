@@ -16,9 +16,9 @@ public class GitCommitModel implements Parcelable {
     private String sha;
     private String url;
     private String message;
-    private ActorModel author;
-    private ActorModel committer;
-    private ActorModel tree;
+    private UserModel author;
+    private UserModel committer;
+    private UserModel tree;
     private boolean distinct;
     private List<GitCommitModel> parents;
     @SerializedName("comment_count") private int commentCount;
@@ -47,27 +47,27 @@ public class GitCommitModel implements Parcelable {
         this.message = message;
     }
 
-    public ActorModel getAuthor() {
+    public UserModel getAuthor() {
         return author;
     }
 
-    public void setAuthor(ActorModel author) {
+    public void setAuthor(UserModel author) {
         this.author = author;
     }
 
-    public ActorModel getCommitter() {
+    public UserModel getCommitter() {
         return committer;
     }
 
-    public void setCommitter(ActorModel committer) {
+    public void setCommitter(UserModel committer) {
         this.committer = committer;
     }
 
-    public ActorModel getTree() {
+    public UserModel getTree() {
         return tree;
     }
 
-    public void setTree(ActorModel tree) {
+    public void setTree(UserModel tree) {
         this.tree = tree;
     }
 
@@ -115,9 +115,9 @@ public class GitCommitModel implements Parcelable {
         this.sha = in.readString();
         this.url = in.readString();
         this.message = in.readString();
-        this.author = in.readParcelable(ActorModel.class.getClassLoader());
-        this.committer = in.readParcelable(ActorModel.class.getClassLoader());
-        this.tree = in.readParcelable(ActorModel.class.getClassLoader());
+        this.author = in.readParcelable(UserModel.class.getClassLoader());
+        this.committer = in.readParcelable(UserModel.class.getClassLoader());
+        this.tree = in.readParcelable(UserModel.class.getClassLoader());
         this.distinct = in.readByte() != 0;
         this.parents = new ArrayList<GitCommitModel>();
         in.readList(this.parents, GitCommitModel.class.getClassLoader());

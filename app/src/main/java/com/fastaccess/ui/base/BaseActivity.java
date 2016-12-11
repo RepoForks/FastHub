@@ -21,6 +21,7 @@ import com.fastaccess.R;
 import com.fastaccess.data.dao.UserModel;
 import com.fastaccess.helper.AppHelper;
 import com.fastaccess.helper.InputHelper;
+import com.fastaccess.helper.Logger;
 import com.fastaccess.helper.PrefGetter;
 import com.fastaccess.helper.ViewHelper;
 import com.fastaccess.ui.base.mvp.BaseMvp;
@@ -34,6 +35,7 @@ import net.grandcentrix.thirtyinch.TiActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import icepick.Icepick;
+import icepick.State;
 
 /**
  * Created by Kosh on 24 May 2016, 8:48 PM
@@ -44,13 +46,14 @@ public abstract class BaseActivity<V extends BaseMvp.FAView, P extends BasePrese
 
     private Toast toast;
 
-    @LayoutRes protected abstract int layout();
-
-    protected abstract boolean hasSlideExitAnimation();
-
+    @State boolean isProgressShowing;
     @Nullable @BindView(R.id.toolbar) Toolbar toolbar;
     @Nullable @BindView(R.id.toolbarShadow) View shadowView;
     @Nullable @BindView(R.id.drawerLayout) protected DrawerLayout drawerLayout;
+
+    @LayoutRes protected abstract int layout();
+
+    protected abstract boolean hasSlideExitAnimation();
 
     protected abstract boolean isTransparent();
 
@@ -152,23 +155,27 @@ public abstract class BaseActivity<V extends BaseMvp.FAView, P extends BasePrese
         if (resId != 0) {
             msg = getString(resId);
         }
-        ProgressDialogFragment fragment = (ProgressDialogFragment) AppHelper.getFragmentByTag(getSupportFragmentManager(),
-                ProgressDialogFragment.TAG);
-        if (fragment == null) {
-            ProgressDialogFragment.newInstance(msg, false).show(getSupportFragmentManager(), ProgressDialogFragment.TAG);
-        } else if (fragment.getDialog() != null && !fragment.getDialog().isShowing()) {
-            fragment.show(getSupportFragmentManager(), ProgressDialogFragment.TAG);
-        } else {
-            ProgressDialogFragment.newInstance(msg, false).show(getSupportFragmentManager(), ProgressDialogFragment.TAG);
+        Logger.e(isProgressShowing);
+        if (!isProgressShowing) {
+            ProgressDialogFragment fragment = (ProgressDialogFragment) AppHelper.getFragmentByTag(getSupportFragmentManager(),
+                    ProgressDialogFragment.TAG);
+            if (fragment == null) {
+                isProgressShowing = true;
+                fragment = ProgressDialogFragment.newInstance(msg, false);
+                fragment.show(getSupportFragmentManager(), ProgressDialogFragment.TAG);
+            }
         }
     }
 
     @Override public void hideProgress() {
+        Logger.e(isProgressShowing);
         ProgressDialogFragment fragment = (ProgressDialogFragment) AppHelper.getFragmentByTag(getSupportFragmentManager(),
                 ProgressDialogFragment.TAG);
         if (fragment != null) {
+            isProgressShowing = false;
             fragment.dismiss();
         }
+        Logger.e(isProgressShowing);
     }
 
     @Override public void finish() {

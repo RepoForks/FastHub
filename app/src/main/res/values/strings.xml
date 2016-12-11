@@ -49,11 +49,8 @@
     <string name="stars">Stars</string>
     <string name="fork">Forks</string>
     <string name="gist">Gist</string>
-    <string name="description_transition">DescriptionTransition</string>
-    <string name="avatar_transition">AvatarTransition</string>
-    <string name="image_transition">ImageTransition</string>
     <string name="share">Share</string>
-    <string name="loading_please_wait">Loading, Please wait…</string>
+    <string name="loading_please_wait">In Progress, Please Wait…</string>
     <string name="no_files">No Files.</string>
     <string name="gist_files">Gist Files</string>
     <string name="details">Details</string>
@@ -116,4 +113,5 @@
     <string name="unlock_issue_details">Unlocking the conversation means:\nEveryone will be able to comment on this issue once more.\nYou can always lock this issue again in the future.\n</string>
     <string name="lock_issue">Lock Issue</string>
     <string name="unlock_issue">Unlock Issue</string>
+    <string name="readme">Readme</string>
 </resources>

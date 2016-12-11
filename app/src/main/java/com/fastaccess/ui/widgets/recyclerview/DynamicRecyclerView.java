@@ -1,17 +1,13 @@
 package com.fastaccess.ui.widgets.recyclerview;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.fastaccess.helper.AnimHelper;
-import com.fastaccess.ui.widgets.recyclerview.layout_manager.GridManager;
-
-import static android.R.attr.columnWidth;
+import com.fastaccess.ui.widgets.StateLayout;
 
 
 /**
@@ -21,8 +17,7 @@ import static android.R.attr.columnWidth;
  */
 public class DynamicRecyclerView extends RecyclerView {
 
-    private View emptyView;
-    private int iconSize;
+    private StateLayout emptyView;
     @Nullable private View parentView;
 
     @NonNull private AdapterDataObserver observer = new AdapterDataObserver() {
@@ -51,19 +46,6 @@ public class DynamicRecyclerView extends RecyclerView {
 
     public DynamicRecyclerView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        if (attrs != null) {
-            int[] attrsArray = {columnWidth};
-            TypedArray array = context.obtainStyledAttributes(attrs, attrsArray);
-            iconSize = array.getDimensionPixelSize(0, -1);
-            if (iconSize > 0) {
-                setHasFixedSize(true);
-//                iconSize += getResources().getDimensionPixelSize(R.dimen.spacing_micro);
-                if (getLayoutManager() instanceof GridManager) {
-                    ((GridManager) getLayoutManager()).setIconSize(iconSize);
-                }
-            }
-            array.recycle();
-        }
     }
 
     @Override public void setAdapter(@Nullable Adapter adapter) {
@@ -73,18 +55,6 @@ public class DynamicRecyclerView extends RecyclerView {
             observer.onChanged();
         }
     }
-
-//    @Override protected void onMeasure(int widthSpec, int heightSpec) {
-//        super.onMeasure(widthSpec, heightSpec);
-//        int width = MeasureSpec.getSize(widthSpec);
-//        if (iconSize > 0 && width != 0) {
-//            int spanCount = Math.max(1, width / iconSize);
-//            if (getLayoutManager() instanceof GridLayoutManager) {
-//                ((GridLayoutManager) getLayoutManager()).setSpanCount(spanCount);
-//                getLayoutManager().requestLayout();
-//            }
-//        }
-//    }
 
     public void showEmptyView() {
         Adapter<?> adapter = getAdapter();
@@ -112,26 +82,21 @@ public class DynamicRecyclerView extends RecyclerView {
         emptyView.setVisibility(!show ? VISIBLE : GONE);
     }
 
-    public void setEmptyView(@NonNull View emptyView, @Nullable View parentView) {
+    public void setEmptyView(@NonNull StateLayout emptyView, @Nullable View parentView) {
         this.emptyView = emptyView;
         this.parentView = parentView;
         showEmptyView();
     }
 
-    public void setEmptyView(@NonNull View emptyView) {
+    public void setEmptyView(@NonNull StateLayout emptyView) {
         setEmptyView(emptyView, null);
     }
 
-    public void hideProgress(@NonNull View view) {
-        AnimHelper.animateVisibility(view, false);
+    public void hideProgress(@NonNull StateLayout view) {
+        view.hideProgress();
     }
 
-    public void showProgress(@NonNull View view) {
-        AnimHelper.animateVisibility(view, true);
-    }
-
-    public void setIconSize(int iconSize) {
-        this.iconSize = iconSize;
-        invalidate();
+    public void showProgress(@NonNull StateLayout view) {
+        view.showProgress();
     }
 }

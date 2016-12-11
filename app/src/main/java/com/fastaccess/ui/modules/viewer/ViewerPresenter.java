@@ -9,6 +9,7 @@ import com.fastaccess.data.dao.FileModel;
 import com.fastaccess.data.dao.FilesListModel;
 import com.fastaccess.data.rest.RestClient;
 import com.fastaccess.helper.BundleConstant;
+import com.fastaccess.helper.InputHelper;
 import com.fastaccess.helper.RxHelper;
 import com.fastaccess.provider.markdown.MarkDownProvider;
 import com.fastaccess.ui.base.mvp.presenter.BasePresenter;
@@ -20,13 +21,14 @@ import java.io.IOException;
  */
 
 public class ViewerPresenter extends BasePresenter<ViewerMvp.View> implements ViewerMvp.Presenter {
-
     private String downloadedStream;
     private boolean isMarkdown;
 
     @Override public void onHandleIntent(@Nullable Bundle intent) {
         if (intent == null) return;
         FilesListModel filesListModel = intent.getParcelable(BundleConstant.EXTRA);
+        String repoId = intent.getString(BundleConstant.ID);
+        String login = intent.getString(BundleConstant.EXTRA_ID);
         if (filesListModel != null) {
             if (MarkDownProvider.isArchive(filesListModel.getFilename()) || MarkDownProvider.isArchive(filesListModel.getRawUrl())) {
                 sendToView(view -> view.onShowError(R.string.archive_file_detected_error));
@@ -34,6 +36,20 @@ public class ViewerPresenter extends BasePresenter<ViewerMvp.View> implements Vi
             }
             //work offline first.
             onWorkOffline(filesListModel);
+        } else if (!InputHelper.isEmpty(repoId) && !InputHelper.isEmpty(login)) {
+            manageSubscription(RxHelper.getObserver(RestClient.getRawReadMe(login, repoId))
+                    .doOnSubscribe(() -> sendToView(ViewerMvp.View::onShowMdProgress))
+                    .doOnNext(s -> {
+                        isMarkdown = true;
+                        downloadedStream = s;
+                        sendToView(view -> view.onSetMdText(downloadedStream));
+                    })
+                    .onErrorReturn(throwable -> {
+                        throwable.printStackTrace();
+                        sendToView(view -> view.onShowError(throwable.getMessage()));
+                        return null;
+                    })
+                    .subscribe());
         }
     }
 

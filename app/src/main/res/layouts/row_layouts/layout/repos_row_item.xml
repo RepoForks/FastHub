@@ -18,8 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:orientation="horizontal"
-        android:transitionName="@string/description_transition">
+        android:orientation="horizontal">
 
         <com.fastaccess.ui.widgets.AvatarLayout
             android:id="@+id/avatarLayout"

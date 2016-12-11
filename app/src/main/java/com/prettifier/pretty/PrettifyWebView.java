@@ -43,7 +43,7 @@ public class PrettifyWebView extends NestedWebView {
         super(context, attrs, defStyleAttr);
         initView();
     }
-
+    
     @SuppressLint("SetJavaScriptEnabled") private void initView() {
         if (isInEditMode()) return;
         setWebChromeClient(new ChromeClient());

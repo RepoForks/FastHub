@@ -76,6 +76,7 @@ dependencies {
         supportVerion = "25.0.1"
         firebase = "9.8.0"
         thirtyinchVersion = '0.8.0-rc1'
+        retrofit = '2.1.0'
     }
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile "com.android.support:appcompat-v7:${supportVerion}"
@@ -99,13 +100,13 @@ dependencies {
     compile 'pub.devrel:easypermissions:0.2.1'
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'io.reactivex:rxjava:1.2.2'
-    compile 'com.squareup.retrofit2:retrofit:2.1.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
-    compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
+    compile "com.squareup.retrofit2:retrofit:${retrofit}"
+    compile "com.squareup.retrofit2:converter-gson:${retrofit}"
+    compile "com.squareup.retrofit2:adapter-rxjava:${retrofit}"
     compile 'com.squareup.okhttp3:logging-interceptor:3.3.1'
-    compile 'com.mittsu:markedview:1.0.4@aar'
     compile 'io.paperdb:paperdb:2.0'
     compile 'com.annimon:stream:1.1.4'
+    compile 'me.grantland:autofittextview:0.2.1'
     compile project(':richtext')
     apt 'frankiesardo:icepick-processor:3.1.0'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'

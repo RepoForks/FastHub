@@ -31,7 +31,7 @@
             android:clipToPadding="false"
             android:paddingStart="@dimen/keyline_1"
             app:tabSelectedTextColor="?colorAccent"
-            app:tabTextColor="@color/light_primary_dark"/>
+            app:tabTextColor="@color/primary_dark"/>
     </LinearLayout>
 
     <View

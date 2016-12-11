@@ -188,14 +188,14 @@ public class IssuePagerView extends BaseActivity<IssuePagerMvp.View, IssuePagerP
         supportInvalidateOptionsMenu();
         IssueModel issueModel = getPresenter().getIssue();
         setTitle(String.format("%s #%s", getString(R.string.issue), issueModel.getNumber()));
-        UserModel actorModel = issueModel.getUser();
+        UserModel userModel = issueModel.getUser();
         title.setText(issueModel.getTitle());
-        if (actorModel != null) {
+        if (userModel != null) {
             date.setVisibility(View.GONE);
             size.setText(SpannableBuilder.builder().append(issueModel.getState().getStatus()).append(" ").append(getString(R.string.by))
-                    .append(" ").append(actorModel.getLogin()).append(" ")
+                    .append(" ").append(userModel.getLogin()).append(" ")
                     .append(ParseDateFormat.getTimeAgo(issueModel.getCreatedAt())));
-            avatarLayout.setUrl(actorModel.getAvatarUrl(), actorModel.getLogin());
+            avatarLayout.setUrl(userModel.getAvatarUrl(), userModel.getLogin());
         }
 //        tabs.setupWithViewPager(pager);
 

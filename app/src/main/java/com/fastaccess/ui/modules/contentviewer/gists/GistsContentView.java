@@ -88,7 +88,7 @@ public class GistsContentView extends BaseActivity<GistsContentMvp.View, GistsCo
     }
 
     @Override protected boolean hasSlideExitAnimation() {
-        return false;
+        return true;
     }
 
     @Override protected boolean isTransparent() {

@@ -1,15 +1,12 @@
 package com.fastaccess.ui.modules.main.gists;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 
-import com.fastaccess.R;
 import com.fastaccess.data.dao.GistsModel;
 import com.fastaccess.data.rest.RestClient;
-import com.fastaccess.helper.ActivityHelper;
 import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.Bundler;
 import com.fastaccess.helper.Logger;
@@ -60,13 +57,11 @@ public class GistsPresenter extends BasePresenter<GistsMvp.View> implements Gist
                         .doOnSubscribe(() -> sendToView(GistsMvp.View::onShowProgress))
                         .doOnNext(listResponse -> {
                             lastPage = listResponse.getLast();
-                            if (listResponse.getItems() != null) {
-                                if (getCurrentPage() == 1) {
-                                    getGists().clear();
-                                    manageSubscription(GistsModel.save(listResponse.getItems()).subscribe());
-                                }
-                                getGists().addAll(listResponse.getItems());
+                            if (getCurrentPage() == 1) {
+                                getGists().clear();
+                                manageSubscription(GistsModel.save(listResponse.getItems()).subscribe());
                             }
+                            getGists().addAll(listResponse.getItems());
                             sendToView(GistsMvp.View::onNotifyAdapter);
                         })
                         .onErrorReturn(throwable -> {
@@ -85,26 +80,23 @@ public class GistsPresenter extends BasePresenter<GistsMvp.View> implements Gist
     @Override public void onWorkOffline() {
         if (gistsModels.isEmpty()) {
             manageSubscription(
-                    GistsModel.getGists()
-                            .subscribe(gists -> {
-                                if (gists != null && !gists.isEmpty()) {
-                                    Logger.e(gists.size());
-                                    gistsModels.addAll(gists);
-                                    sendToView(GistsMvp.View::onNotifyAdapter);
-                                }
-                            })
+                    GistsModel.getGists().subscribe(gists -> {
+                        if (gists != null && !gists.isEmpty()) {
+                            Logger.e(gists.size());
+                            gistsModels.addAll(gists);
+                            sendToView(GistsMvp.View::onNotifyAdapter);
+                        }
+                    })
             );
         }
     }
 
     @Override public void onItemClick(int position, View v, GistsModel item) {
-        Activity activity = ActivityHelper.getActivity(v.getContext());
         Intent intent = new Intent(v.getContext(), GistsContentView.class);
         intent.putExtras(Bundler.start()
                 .put(BundleConstant.ITEM, item)
                 .end());
-        View image = v.findViewById(R.id.avatarLayout);
-        ActivityHelper.start(activity, intent, image);
+        v.getContext().startActivity(intent);
     }
 
     @Override public void onItemLongClick(int position, View v, GistsModel item) {}

@@ -1,5 +1,6 @@
 package com.fastaccess.provider.scheme;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -7,9 +8,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.fastaccess.helper.ActivityHelper;
 import com.fastaccess.helper.InputHelper;
 import com.fastaccess.ui.modules.contentviewer.gists.GistsContentView;
 import com.fastaccess.ui.modules.issue.IssuePagerView;
+import com.fastaccess.ui.modules.repo.RepoPagerView;
 import com.fastaccess.ui.modules.user.UserPagerView;
 
 import java.util.List;
@@ -34,7 +37,12 @@ public class SchemeParser {
         if (intent != null) {
             context.startActivity(intent);
         } else {
-            context.startActivity(new Intent(ACTION_VIEW, data.getData()).addCategory(CATEGORY_BROWSABLE));
+            Activity activity = ActivityHelper.getActivity(context);
+            if (activity == null) {
+                context.startActivity(new Intent(ACTION_VIEW, data.getData()).addCategory(CATEGORY_BROWSABLE));
+            } else {
+                ActivityHelper.startCustomTab(activity, data.getData());
+            }
         }
     }
 
@@ -49,7 +57,7 @@ public class SchemeParser {
 
     @Nullable public static String getUser(@NonNull Uri uri) {
         List<String> segments = uri.getPathSegments();
-        return segments != null && !segments.isEmpty() ? segments.get(0) : null;
+        return segments != null && !segments.isEmpty() && segments.size() == 1 ? segments.get(0) : null;
     }
 
     @Nullable public static Intent convert(@NonNull Context context, final Intent intent) {
@@ -90,11 +98,10 @@ public class SchemeParser {
             if (issueIntent != null) {
                 return issueIntent;
             }
-//
-//            Repository repository = RepositoryUriMatcher.getRepository(data);
-//            if (repository != null) {
-//                return RepositoryViewActivity.createIntent(repository);
-//            }
+            Intent repoIntent = getRepo(context, data);
+            if (repoIntent != null) {
+                return repoIntent;
+            }
             String login = getUser(data);
             if (login != null) {
                 return UserPagerView.createIntent(context, login);
@@ -120,5 +127,13 @@ public class SchemeParser {
         }
         if (issueNumber < 1) return null;
         return IssuePagerView.createIntent(context, repo, owner, issueNumber);
+    }
+
+    public static Intent getRepo(@NonNull Context context, @NonNull Uri uri) {
+        List<String> segments = uri.getPathSegments();
+        if (segments == null || segments.size() > 2) return null;
+        String owner = segments.get(0);
+        String repoName = segments.get(1);
+        return RepoPagerView.createIntent(context, repoName, owner);
     }
 }

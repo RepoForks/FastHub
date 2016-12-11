@@ -40,7 +40,6 @@ public class GistsViewHolder extends BaseViewHolder<GistsModel> {
             String login = item.getOwner() != null ? item.getOwner().getLogin() : item.getUser() != null ? item.getUser().getLogin() : null;
             avatar.setUrl(url, login);
         } else {
-            avatar.setTransitionName(null);
             avatar.setVisibility(View.GONE);
         }
         title.setText(item.getDisplayTitle(isFromProfile));

@@ -1,6 +1,9 @@
 package com.fastaccess.data.rest.service;
 
 
+import com.fastaccess.data.dao.CommentRequestModel;
+import com.fastaccess.data.dao.CommentsModel;
+import com.fastaccess.data.dao.IssueEventModel;
 import com.fastaccess.data.dao.IssueModel;
 import com.fastaccess.data.dao.IssueRequestModel;
 import com.fastaccess.data.dao.Pageable;
@@ -33,12 +36,16 @@ public interface IssueService {
 
     @GET("repos/{owner}/{repo}/issues")
     Observable<Pageable<IssueModel>> getRepositoryIssues(@Path("owner") String owner, @Path("repo") String repo,
-                                                         @QueryMap Map<String, Object> filter,
                                                          @Query("page") long page);
 
     @GET("repos/{owner}/{repo}/issues/{number}")
     Observable<IssueModel> getIssue(@Path("owner") String owner, @Path("repo") String repo,
                                     @Path("number") long number);
+
+    @GET("repos/{owner}/{repo}/issues/{issue_number}/timeline")
+    Observable<Pageable<IssueEventModel>> getTimeline(@Path("owner") String owner, @Path("repo") String repo,
+                                                      @Path("issue_number") int issue_number,
+                                                      @Query("page") long page);
 
     @POST("repos/{owner}/{repo}/issues")
     Observable<IssueModel> createIssue(@Path("owner") String owner, @Path("repo") String repo,
@@ -55,4 +62,28 @@ public interface IssueService {
 
     @DELETE("repos/{owner}/{repo}/issues/{number}/lock")
     Observable<Response<Boolean>> unlockIssue(@Path("owner") String owner, @Path("repo") String repo, @Path("number") long number);
+
+
+    @GET("repos/{owner}/{repo}/issues/{number}/comments")
+    Observable<Pageable<CommentsModel>> getIssueComments(@Path("owner") String owner,
+                                                         @Path("repo") String repo,
+                                                         @Path("number") long number,
+                                                         @Query("page") long page);
+
+    @GET("repos/{owner}/{repo}/issues/{number}/comments/{id}")
+    Observable<CommentsModel> getIssueComment(@Path("owner") String owner, @Path("repo") String repo,
+                                              @Path("number") long number, @Path("id") long id);
+
+    @POST("repos/{owner}/{repo}/issues/{number}/comments")
+    Observable<CommentsModel> createIssueComment(@Path("owner") String owner, @Path("repo") String repo,
+                                                 @Path("number") long number, @Body CommentRequestModel body);
+
+    @PATCH("repos/{owner}/{repo}/issues/{number}/comments/{id}")
+    Observable<CommentsModel> editIssueComment(@Path("owner") String owner, @Path("repo") String repo,
+                                               @Path("number") long number, @Path("id") long id,
+                                               @Body CommentRequestModel body);
+
+    @DELETE("repos/{owner}/{repo}/issues/{number}/comments/{id}")
+    Observable<Response<Boolean>> deleteIssueComment(@Path("owner") String owner, @Path("repo") String repo,
+                                                     @Path("number") long number, @Path("id") long id);
 }

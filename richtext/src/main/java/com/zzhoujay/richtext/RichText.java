@@ -16,7 +16,6 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ImageSpan;
 import android.text.style.URLSpan;
-import android.util.Log;
 import android.widget.TextView;
 
 import com.bumptech.glide.BitmapTypeRequest;
@@ -67,7 +66,9 @@ public class RichText implements ImageLoadNotify {
     private static Matcher IMAGE_WIDTH_MATCHER = Pattern.compile("(width|WIDTH)=\"(.*?)\"").matcher("");
     private static Matcher IMAGE_HEIGHT_MATCHER = Pattern.compile("(height|HEIGHT)=\"(.*?)\"").matcher("");
     private static Matcher IMAGE_SRC_MATCHER = Pattern.compile("(src|SRC)=\"(.*?)\"").matcher("");
-
+    private static Matcher BADGE_MATCHER = Pattern.compile(".*?(\\[!\\[.*?]\\(.*\\)\\]\\(.*\\))").matcher("");
+    private static Matcher BADGE_URL_MATCHER = Pattern.compile("(\\(.*\\))(\\])").matcher("");
+    private static Matcher BRACES_MATCHER = Pattern.compile("(\\(.*\\))").matcher("");
 
     private Drawable placeHolder, errorImage;//占位图，错误图
     @DrawableRes
@@ -92,7 +93,7 @@ public class RichText implements ImageLoadNotify {
     private final String sourceText;
     private CharSequence richText;
     @RichType
-    private int type;
+    private int type = RichType.MARKDOWN;
     private SpannedParser spannedParser;
 
     private WeakReference<TextView> textViewWeakReference;
@@ -118,7 +119,8 @@ public class RichText implements ImageLoadNotify {
     /**
      * 给TextView设置富文本
      *
-     * @param textView textView
+     * @param textView
+     *         textView
      */
     public void into(final TextView textView) {
         this.textViewWeakReference = new WeakReference<>(textView);
@@ -159,7 +161,8 @@ public class RichText implements ImageLoadNotify {
     /**
      * 检查TextView tag复用
      *
-     * @param textView textView
+     * @param textView
+     *         textView
      */
     @SuppressWarnings("unchecked")
     private void checkTag(TextView textView) {
@@ -176,7 +179,8 @@ public class RichText implements ImageLoadNotify {
     /**
      * 生成富文本
      *
-     * @param text text
+     * @param text
+     *         text
      * @return Spanned
      */
     private CharSequence generateRichText(String text) {
@@ -192,9 +196,9 @@ public class RichText implements ImageLoadNotify {
         if (type != RichType.MARKDOWN) {
             analyzeImages(text);
         } else {
+            text = convertToImage(text);
             imageHolderMap = new HashMap<>();
         }
-
         TextView textView = textViewWeakReference.get();
         if (textView == null) {
             return null;
@@ -220,7 +224,8 @@ public class RichText implements ImageLoadNotify {
                 int end = spannableStringBuilder.getSpanEnd(imageSpan);
                 imageUrls.add(imageUrl);
 
-                ClickableImageSpan clickableImageSpan = new ClickableImageSpan(imageSpan, imageUrls, i, onImageClickListener, onImageLongClickListener);
+                ClickableImageSpan clickableImageSpan = new ClickableImageSpan(imageSpan, imageUrls, i, onImageClickListener,
+                        onImageLongClickListener);
                 // 去除其他的ClickableSpan
                 ClickableSpan[] clickableSpans = spannableStringBuilder.getSpans(start, end, ClickableSpan.class);
                 if (clickableSpans != null && clickableSpans.length != 0) {
@@ -246,7 +251,8 @@ public class RichText implements ImageLoadNotify {
                 if (linkFixCallback != null) {
                     linkFixCallback.fix(linkHolder);
                 }
-                spannableStringBuilder.setSpan(new LongClickableURLSpan(urlSpan.getURL(), onURLClickListener, onUrlLongClickListener, linkHolder), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableStringBuilder.setSpan(new LongClickableURLSpan(urlSpan.getURL(), onURLClickListener, onUrlLongClickListener, linkHolder),
+                        start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }
         return spannableStringBuilder;
@@ -254,6 +260,8 @@ public class RichText implements ImageLoadNotify {
 
     // 图片异步加载器
     private final Html.ImageGetter asyncImageGetter = new Html.ImageGetter() {
+        private boolean minimize;
+
         @Override
         public Drawable getDrawable(String source) {
             if (noImage) {
@@ -344,6 +352,44 @@ public class RichText implements ImageLoadNotify {
     };
 
     /**
+     * @param text
+     * @return a markdown image instead of html <img> & badges to images.
+     */
+    private String convertToImage(String text) {
+        Matcher matcher = IMAGE_TAG_MATCHER.reset(text);
+        while (matcher.find()) {
+            String image = matcher.group(2).trim();
+            IMAGE_SRC_MATCHER.reset(image);
+            String src = null;
+            if (IMAGE_SRC_MATCHER.find()) {
+                src = IMAGE_SRC_MATCHER.group(2).trim();
+            }
+            if (src == null) {
+                continue;
+            }
+            text = text.replace(matcher.group(), ("![](" + src + ")").replace("_", "%5f"));
+        }
+        Matcher badger = BADGE_MATCHER.reset(text);
+        while (badger.find()) {
+            String badge = badger.group(1).trim();
+            BADGE_URL_MATCHER.reset(badge);
+            if (BADGE_URL_MATCHER.find()) {
+                String matched = BADGE_URL_MATCHER.group(1);
+                if (matched == null) {
+                    continue;
+                }
+                BRACES_MATCHER.reset(matched.trim());
+                if (BRACES_MATCHER.find()) {
+                    if (BRACES_MATCHER.group(1) == null) continue;
+                    String url = BRACES_MATCHER.group(1).trim().replace("_", "%5f");
+                    text = text.replace(badge, "![]" + Html.escapeHtml((url.endsWith(")") && url.startsWith("(") ? url : "(" + url + ")")));
+                }
+            }
+        }
+        return text;
+    }
+
+    /**
      * 从文本中拿到<img/>标签,并获取图片url和宽高
      */
     private synchronized void analyzeImages(String text) {
@@ -378,7 +424,8 @@ public class RichText implements ImageLoadNotify {
     /**
      * 判断Activity是否已经结束
      *
-     * @param context context
+     * @param context
+     *         context
      * @return true：已结束
      */
     private static boolean activityIsAlive(Context context) {
@@ -419,7 +466,8 @@ public class RichText implements ImageLoadNotify {
 
 
     /**
-     * @param richText 待解析文本
+     * @param richText
+     *         待解析文本
      * @return RichText
      * @see #fromHtml(String)
      */
@@ -430,7 +478,8 @@ public class RichText implements ImageLoadNotify {
     /**
      * 构建RichText并设置数据源为Html
      *
-     * @param richText 待解析文本
+     * @param richText
+     *         待解析文本
      * @return RichText
      */
     @SuppressWarnings("WeakerAccess")
@@ -443,7 +492,8 @@ public class RichText implements ImageLoadNotify {
     /**
      * 构建RichText并设置数据源为Markdown
      *
-     * @param markdown markdown源文本
+     * @param markdown
+     *         markdown源文本
      * @return RichText
      */
     public static RichText fromMarkdown(String markdown) {
@@ -466,7 +516,8 @@ public class RichText implements ImageLoadNotify {
     /**
      * 是否图片宽高自动修复自屏宽，默认true
      *
-     * @param autoFix autoFix
+     * @param autoFix
+     *         autoFix
      * @return RichText
      */
     public RichText autoFix(boolean autoFix) {
@@ -477,7 +528,8 @@ public class RichText implements ImageLoadNotify {
     /**
      * 不使用img标签里的宽高，img标签的宽高存在才有用
      *
-     * @param resetSize false：使用标签里的宽高，不会触发SIZE_READY的回调；true：忽略标签里的宽高，触发SIZE_READY的回调获取尺寸大小。默认为false
+     * @param resetSize
+     *         false：使用标签里的宽高，不会触发SIZE_READY的回调；true：忽略标签里的宽高，触发SIZE_READY的回调获取尺寸大小。默认为false
      * @return RichText
      */
     public RichText resetSize(boolean resetSize) {
@@ -488,7 +540,8 @@ public class RichText implements ImageLoadNotify {
     /**
      * 手动修复图片宽高
      *
-     * @param callback ImageFixCallback回调
+     * @param callback
+     *         ImageFixCallback回调
      * @return RichText
      */
     public RichText fix(ImageFixCallback callback) {
@@ -499,7 +552,8 @@ public class RichText implements ImageLoadNotify {
     /**
      * 链接修复
      *
-     * @param callback LinkFixCallback
+     * @param callback
+     *         LinkFixCallback
      * @return RichText
      */
     public RichText linkFix(LinkFixCallback callback) {
@@ -510,7 +564,8 @@ public class RichText implements ImageLoadNotify {
     /**
      * 不显示图片
      *
-     * @param noImage 默认false
+     * @param noImage
+     *         默认false
      * @return RichText
      */
     public RichText noImage(boolean noImage) {
@@ -521,7 +576,8 @@ public class RichText implements ImageLoadNotify {
     /**
      * 是否屏蔽点击，不进行此项设置只会在设置了点击回调才会响应点击事件
      *
-     * @param clickable clickable，false:屏蔽点击事件，true不屏蔽不设置点击回调也可以响应响应的链接默认回调
+     * @param clickable
+     *         clickable，false:屏蔽点击事件，true不屏蔽不设置点击回调也可以响应响应的链接默认回调
      * @return RichText
      */
     public RichText clickable(boolean clickable) {
@@ -532,7 +588,8 @@ public class RichText implements ImageLoadNotify {
     /**
      * 数据源类型
      *
-     * @param type type
+     * @param type
+     *         type
      * @return RichText
      * @see RichType
      */
@@ -545,7 +602,8 @@ public class RichText implements ImageLoadNotify {
     /**
      * 图片点击回调
      *
-     * @param imageClickListener 回调
+     * @param imageClickListener
+     *         回调
      * @return RichText
      */
     public RichText imageClick(OnImageClickListener imageClickListener) {
@@ -556,7 +614,8 @@ public class RichText implements ImageLoadNotify {
     /**
      * 链接点击回调
      *
-     * @param onURLClickListener 回调
+     * @param onURLClickListener
+     *         回调
      * @return RichText
      */
     public RichText urlClick(OnURLClickListener onURLClickListener) {
@@ -567,7 +626,8 @@ public class RichText implements ImageLoadNotify {
     /**
      * 图片长按回调
      *
-     * @param imageLongClickListener 回调
+     * @param imageLongClickListener
+     *         回调
      * @return RichText
      */
     public RichText imageLongClick(OnImageLongClickListener imageLongClickListener) {
@@ -578,7 +638,8 @@ public class RichText implements ImageLoadNotify {
     /**
      * 链接长按回调
      *
-     * @param urlLongClickListener 回调
+     * @param urlLongClickListener
+     *         回调
      * @return RichText
      */
     public RichText urlLongClick(OnUrlLongClickListener urlLongClickListener) {
@@ -589,7 +650,8 @@ public class RichText implements ImageLoadNotify {
     /**
      * 图片加载过程中的占位图
      *
-     * @param placeHolder 占位图
+     * @param placeHolder
+     *         占位图
      * @return RichText
      */
     public RichText placeHolder(Drawable placeHolder) {
@@ -600,7 +662,8 @@ public class RichText implements ImageLoadNotify {
     /**
      * 图片加载失败的占位图
      *
-     * @param errorImage 占位图
+     * @param errorImage
+     *         占位图
      * @return RichText
      */
     public RichText error(Drawable errorImage) {
@@ -611,7 +674,8 @@ public class RichText implements ImageLoadNotify {
     /**
      * 图片加载过程中的占位图
      *
-     * @param placeHolder 占位图
+     * @param placeHolder
+     *         占位图
      * @return RichText
      */
     public RichText placeHolder(@DrawableRes int placeHolder) {
@@ -622,7 +686,8 @@ public class RichText implements ImageLoadNotify {
     /**
      * 图片加载失败的占位图
      *
-     * @param errorImage 占位图
+     * @param errorImage
+     *         占位图
      * @return RichText
      */
     public RichText error(@DrawableRes int errorImage) {

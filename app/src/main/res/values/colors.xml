@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="light_primary">#F5F5F5</color>
-    <color name="light_primary_dark">#FF616161</color>
-    <color name="light_primary_light">#F5F5F5</color>
-    <color name="light_accent">#FF2A456B</color>
+    <color name="primary">#F5F5F5</color>
+    <color name="primary_dark">#FF616161</color>
+    <color name="primary_light">#F5F5F5</color>
+    <color name="accent">#FF2A456B</color>
     <color name="bluish_primary">#FF2A456B</color>
     <color name="bluish_primary_dark">#213755</color>
     <color name="bluish_primary_light">#C5CAE9</color>

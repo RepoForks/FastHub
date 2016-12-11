@@ -42,9 +42,9 @@ public class GistsModel implements Parcelable {
     @SerializedName("updated_at") private String updatedAt;
     @SerializedName("description") private String description;
     @SerializedName("comments") private int comments;
-    @SerializedName("user") private ActorModel user;
+    @SerializedName("user") private UserModel user;
     @SerializedName("comments_url") private String commentsUrl;
-    @SerializedName("owner") private ActorModel owner;
+    @SerializedName("owner") private UserModel owner;
     @SerializedName("truncated") private boolean truncated;
 
     public String getUrl() {
@@ -151,11 +151,11 @@ public class GistsModel implements Parcelable {
         this.comments = comments;
     }
 
-    public ActorModel getUser() {
+    public UserModel getUser() {
         return user;
     }
 
-    public void setUser(ActorModel user) {
+    public void setUser(UserModel user) {
         this.user = user;
     }
 
@@ -167,11 +167,11 @@ public class GistsModel implements Parcelable {
         this.commentsUrl = commentsUrl;
     }
 
-    public ActorModel getOwner() {
+    public UserModel getOwner() {
         return owner;
     }
 
-    public void setOwner(ActorModel owner) {
+    public void setOwner(UserModel owner) {
         this.owner = owner;
     }
 
@@ -278,9 +278,9 @@ public class GistsModel implements Parcelable {
         this.updatedAt = in.readString();
         this.description = in.readString();
         this.comments = in.readInt();
-        this.user = in.readParcelable(ActorModel.class.getClassLoader());
+        this.user = in.readParcelable(UserModel.class.getClassLoader());
         this.commentsUrl = in.readString();
-        this.owner = in.readParcelable(ActorModel.class.getClassLoader());
+        this.owner = in.readParcelable(UserModel.class.getClassLoader());
         this.truncated = in.readByte() != 0;
     }
 

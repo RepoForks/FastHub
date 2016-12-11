@@ -8,7 +8,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 
 import com.fastaccess.R;
-import com.fastaccess.data.dao.ActorModel;
+import com.fastaccess.data.dao.UserModel;
 import com.fastaccess.data.dao.CommentsModel;
 import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.Bundler;
@@ -146,7 +146,7 @@ public class GistCommentsView extends BaseFragment<GistCommentsMvp.View, GistCom
         if (navigationCallback != null) navigationCallback.showProgress(0);
     }
 
-    @Override public void onTagUser(@NonNull ActorModel user) {
+    @Override public void onTagUser(@NonNull UserModel user) {
         Intent intent = new Intent(getContext(), CommentsView.class);
         intent.putExtras(Bundler
                 .start()

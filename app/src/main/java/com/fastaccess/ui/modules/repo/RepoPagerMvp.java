@@ -17,11 +17,29 @@ public interface RepoPagerMvp {
 
         void onFinishActivity();
 
-        void onInitAdapter();
+        void onInitRepo();
 
         void onShowProgress();
 
         void onShowMessage(@NonNull String msg);
+
+        void onRepoWatched(boolean isWatched);
+
+        void onRepoStarred(boolean isStarred);
+
+        void onRepoForked(boolean isForked);
+
+        void onEnableDisableWatch(boolean isEnabled);
+
+        void onEnableDisableStar(boolean isEnabled);
+
+        void onEnableDisableFork(boolean isEnabled);
+
+        void onChangeWatchedCount(boolean isWatched);
+
+        void onChangeStarCount(boolean isStarred);
+
+        void onChangeForkCount(boolean isForked);
     }
 
     interface Presenter extends BaseMvp.FAPresenter<View> {
@@ -32,5 +50,23 @@ public interface RepoPagerMvp {
         @NonNull String login();
 
         @Nullable RepoModel getRepo();
+
+        boolean isWatched();
+
+        boolean isStarred();
+
+        boolean isForked();
+
+        void onWatch();
+
+        void onStar();
+
+        void onFork();
+
+        void onCheckWatching();
+
+        void onCheckStarring();
+
+        void onWorkOffline();
     }
 }

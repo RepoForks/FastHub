@@ -15,8 +15,10 @@ import com.fastaccess.data.dao.Pageable;
 import com.fastaccess.data.dao.RepoModel;
 import com.fastaccess.data.dao.SearchCodeModel;
 import com.fastaccess.data.dao.UserModel;
+import com.fastaccess.data.rest.service.ContentService;
 import com.fastaccess.data.rest.service.GistService;
 import com.fastaccess.data.rest.service.IssueService;
+import com.fastaccess.data.rest.service.RepoService;
 import com.fastaccess.data.rest.service.RestService;
 import com.fastaccess.data.rest.service.SearchService;
 import com.fastaccess.provider.rest.RestProvider;
@@ -143,7 +145,7 @@ public class RestClient {
     }
 
     public static Observable<RepoModel> getRepo(@NonNull String login, @NonNull String repoId) {
-        return RestProvider.getRestService().getRepo(login, repoId);
+        return RestProvider.createService(RepoService.class).getRepo(login, repoId);
     }
 
     public static Observable<IssueModel> getIssue(@NonNull String login, @NonNull String repoId, long number) {
@@ -161,6 +163,42 @@ public class RestClient {
     public static Observable<IssueModel> editIssue(@NonNull String login, @NonNull String repoId,
                                                    long number, @NonNull IssueRequestModel model) {
         return RestProvider.createService(IssueService.class).editIssue(login, repoId, number, model);
+    }
+
+    public static Observable<Pageable<IssueModel>> getRepoIssues(@NonNull String login, @NonNull String repoId, int page) {
+        return RestProvider.createService(IssueService.class).getRepositoryIssues(login, repoId, page);
+    }
+
+    public static Observable<String> getRawReadMe(@NonNull String login, @NonNull String repoId) {
+        return RestProvider.createService(ContentService.class, true).getRawReadme(login, repoId);
+    }
+
+    public static Observable<Response<Boolean>> checkStarringRepo(@NonNull String login, @NonNull String repoId) {
+        return RestProvider.createService(RepoService.class).checkStarring(login, repoId);
+    }
+
+    public static Observable<Response<Boolean>> checkWatchingRepo(@NonNull String login, @NonNull String repoId) {
+        return RestProvider.createService(RepoService.class).isWatchingRepo(login, repoId);
+    }
+
+    public static Observable<Response<Boolean>> watchRepo(@NonNull String login, @NonNull String repoId) {
+        return RestProvider.createService(RepoService.class).watchRepo(login, repoId);
+    }
+
+    public static Observable<Response<Boolean>> unwatchRepo(@NonNull String login, @NonNull String repoId) {
+        return RestProvider.createService(RepoService.class).unwatchRepo(login, repoId);
+    }
+
+    public static Observable<Response<Boolean>> starRepo(@NonNull String login, @NonNull String repoId) {
+        return RestProvider.createService(RepoService.class).starRepo(login, repoId);
+    }
+
+    public static Observable<Response<Boolean>> unstarRepo(@NonNull String login, @NonNull String repoId) {
+        return RestProvider.createService(RepoService.class).unstarRepo(login, repoId);
+    }
+
+    public static Observable<RepoModel> forkRepo(@NonNull String login, @NonNull String repoId) {
+        return RestProvider.createService(RepoService.class).forkRepo(login, repoId);
     }
 }
 

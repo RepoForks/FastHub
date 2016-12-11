@@ -11,10 +11,12 @@ import com.fastaccess.ui.modules.main.profile.gists.ProfileGistsView;
 import com.fastaccess.ui.modules.main.profile.overview.ProfileOverviewView;
 import com.fastaccess.ui.modules.main.profile.repos.ProfileReposView;
 import com.fastaccess.ui.modules.main.profile.starred.ProfileStarredView;
+import com.fastaccess.ui.modules.repo.issues.RepoIssuesView;
 import com.fastaccess.ui.modules.search.code.SearchCodeView;
 import com.fastaccess.ui.modules.search.issues.SearchIssuesView;
 import com.fastaccess.ui.modules.search.repos.SearchReposView;
 import com.fastaccess.ui.modules.search.users.SearchUsersView;
+import com.fastaccess.ui.modules.viewer.ViewerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +68,15 @@ public class FragmentPagerAdapterModel {
         fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.users), SearchUsersView.newInstance()));
         fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.issues), SearchIssuesView.newInstance()));
         fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.code), SearchCodeView.newInstance()));
+        return fragments;
+    }
+
+    public static List<FragmentPagerAdapterModel> buildForRepo(@NonNull Context context, @NonNull RepoModel repoModel) {
+        List<FragmentPagerAdapterModel> fragments = new ArrayList<>();
+        String login = repoModel.getOwner().getLogin();
+        String repoId = String.valueOf(repoModel.getName());
+        fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.readme), ViewerView.newInstance(repoId, login)));
+        fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.issues), RepoIssuesView.newInstance(repoId, login)));
         return fragments;
     }
 }

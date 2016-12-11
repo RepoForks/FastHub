@@ -7,11 +7,11 @@ import com.google.gson.annotations.SerializedName;
 
 public class PayloadModel implements Parcelable {
     @SerializedName("action") private String action;
-    @SerializedName("forkee") private ForkeeModel forkee;
+    @SerializedName("forkee") private RepoModel forkee;
 
-    public ForkeeModel getForkee() { return forkee;}
+    public RepoModel getForkee() { return forkee;}
 
-    public void setForkee(ForkeeModel forkee) { this.forkee = forkee;}
+    public void setForkee(RepoModel forkee) { this.forkee = forkee;}
 
     public String getAction() {
         return action;
@@ -32,7 +32,7 @@ public class PayloadModel implements Parcelable {
 
     protected PayloadModel(Parcel in) {
         this.action = in.readString();
-        this.forkee = in.readParcelable(ForkeeModel.class.getClassLoader());
+        this.forkee = in.readParcelable(RepoModel.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<PayloadModel> CREATOR = new Parcelable.Creator<PayloadModel>() {

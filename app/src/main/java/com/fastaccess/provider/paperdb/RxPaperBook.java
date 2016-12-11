@@ -117,7 +117,8 @@ public class RxPaperBook {
         return Single
                 .fromCallable((Func0<T>) () -> book.read(key, defaultValue))
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                .observeOn(AndroidSchedulers.mainThread())
+                .onErrorReturn(throwable -> null);
     }
 
     /**

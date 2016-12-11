@@ -26,7 +26,7 @@ public class EventsModel implements Parcelable {
 
     @SerializedName("id") private String eventId;
     @SerializedName("type") private EventsType type;
-    @SerializedName("actor") private ActorModel actor;
+    @SerializedName("actor") private UserModel actor;
     @SerializedName("repo") private RepoModel repo;
     @SerializedName("payload") private PayloadModel payload;
     @SerializedName("public") private boolean publicX;
@@ -40,9 +40,9 @@ public class EventsModel implements Parcelable {
 
     public void setType(EventsType type) { this.type = type;}
 
-    public ActorModel getActor() { return actor;}
+    public UserModel getActor() { return actor;}
 
-    public void setActor(ActorModel actor) { this.actor = actor;}
+    public void setActor(UserModel actor) { this.actor = actor;}
 
     public RepoModel getRepo() { return repo;}
 
@@ -110,7 +110,7 @@ public class EventsModel implements Parcelable {
         this.eventId = in.readString();
         int tmpType = in.readInt();
         this.type = tmpType == -1 ? null : EventsType.values()[tmpType];
-        this.actor = in.readParcelable(ActorModel.class.getClassLoader());
+        this.actor = in.readParcelable(UserModel.class.getClassLoader());
         this.repo = in.readParcelable(RepoModel.class.getClassLoader());
         this.payload = in.readParcelable(PayloadModel.class.getClassLoader());
         this.publicX = in.readByte() != 0;

@@ -27,6 +27,7 @@ public class StateLayout extends NestedScrollView {
     private static final int HIDE_PROGRESS_STATE = 2;
     private static final int HIDE_RELOAD_STATE = 3;
     private static final int SHOW_RELOAD_STATE = 4;
+    private static final int HIDDEN = 5;
 
     @BindView(R.id.empty_text) FontTextView emptyText;
     @BindView(R.id.reload) FontButton reload;
@@ -101,6 +102,11 @@ public class StateLayout extends NestedScrollView {
 
     public void setOnReloadListener(OnClickListener onReloadListener) {
         this.onReloadListener = onReloadListener;
+    }
+
+    @Override public void setVisibility(int visibility) {
+        super.setVisibility(visibility);
+        if (visibility != VISIBLE) layoutState = HIDDEN;
     }
 
     @Override protected void onFinishInflate() {

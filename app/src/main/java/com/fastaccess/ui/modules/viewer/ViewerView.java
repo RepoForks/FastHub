@@ -1,22 +1,20 @@
 package com.fastaccess.ui.modules.viewer;
 
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ScrollView;
 
 import com.fastaccess.R;
-import com.fastaccess.data.dao.FilesListModel;
 import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.Bundler;
 import com.fastaccess.helper.InputHelper;
 import com.fastaccess.provider.markdown.MarkDownProvider;
 import com.fastaccess.ui.base.BaseFragment;
 import com.fastaccess.ui.widgets.FontTextView;
+import com.fastaccess.ui.widgets.StateLayout;
 import com.prettifier.pretty.PrettifyWebView;
 
 import butterknife.BindView;
@@ -30,17 +28,16 @@ public class ViewerView extends BaseFragment<ViewerMvp.View, ViewerPresenter> im
     public static final String TAG = ViewerView.class.getSimpleName();
 
     @BindView(R.id.textView) FontTextView textView;
-    @BindView(R.id.textViewHolder) ScrollView textViewHolder;
+    @BindView(R.id.textViewHolder) View textViewHolder;
     @BindView(R.id.webView) PrettifyWebView webView;
-    @BindView(R.id.progressBar) View progressBar;
+    @BindView(R.id.stateLayout) StateLayout stateLayout;
     @BindView(R.id.webViewHolder) FrameLayout webViewHolder;
 
-    public static ViewerView newInstance(@NonNull String id, @NonNull String url) {
-        FilesListModel filesListModel = new FilesListModel();
-        filesListModel.setId(id);
-        filesListModel.setFilename(url);
-        filesListModel.setRawUrl(url);
-        return newInstance(Bundler.start().put(BundleConstant.EXTRA, (Parcelable) filesListModel).end());
+    public static ViewerView newInstance(@NonNull String repoId, @NonNull String login) {
+        return newInstance(Bundler.start()
+                .put(BundleConstant.EXTRA_ID, login)
+                .put(BundleConstant.ID, repoId)
+                .end());
     }
 
     public static ViewerView newInstance(@NonNull Bundle bundle) {
@@ -50,12 +47,13 @@ public class ViewerView extends BaseFragment<ViewerMvp.View, ViewerPresenter> im
     }
 
     @Override public void onSetNormalText(@NonNull String text) {
+        stateLayout.hideProgress();
         textViewHolder.setVisibility(View.VISIBLE);
         textView.setText(text);
     }
 
     @Override public void onSetMdText(@NonNull String text) {
-        progressBar.setVisibility(View.GONE);
+        stateLayout.hideProgress();
         textViewHolder.setVisibility(View.VISIBLE);
         MarkDownProvider.convertTextToMarkDown(textView, text);
     }
@@ -67,17 +65,19 @@ public class ViewerView extends BaseFragment<ViewerMvp.View, ViewerPresenter> im
     }
 
     @Override public void onShowError(@NonNull String msg) {
+        stateLayout.hideProgress();
         if (navigationCallback != null) {
             navigationCallback.showMessage(getString(R.string.error), msg);
         }
     }
 
     @Override public void onShowError(@StringRes int msg) {
+        stateLayout.hideProgress();
         onShowError(getString(msg));
     }
 
     @Override public void onShowMdProgress() {
-        progressBar.setVisibility(View.VISIBLE);
+        stateLayout.showProgress();
     }
 
     @Override protected int fragmentLayout() {
@@ -90,7 +90,7 @@ public class ViewerView extends BaseFragment<ViewerMvp.View, ViewerPresenter> im
 
     @Override public void onContentChanged(int progress) {
         if (progress == 100) {
-            if (progressBar != null) progressBar.setVisibility(View.GONE);
+            if (stateLayout != null) stateLayout.hideProgress();
         }
     }
 

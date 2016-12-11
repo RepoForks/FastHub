@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.view.View;
 
@@ -45,14 +46,14 @@ public class ActivityHelper {
 
     public static void startCustomTab(@NonNull Activity context) {
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-        builder.setToolbarColor(ViewHelper.getPrimaryColor(context));
+        builder.setToolbarColor(ContextCompat.getColor(context, R.color.primary));
         CustomTabsIntent tabsIntent = builder.build();
         tabsIntent.launchUrl(context, Uri.parse("https://github.com/k0shk0sh/FastAccess"));//TODO
     }
 
     public static void startCustomTab(@NonNull Activity context, @NonNull Uri url) {
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-        builder.setToolbarColor(ViewHelper.getPrimaryColor(context));
+        builder.setToolbarColor(ContextCompat.getColor(context, R.color.primary));
         builder.setShowTitle(false);
         CustomTabsIntent tabsIntent = builder.build();
         tabsIntent.launchUrl(context, url);

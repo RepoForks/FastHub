@@ -19,8 +19,8 @@ public class CommitModel implements Parcelable {
     private String sha;
     private boolean distinct;
     private GitCommitModel commit;
-    private ActorModel author;
-    private ActorModel committer;
+    private UserModel author;
+    private UserModel committer;
     private List<CommentsModel> parents;
     private GithubState stats;
     private List<FilesListModel> files;
@@ -74,19 +74,19 @@ public class CommitModel implements Parcelable {
         this.commit = commit;
     }
 
-    public ActorModel getAuthor() {
+    public UserModel getAuthor() {
         return author;
     }
 
-    public void setAuthor(ActorModel author) {
+    public void setAuthor(UserModel author) {
         this.author = author;
     }
 
-    public ActorModel getCommitter() {
+    public UserModel getCommitter() {
         return committer;
     }
 
-    public void setCommitter(ActorModel committer) {
+    public void setCommitter(UserModel committer) {
         this.committer = committer;
     }
 
@@ -148,8 +148,8 @@ public class CommitModel implements Parcelable {
         this.sha = in.readString();
         this.distinct = in.readByte() != 0;
         this.commit = in.readParcelable(GitCommitModel.class.getClassLoader());
-        this.author = in.readParcelable(ActorModel.class.getClassLoader());
-        this.committer = in.readParcelable(ActorModel.class.getClassLoader());
+        this.author = in.readParcelable(UserModel.class.getClassLoader());
+        this.committer = in.readParcelable(UserModel.class.getClassLoader());
         this.parents = in.createTypedArrayList(CommentsModel.CREATOR);
         this.stats = in.readParcelable(GithubState.class.getClassLoader());
         this.files = in.createTypedArrayList(FilesListModel.CREATOR);

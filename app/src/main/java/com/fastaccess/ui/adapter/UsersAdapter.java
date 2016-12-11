@@ -3,7 +3,7 @@ package com.fastaccess.ui.adapter;
 import android.support.annotation.NonNull;
 import android.view.ViewGroup;
 
-import com.fastaccess.data.dao.ActorModel;
+import com.fastaccess.data.dao.UserModel;
 import com.fastaccess.data.dao.UserModel;
 import com.fastaccess.ui.adapter.viewholder.UsersViewHolder;
 import com.fastaccess.ui.widgets.recyclerview.BaseRecyclerAdapter;

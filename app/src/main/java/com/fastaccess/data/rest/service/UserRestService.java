@@ -3,7 +3,7 @@ package com.fastaccess.data.rest.service;
 import android.support.annotation.NonNull;
 
 import com.fastaccess.data.dao.AccessTokenModel;
-import com.fastaccess.data.dao.ActorModel;
+import com.fastaccess.data.dao.UserModel;
 import com.fastaccess.data.dao.EventsModel;
 import com.fastaccess.data.dao.Pageable;
 import com.fastaccess.data.dao.RepoModel;

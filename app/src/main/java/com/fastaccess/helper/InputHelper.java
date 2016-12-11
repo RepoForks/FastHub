@@ -57,4 +57,11 @@ public class InputHelper {
     @NonNull public static String toString(@NonNull Object object) {
         return !isEmpty(object) ? object.toString() : "";
     }
+
+    public static long toLong(TextView textView) {
+        if (!isEmpty(textView)) {
+            return Long.valueOf(toString(textView));
+        }
+        return 0;
+    }
 }
