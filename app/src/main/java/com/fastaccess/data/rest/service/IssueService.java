@@ -26,26 +26,26 @@ import rx.Observable;
 public interface IssueService {
 
     @GET("issues")
-    Observable<Pageable<IssueModel>> getIssues(@QueryMap Map<String, Object> filter, @Query("page") long page);
+    Observable<Pageable<IssueModel>> getIssues(@QueryMap Map<String, Object> filter, @Query("page") int page);
 
     @GET("user/issues")
-    Observable<Pageable<IssueModel>> getRepoMemberIssues(@QueryMap Map<String, Object> filter, @Query("page") long page);
+    Observable<Pageable<IssueModel>> getRepoMemberIssues(@QueryMap Map<String, Object> filter, @Query("page") int page);
 
     @GET("orgs/{org}/issues")
-    Observable<Pageable<IssueModel>> getOrgIssues(@QueryMap Map<String, Object> filter, @Query("page") long page);
+    Observable<Pageable<IssueModel>> getOrgIssues(@QueryMap Map<String, Object> filter, @Query("page") int page);
 
     @GET("repos/{owner}/{repo}/issues")
     Observable<Pageable<IssueModel>> getRepositoryIssues(@Path("owner") String owner, @Path("repo") String repo,
-                                                         @Query("page") long page);
+                                                         @Query("page") int page);
 
     @GET("repos/{owner}/{repo}/issues/{number}")
     Observable<IssueModel> getIssue(@Path("owner") String owner, @Path("repo") String repo,
                                     @Path("number") long number);
 
-    @GET("repos/{owner}/{repo}/issues/{issue_number}/timeline")
+    @GET("repos/{owner}/{repo}/issues/{issue_number}/events")
     Observable<Pageable<IssueEventModel>> getTimeline(@Path("owner") String owner, @Path("repo") String repo,
                                                       @Path("issue_number") int issue_number,
-                                                      @Query("page") long page);
+                                                      @Query("page") int page);
 
     @POST("repos/{owner}/{repo}/issues")
     Observable<IssueModel> createIssue(@Path("owner") String owner, @Path("repo") String repo,
@@ -68,7 +68,7 @@ public interface IssueService {
     Observable<Pageable<CommentsModel>> getIssueComments(@Path("owner") String owner,
                                                          @Path("repo") String repo,
                                                          @Path("number") long number,
-                                                         @Query("page") long page);
+                                                         @Query("page") int page);
 
     @GET("repos/{owner}/{repo}/issues/{number}/comments/{id}")
     Observable<CommentsModel> getIssueComment(@Path("owner") String owner, @Path("repo") String repo,

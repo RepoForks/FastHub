@@ -114,4 +114,7 @@
     <string name="lock_issue">Lock Issue</string>
     <string name="unlock_issue">Unlock Issue</string>
     <string name="readme">Readme</string>
+    <string name="opened">Opened</string>
+    <string name="closed">Closed</string>
+    <string name="no_description_provided">No description provided.</string>
 </resources>

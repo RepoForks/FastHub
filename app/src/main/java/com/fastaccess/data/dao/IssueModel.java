@@ -44,6 +44,7 @@ public class IssueModel implements Parcelable {
     @SerializedName("updated_at") private String updatedAt;
     @SerializedName("closed_by") private UserModel closedBy;
     private String repoId;
+    private String login;
 
     public String getUrl() {
         return url;
@@ -245,6 +246,14 @@ public class IssueModel implements Parcelable {
         return repoId;
     }
 
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
     @Override public int describeContents() { return 0; }
 
     @Override public void writeToParcel(Parcel dest, int flags) {
@@ -271,6 +280,7 @@ public class IssueModel implements Parcelable {
         dest.writeString(this.updatedAt);
         dest.writeParcelable(this.closedBy, flags);
         dest.writeString(this.repoId);
+        dest.writeString(this.login);
     }
 
     protected IssueModel(Parcel in) {
@@ -298,6 +308,7 @@ public class IssueModel implements Parcelable {
         this.updatedAt = in.readString();
         this.closedBy = in.readParcelable(UserModel.class.getClassLoader());
         this.repoId = in.readString();
+        this.login = in.readString();
     }
 
     public static final Creator<IssueModel> CREATOR = new Creator<IssueModel>() {

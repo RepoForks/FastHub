@@ -41,9 +41,9 @@ public class FeedsViewHolder extends BaseViewHolder<EventsModel> {
             avatar.setUrl(null, null);
         }
         SpannableBuilder spannableBuilder = SpannableBuilder.builder();
-        spannableBuilder.bold(eventsModel.getActor().getLogin()).append(" ");
-        spannableBuilder.append(eventsModel.getType().getType()).append(" ");
-        spannableBuilder.bold(eventsModel.getRepo().getName());
+        spannableBuilder.append(eventsModel.getActor().getLogin()).append(" ");
+        spannableBuilder.bold(eventsModel.getType().getType()).append(" ");
+        spannableBuilder.append(eventsModel.getRepo().getName());
         title.setText(spannableBuilder);
         date.setText(ParseDateFormat.getTimeAgo(eventsModel.getCreatedAt()));
     }

@@ -9,8 +9,8 @@
     android:clickable="true"
     android:foreground="?android:selectableItemBackground"
     android:paddingBottom="@dimen/spacing_normal"
-    android:paddingLeft="@dimen/spacing_xs_large"
-    android:paddingRight="@dimen/spacing_xs_large"
+    android:paddingStart="@dimen/spacing_xs_large"
+    android:paddingEnd="@dimen/spacing_xs_large"
     android:paddingTop="@dimen/spacing_normal"
     android:stateListAnimator="@animator/raise_selector">
 

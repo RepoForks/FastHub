@@ -36,7 +36,7 @@
                 android:layout_marginEnd="@dimen/spacing_xs_large"
                 android:background="?selectableItemBackgroundBorderless"
                 android:drawablePadding="@dimen/spacing_normal"
-                android:drawableStart="@drawable/ic_share"
+                android:drawableTop="@drawable/ic_share"
                 android:gravity="center"/>
 
             <com.fastaccess.ui.widgets.FontTextView
@@ -48,7 +48,7 @@
                 android:layout_marginEnd="@dimen/spacing_xs_large"
                 android:background="?selectableItemBackgroundBorderless"
                 android:drawablePadding="@dimen/spacing_normal"
-                android:drawableStart="@drawable/ic_fork"
+                android:drawableTop="@drawable/ic_fork"
                 android:gravity="center"
                 tools:text="100,000"/>
 
@@ -61,7 +61,7 @@
                 android:layout_marginEnd="@dimen/spacing_xs_large"
                 android:background="?selectableItemBackgroundBorderless"
                 android:drawablePadding="@dimen/spacing_normal"
-                android:drawableStart="@drawable/ic_star"
+                android:drawableTop="@drawable/ic_star"
                 android:gravity="center"
                 android:scaleType="centerCrop"
                 tools:text="100,000"/>
@@ -76,7 +76,7 @@
                 android:layout_marginEnd="@dimen/spacing_xs_large"
                 android:background="?selectableItemBackgroundBorderless"
                 android:drawablePadding="@dimen/spacing_normal"
-                android:drawableStart="@drawable/ic_eye"
+                android:drawableTop="@drawable/ic_eye"
                 android:gravity="center"
                 android:scaleType="centerCrop"
                 tools:text="100,000"/>

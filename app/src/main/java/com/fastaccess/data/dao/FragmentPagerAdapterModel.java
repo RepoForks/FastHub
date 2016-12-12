@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 
 import com.fastaccess.R;
+import com.fastaccess.ui.modules.issue.comments.IssueCommentsView;
+import com.fastaccess.ui.modules.issue.details.IssueDetailsView;
 import com.fastaccess.ui.modules.main.profile.followers.ProfileFollowersView;
 import com.fastaccess.ui.modules.main.profile.following.ProfileFollowingView;
 import com.fastaccess.ui.modules.main.profile.gists.ProfileGistsView;
@@ -19,6 +21,7 @@ import com.fastaccess.ui.modules.search.users.SearchUsersView;
 import com.fastaccess.ui.modules.viewer.ViewerView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -79,4 +82,15 @@ public class FragmentPagerAdapterModel {
         fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.issues), RepoIssuesView.newInstance(repoId, login)));
         return fragments;
     }
+
+    public static List<FragmentPagerAdapterModel> buildForIssues(@NonNull Context context, @NonNull IssueModel issueModel) {
+        String login = issueModel.getLogin();
+        String repoId = issueModel.getRepoId();
+        int number = issueModel.getNumber();
+        return Arrays.asList(new FragmentPagerAdapterModel(context.getString(R.string.details),
+                        IssueDetailsView.newInstance(issueModel)),
+                new FragmentPagerAdapterModel(context.getString(R.string.comments),
+                        IssueCommentsView.newInstance(login, repoId, number)));
+    }
+
 }

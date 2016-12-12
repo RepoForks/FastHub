@@ -60,6 +60,6 @@ public interface RepoService {
     Observable<Response<Boolean>> unwatchRepo(@Path("owner") String owner, @Path("repo") String repo);
 
     @GET("repos/{owner}/{repo}/pulls")
-    Observable<Pageable<PullRequestModel>> getPullRequests(@Path("owner") String owner, @Path("repo") String repo, @Query("page") long page);
+    Observable<Pageable<PullRequestModel>> getPullRequests(@Path("owner") String owner, @Path("repo") String repo, @Query("page") int page);
 
 }

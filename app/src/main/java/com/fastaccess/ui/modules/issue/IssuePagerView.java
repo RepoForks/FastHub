@@ -15,14 +15,15 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.fastaccess.R;
+import com.fastaccess.data.dao.FragmentPagerAdapterModel;
 import com.fastaccess.data.dao.IssueModel;
 import com.fastaccess.data.dao.UserModel;
 import com.fastaccess.data.dao.types.IssueState;
 import com.fastaccess.helper.ActivityHelper;
 import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.Bundler;
-import com.fastaccess.helper.Logger;
 import com.fastaccess.helper.ParseDateFormat;
+import com.fastaccess.ui.adapter.FragmentsPagerAdapter;
 import com.fastaccess.ui.base.BaseActivity;
 import com.fastaccess.ui.widgets.AvatarLayout;
 import com.fastaccess.ui.widgets.FontTextView;
@@ -64,14 +65,16 @@ public class IssuePagerView extends BaseActivity<IssuePagerMvp.View, IssuePagerP
 
     public static void createIntentForOffline(@NonNull Context context, @NonNull IssueModel issueModel) {
         String repoId;
+        String login;
         if (issueModel.getRepository() == null) {
             Uri uri = Uri.parse(issueModel.getRepoUrl());
             repoId = uri.getLastPathSegment();
-            Logger.e(uri.getLastPathSegment());
-
+            login = uri.getPathSegments().get(1);
         } else {
-            repoId = String.valueOf(issueModel.getRepository().getRepoId());
+            repoId = issueModel.getRepository().getName();
+            login = issueModel.getRepository().getOwner().getLogin();
         }
+        issueModel.setLogin(login);
         issueModel.setRepoId(repoId);
         Intent intent = new Intent(context, IssuePagerView.class);
         intent.putExtras(Bundler.start()
@@ -136,8 +139,7 @@ public class IssuePagerView extends BaseActivity<IssuePagerMvp.View, IssuePagerP
             if (issueModel == null) return true;
             MessageDialogView.newInstance(
                     issueModel.getState() == IssueState.open ? getString(R.string.close_issue) : getString(R.string.re_open_issue),
-                    getString(R.string.confirm_message),
-                    Bundler.start().put(BundleConstant.EXTRA, true).end())
+                    getString(R.string.confirm_message), Bundler.start().put(BundleConstant.EXTRA, true).end())
                     .show(getSupportFragmentManager(), MessageDialogView.TAG);
             return true;
         } else if (item.getItemId() == R.id.lockIssue) {
@@ -187,18 +189,18 @@ public class IssuePagerView extends BaseActivity<IssuePagerMvp.View, IssuePagerP
         }
         supportInvalidateOptionsMenu();
         IssueModel issueModel = getPresenter().getIssue();
-        setTitle(String.format("%s #%s", getString(R.string.issue), issueModel.getNumber()));
+        setTitle(String.format("#%s", issueModel.getNumber()));
         UserModel userModel = issueModel.getUser();
         title.setText(issueModel.getTitle());
         if (userModel != null) {
             date.setVisibility(View.GONE);
-            size.setText(SpannableBuilder.builder().append(issueModel.getState().getStatus()).append(" ").append(getString(R.string.by))
-                    .append(" ").append(userModel.getLogin()).append(" ")
+            size.setText(SpannableBuilder.builder().append(getString(issueModel.getState().getStatus()))
+                    .append(" ").append(getString(R.string.by)).append(" ").append(userModel.getLogin()).append(" ")
                     .append(ParseDateFormat.getTimeAgo(issueModel.getCreatedAt())));
             avatarLayout.setUrl(userModel.getAvatarUrl(), userModel.getLogin());
         }
-//        tabs.setupWithViewPager(pager);
-
+        pager.setAdapter(new FragmentsPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapterModel.buildForIssues(this, issueModel)));
+        tabs.setupWithViewPager(pager);
         QuickReturnFooterBehavior quickReturnFooterBehavior = (QuickReturnFooterBehavior)
                 ((CoordinatorLayout.LayoutParams) fab.getLayoutParams()).getBehavior();
         if (!getPresenter().isLocked() && !getPresenter().isOwner()) {

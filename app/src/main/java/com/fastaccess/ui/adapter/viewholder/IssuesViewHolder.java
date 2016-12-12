@@ -39,7 +39,8 @@ public class IssuesViewHolder extends BaseViewHolder<IssueModel> {
 
     @Override public void bind(@NonNull IssueModel issueModel) {
         title.setText(issueModel.getTitle());
-        details.setText(SpannableBuilder.builder().append(issueModel.getState().getStatus()).append(" ").append(by).append(" ")
-                .append(issueModel.getUser().getLogin()).append(" ").append(ParseDateFormat.getTimeAgo(issueModel.getCreatedAt())));
+        details.setText(SpannableBuilder.builder().append(itemView.getResources().getString(issueModel.getState().getStatus()))
+                .append(" ").append(by).append(" ").append(issueModel.getUser().getLogin()).append(" ")
+                .append(ParseDateFormat.getTimeAgo(issueModel.getCreatedAt())));
     }
 }

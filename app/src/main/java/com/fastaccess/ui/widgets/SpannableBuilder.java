@@ -5,7 +5,6 @@ import android.text.SpannableStringBuilder;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
-import android.text.style.TypefaceSpan;
 import android.text.style.URLSpan;
 import android.view.View;
 
@@ -60,7 +59,7 @@ public class SpannableBuilder extends SpannableStringBuilder {
         return this;
     }
 
-    public SpannableBuilder background(final CharSequence text, @ColorInt final int color) {
+    public SpannableBuilder background(final CharSequence text, final int color) {
         if (!InputHelper.isEmpty(text)) return append(text, new BackgroundColorSpan(color));
         return this;
     }
@@ -72,11 +71,6 @@ public class SpannableBuilder extends SpannableStringBuilder {
 
     public SpannableBuilder foreground(final char text, @ColorInt final int color) {
         return append(text, new ForegroundColorSpan(color));
-    }
-
-    public SpannableBuilder monospace(final CharSequence text) {
-        if (!InputHelper.isEmpty(text)) return append(text, new TypefaceSpan("monospace"));
-        return this;
     }
 
     public SpannableBuilder url(final CharSequence text, final View.OnClickListener listener) {

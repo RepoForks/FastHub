@@ -9,9 +9,11 @@ import com.fastaccess.data.dao.CommentsModel;
 import com.fastaccess.data.dao.CreateGistModel;
 import com.fastaccess.data.dao.EventsModel;
 import com.fastaccess.data.dao.GistsModel;
+import com.fastaccess.data.dao.IssueEventModel;
 import com.fastaccess.data.dao.IssueModel;
 import com.fastaccess.data.dao.IssueRequestModel;
 import com.fastaccess.data.dao.Pageable;
+import com.fastaccess.data.dao.PullRequestModel;
 import com.fastaccess.data.dao.RepoModel;
 import com.fastaccess.data.dao.SearchCodeModel;
 import com.fastaccess.data.dao.UserModel;
@@ -169,6 +171,14 @@ public class RestClient {
         return RestProvider.createService(IssueService.class).getRepositoryIssues(login, repoId, page);
     }
 
+    public static Observable<Pageable<IssueEventModel>> getIssueTimeline(@NonNull String login, @NonNull String repoId, int number, int page) {
+        return RestProvider.createService(IssueService.class).getTimeline(login, repoId, number, page);
+    }
+
+    public static Observable<Pageable<CommentsModel>> getIssuesComments(@NonNull String login, @NonNull String repoId, int number, int page) {
+        return RestProvider.createService(IssueService.class).getIssueComments(login, repoId, number, page);
+    }
+
     public static Observable<String> getRawReadMe(@NonNull String login, @NonNull String repoId) {
         return RestProvider.createService(ContentService.class, true).getRawReadme(login, repoId);
     }
@@ -199,6 +209,10 @@ public class RestClient {
 
     public static Observable<RepoModel> forkRepo(@NonNull String login, @NonNull String repoId) {
         return RestProvider.createService(RepoService.class).forkRepo(login, repoId);
+    }
+
+    public static Observable<Pageable<PullRequestModel>> getPullRequests(@NonNull String login, @NonNull String repoId, int page) {
+        return RestProvider.createService(RepoService.class).getPullRequests(login, repoId, page);
     }
 }
 

@@ -685,7 +685,12 @@ public class TagHandlerImpl implements TagHandler {
         if (matcher.find()) {
             String title = matcher.group(2);
             String link = matcher.group(3);
-            if (link.endsWith(".svg") || link.endsWith(".SVG")) return false;//FIXME support svg for the future?
+            if (link.contains(".")) {
+                String extension = link.substring(link.lastIndexOf("."));
+                if (extension.toLowerCase().contains("svg")) {
+                    return false;
+                }
+            }
             String hint = matcher.group(6);
             builder.delete(matcher.start(1), matcher.end(1));
             builder.insert(matcher.start(1), styleBuilder.image(title, link, hint));
@@ -706,7 +711,13 @@ public class TagHandlerImpl implements TagHandler {
             Pair<String, String> image = idImageUrl.get(id);
             if (image != null) {
                 builder.delete(matcher.start(1), matcher.end(1));
-                if (image.first.endsWith(".svg") || image.first.endsWith(".SVG")) return false;//FIXME support svg for the future?
+                Log.e("link", image.first);
+                if (image.first.contains(".")) {
+                    String extension = image.first.substring(image.first.lastIndexOf("."));
+                    if (extension.toLowerCase().contains("svg")) {
+                        return false;
+                    }
+                }
                 builder.insert(matcher.start(1), styleBuilder.image(title, image.first, image.second));
             } else {
                 return false;

@@ -21,10 +21,11 @@ public class ImageHolder {
     /**
      * ImageType
      */
-    @IntDef({ImageType.JPG, ImageType.GIF})
+    @IntDef({ImageType.JPG, ImageType.GIF, ImageType.SVG})
     public @interface ImageType {
         int JPG = 0;
         int GIF = 1;
+        int SVG = 2;
     }
 
     /**
@@ -121,6 +122,10 @@ public class ImageHolder {
 
     public boolean isGif() {
         return imageType == ImageType.GIF;
+    }
+
+    public boolean isSvg() {
+        return imageType == ImageType.SVG;
     }
 
     public boolean isAutoPlay() {

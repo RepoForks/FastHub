@@ -44,6 +44,7 @@ public class IssuePagerPresenter extends BasePresenter<IssuePagerMvp.View> imple
                         .doOnNext(issue -> {
                             issueModel = issue;
                             issueModel.setRepoId(repoId);
+                            issueModel.setLogin(login);
                             sendToView(IssuePagerMvp.View::onSetupIssue);
                         })
                         .onErrorReturn(throwable -> {
@@ -59,7 +60,7 @@ public class IssuePagerPresenter extends BasePresenter<IssuePagerMvp.View> imple
     }
 
     @Override public void onWorkOffline(long issueNumber, @NonNull String repoId, @NonNull String login) {
-
+//TODO
     }
 
     @Override public boolean isOwner() {

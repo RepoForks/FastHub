@@ -3,7 +3,6 @@ package com.fastaccess.ui.widgets;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
@@ -16,6 +15,7 @@ import android.view.Gravity;
 import android.widget.Toast;
 
 import com.fastaccess.R;
+import com.fastaccess.helper.InputHelper;
 import com.fastaccess.helper.Logger;
 import com.fastaccess.helper.ViewHelper;
 
@@ -29,14 +29,14 @@ public class ForegroundImageView extends AppCompatImageView {
 
     public ForegroundImageView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
-        setOnLongClickListener(view -> {
-            Logger.e();
-            Toast toast = Toast.makeText(getContext(), getContentDescription(), Toast.LENGTH_SHORT);
-            Rect rect = ViewHelper.getLayoutPosition(view);
-            toast.setGravity(Gravity.TOP, (int) rect.left, (int) rect.exactCenterY());
-            toast.show();
-            return true;
-        });
+        if (InputHelper.isEmpty(getContentDescription()))
+            setOnLongClickListener(view -> {
+                Logger.e();
+                Toast toast = Toast.makeText(getContext(), getContentDescription(), Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                return true;
+            });
     }
 
     public ForegroundImageView(Context context, AttributeSet attrs, int defStyleAttr) {

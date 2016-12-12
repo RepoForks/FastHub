@@ -23,6 +23,7 @@ import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.GenericRequestBuilder;
 import com.bumptech.glide.GifTypeRequest;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.zzhoujay.richtext.cache.RichCacheManager;
 import com.zzhoujay.richtext.callback.ImageFixCallback;
 import com.zzhoujay.richtext.callback.LinkFixCallback;
@@ -291,6 +292,8 @@ public class RichText implements ImageLoadNotify {
             final GenericRequestBuilder load;
             if (isGif(holder.getSrc())) {
                 holder.setImageType(ImageHolder.ImageType.GIF);
+            } else if (isSvg(holder.getSrc())) {
+                holder.setImageType(ImageHolder.ImageType.SVG);
             } else {
                 holder.setImageType(ImageHolder.ImageType.JPG);
             }
@@ -308,6 +311,7 @@ public class RichText implements ImageLoadNotify {
             } else {
                 dtr = Glide.with(textView.getContext()).load(source);
             }
+            dtr.diskCacheStrategy(DiskCacheStrategy.ALL);
             if (holder.isGif()) {
                 target = new ImageTargetGif(textView, urlDrawable, holder, autoFix, imageFixCallback, RichText.this);
                 load = dtr.asGif();
@@ -462,6 +466,11 @@ public class RichText implements ImageLoadNotify {
     private static boolean isGif(String path) {
         int index = path.lastIndexOf('.');
         return index > 0 && "gif".toUpperCase().equals(path.substring(index + 1).toUpperCase());
+    }
+
+    private static boolean isSvg(String path) {
+        int index = path.lastIndexOf(".");
+        return index > 0 && "svg".toUpperCase().equals(path.substring(index + 1).toLowerCase());
     }
 
 
