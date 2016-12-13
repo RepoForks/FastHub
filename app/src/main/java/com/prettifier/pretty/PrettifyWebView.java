@@ -26,7 +26,7 @@ import com.prettifier.pretty.helper.PrettifyHelper;
 public class PrettifyWebView extends NestedWebView {
     private String content;
     private OnContentChangedListener onContentChangedListener;
-    private boolean interceptTouch = true;
+    private boolean interceptTouch;
 
     public interface OnContentChangedListener {
         void onContentChanged(int progress);
