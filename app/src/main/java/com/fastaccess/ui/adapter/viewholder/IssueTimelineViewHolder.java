@@ -18,6 +18,7 @@ import com.fastaccess.ui.widgets.SpannableBuilder;
 import com.fastaccess.ui.widgets.recyclerview.BaseRecyclerAdapter;
 import com.fastaccess.ui.widgets.recyclerview.BaseViewHolder;
 
+import butterknife.BindString;
 import butterknife.BindView;
 
 /**
@@ -29,9 +30,12 @@ public class IssueTimelineViewHolder extends BaseViewHolder<IssueEventModel> {
     @BindView(R.id.stateImage) ForegroundImageView stateImage;
     @BindView(R.id.avatarLayout) AvatarLayout avatarLayout;
     @BindView(R.id.stateText) FontTextView stateText;
+    @BindString(R.string.to) String to;
 
     private IssueTimelineViewHolder(@NonNull View itemView, @Nullable BaseRecyclerAdapter adapter) {
         super(itemView, adapter);
+        stateText.setOnClickListener(this);
+        stateText.setOnLongClickListener(this);
     }
 
     public static IssueTimelineViewHolder newInstance(ViewGroup viewGroup, BaseRecyclerAdapter adapter) {
@@ -52,10 +56,27 @@ public class IssueTimelineViewHolder extends BaseViewHolder<IssueEventModel> {
                 spannableBuilder
                         .append(" ")
                         .background(labelModel.getName(), Color.parseColor("#" + labelModel.getColor()));
-            } else if (event == IssueEventType.assigned) {
+            } else if (event == IssueEventType.assigned || event == IssueEventType.unassigned) {
                 spannableBuilder
                         .append(" ")
                         .bold(issueEventModel.getAssigner().getLogin());
+            } else if (event == IssueEventType.milestoned || event == IssueEventType.demilestoned) {
+                spannableBuilder
+                        .append(" ")
+                        .append(to)
+                        .append(" ")
+                        .bold(issueEventModel.getMilestone().getTitle());
+            } else if (event == IssueEventType.renamed) {
+                spannableBuilder
+                        .append(" ")
+                        .bold(issueEventModel.getRename().getFrom())
+                        .append(to)
+                        .append(" ")
+                        .bold(issueEventModel.getRename().getTo());
+            } else if (event == IssueEventType.referenced || event == IssueEventType.merged) {
+                spannableBuilder
+                        .append(" ")
+                        .url(issueEventModel.getCommitUrl());
             }
         } else {
             stateImage.setImageResource(R.drawable.ic_label);

@@ -4,13 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clickable="true"
     android:foreground="?android:selectableItemBackground"
     android:paddingBottom="@dimen/spacing_normal"
     android:paddingEnd="@dimen/spacing_xs_large"
     android:paddingStart="@dimen/spacing_xs_large"
-    android:paddingTop="@dimen/spacing_normal"
-    android:stateListAnimator="@animator/raise_selector">
+    android:paddingTop="@dimen/spacing_normal">
 
     <com.fastaccess.ui.widgets.ForegroundImageView
         android:id="@+id/stateImage"
@@ -54,7 +52,7 @@
                 style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="top"
+                android:layout_gravity="center"
                 android:layout_weight="1"
                 android:maxLines="3"
                 tools:text="For a divided large loaf, add some champaign and cinnamon."/>

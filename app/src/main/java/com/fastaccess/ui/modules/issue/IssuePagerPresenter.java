@@ -95,6 +95,7 @@ public class IssuePagerPresenter extends BasePresenter<IssuePagerMvp.View> imple
                         if (issue != null) {
                             sendToView(view -> view.showSuccessIssueActionMsg(currentIssue.getState() == IssueState.open));
                             issue.setRepoId(issueModel.getRepoId());
+                            issue.setLogin(issueModel.getLogin());
                             issueModel = issue;
                             sendToView(IssuePagerMvp.View::onSetupIssue);
                         }
