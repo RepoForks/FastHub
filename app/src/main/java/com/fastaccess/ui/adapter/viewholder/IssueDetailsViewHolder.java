@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.fastaccess.R;
 import com.fastaccess.data.dao.IssueModel;
+import com.fastaccess.helper.InputHelper;
 import com.fastaccess.helper.ParseDateFormat;
 import com.fastaccess.provider.markdown.MarkDownProvider;
 import com.fastaccess.ui.widgets.AvatarLayout;
@@ -39,6 +40,8 @@ public class IssueDetailsViewHolder extends BaseViewHolder<IssueModel> {
         avatarView.setUrl(issueModel.getUser().getAvatarUrl(), issueModel.getUser().getLogin());
         name.setText(issueModel.getUser().getLogin());
         date.setText(ParseDateFormat.getTimeAgo(issueModel.getCreatedAt()));
-        MarkDownProvider.convertTextToMarkDown(description, issueModel.getBody());
+        if (!InputHelper.isEmpty(issueModel.getBody())) {
+            MarkDownProvider.convertTextToMarkDown(description, issueModel.getBody());
+        }
     }
 }

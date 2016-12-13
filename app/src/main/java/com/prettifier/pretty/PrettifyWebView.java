@@ -8,6 +8,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -17,12 +18,15 @@ import android.webkit.WebViewClient;
 
 import com.fastaccess.helper.ActivityHelper;
 import com.fastaccess.helper.InputHelper;
+import com.prettifier.pretty.callback.MarkDownInterceptorInterface;
+import com.prettifier.pretty.helper.MarkDownHelper;
 import com.prettifier.pretty.helper.PrettifyHelper;
 
 
 public class PrettifyWebView extends NestedWebView {
     private String content;
     private OnContentChangedListener onContentChangedListener;
+    private boolean interceptTouch = true;
 
     public interface OnContentChangedListener {
         void onContentChanged(int progress);
@@ -44,6 +48,17 @@ public class PrettifyWebView extends NestedWebView {
         initView();
     }
 
+    @Override public boolean onInterceptTouchEvent(MotionEvent p_event) {
+        return true;
+    }
+
+    @Override public boolean onTouchEvent(MotionEvent event) {
+        if (getParent() != null) {
+            getParent().requestDisallowInterceptTouchEvent(interceptTouch);
+        }
+        return super.onTouchEvent(event);
+    }
+
     @SuppressLint("SetJavaScriptEnabled") private void initView() {
         if (isInEditMode()) return;
         setWebChromeClient(new ChromeClient());
@@ -53,13 +68,10 @@ public class PrettifyWebView extends NestedWebView {
             setWebViewClient(new WebClientCompat());
         }
         WebSettings settings = getSettings();
-        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING);
         settings.setDefaultTextEncodingName("utf-8");
         settings.setJavaScriptEnabled(true);
-        settings.setSupportZoom(true);
-        settings.setBuiltInZoomControls(true);
-        settings.setDisplayZoomControls(false);
-        setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+        settings.setLoadsImagesAutomatically(true);
+        settings.setBlockNetworkImage(false);
     }
 
     public void setOnContentChangedListener(@NonNull OnContentChangedListener onContentChangedListener) {
@@ -67,11 +79,26 @@ public class PrettifyWebView extends NestedWebView {
     }
 
     public void setSource(@NonNull String source) {
+        WebSettings settings = getSettings();
+        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING);
+        setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+        settings.setSupportZoom(true);
+        settings.setBuiltInZoomControls(true);
+        settings.setDisplayZoomControls(false);
         if (!InputHelper.isEmpty(source)) {
             this.content = source;
             String page = PrettifyHelper.generateContent(source);
             post(() -> loadDataWithBaseURL("file:///android_asset/highlight/", page, "text/html", "utf-8", null));
         } else Log.e(getClass().getSimpleName(), "Source can't be null or empty.");
+    }
+
+    public void setMdSource(@NonNull String source) {
+        if (!InputHelper.isEmpty(source)) {
+            addJavascriptInterface(new MarkDownInterceptorInterface(PrettifyWebView.this), "Android");
+            this.content = source;
+            String page = MarkDownHelper.generateContent(source);
+            post(() -> loadDataWithBaseURL("file:///android_asset/md/", page, "text/html", "utf-8", null));
+        }
     }
 
     public void refresh() {
@@ -81,10 +108,16 @@ public class PrettifyWebView extends NestedWebView {
         }
     }
 
+    public void setInterceptTouch(boolean interceptTouch) {
+        this.interceptTouch = interceptTouch;
+    }
+
     private class ChromeClient extends WebChromeClient {
         @Override public void onProgressChanged(WebView view, int progress) {
             super.onProgressChanged(view, progress);
-            if (onContentChangedListener != null) onContentChangedListener.onContentChanged(progress);
+            if (onContentChangedListener != null) {
+                onContentChangedListener.onContentChanged(progress);
+            }
         }
     }
 

@@ -5,13 +5,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.view.View;
-import android.widget.FrameLayout;
 
 import com.fastaccess.R;
 import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.Bundler;
 import com.fastaccess.helper.InputHelper;
-import com.fastaccess.provider.markdown.MarkDownProvider;
 import com.fastaccess.ui.base.BaseFragment;
 import com.fastaccess.ui.widgets.FontTextView;
 import com.fastaccess.ui.widgets.StateLayout;
@@ -31,7 +29,6 @@ public class ViewerView extends BaseFragment<ViewerMvp.View, ViewerPresenter> im
     @BindView(R.id.textViewHolder) View textViewHolder;
     @BindView(R.id.webView) PrettifyWebView webView;
     @BindView(R.id.stateLayout) StateLayout stateLayout;
-    @BindView(R.id.webViewHolder) FrameLayout webViewHolder;
 
     public static ViewerView newInstance(@NonNull String repoId, @NonNull String login) {
         return newInstance(Bundler.start()
@@ -53,15 +50,18 @@ public class ViewerView extends BaseFragment<ViewerMvp.View, ViewerPresenter> im
     }
 
     @Override public void onSetMdText(@NonNull String text) {
-        stateLayout.hideProgress();
-        textViewHolder.setVisibility(View.VISIBLE);
-        MarkDownProvider.convertTextToMarkDown(textView, text);
+//        stateLayout.hideProgress();
+//        textViewHolder.setVisibility(View.VISIBLE);
+//        MarkDownProvider.convertTextToMarkDown(textView, text);
+        webView.setOnContentChangedListener(this);
+        webView.setVisibility(View.VISIBLE);
+        webView.setMdSource(text);
     }
 
     @Override public void onSetCode(@NonNull String text) {
         webView.setOnContentChangedListener(this);
+        webView.setVisibility(View.VISIBLE);
         webView.setSource(text);
-        webViewHolder.setVisibility(View.VISIBLE);
     }
 
     @Override public void onShowError(@NonNull String msg) {
