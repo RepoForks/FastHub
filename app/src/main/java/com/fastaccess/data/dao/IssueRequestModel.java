@@ -8,7 +8,6 @@ import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 import com.fastaccess.data.dao.types.IssueState;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -69,10 +68,9 @@ public class IssueRequestModel implements Parcelable {
 
     public static IssueRequestModel clone(@NonNull IssueModel issue) {
         IssueRequestModel model = new IssueRequestModel();
-        List<String> labels = new ArrayList<>();
         if (issue.getLabels() != null) {
-            Stream.of(issue.getLabels()).map(LabelModel::getName).collect(Collectors.toList());
-            model.setLabels(labels);
+            model.setLabels(Stream.of(issue.getLabels()).filter(value -> value.getName() != null)
+                    .map(LabelModel::getName).collect(Collectors.toList()));
         }
         model.setAssignee(issue.getAssignee() != null ? issue.getAssignee().getLogin() : null);
         model.setBody(issue.getBody());

@@ -46,6 +46,7 @@ public class IssueDetailsView extends BaseFragment<IssueDetailsMvp.View, IssueDe
         refresh.setOnRefreshListener(this);
         stateLayout.setOnReloadListener(this);
         adapter = new IssueTimelineAdapter(getPresenter().getIssues());
+        adapter.setListener(getPresenter());
         getLoadMore().setCurrent_page(getPresenter().getCurrentPage(), getPresenter().getPreviousTotal());
         recycler.setAdapter(adapter);
         recycler.addOnScrollListener(getLoadMore());

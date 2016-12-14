@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -28,7 +27,6 @@ import com.fastaccess.ui.base.BaseActivity;
 import com.fastaccess.ui.widgets.AvatarLayout;
 import com.fastaccess.ui.widgets.FontTextView;
 import com.fastaccess.ui.widgets.ForegroundImageView;
-import com.fastaccess.ui.widgets.QuickReturnFooterBehavior;
 import com.fastaccess.ui.widgets.SpannableBuilder;
 import com.fastaccess.ui.widgets.ViewPagerView;
 import com.fastaccess.ui.widgets.dialog.MessageDialogView;
@@ -89,7 +87,7 @@ public class IssuePagerView extends BaseActivity<IssuePagerMvp.View, IssuePagerP
     }
 
     @Override protected int layout() {
-        return R.layout.gists_content_activity;
+        return R.layout.issue_pager_activity;
     }
 
     @Override protected boolean hasSlideExitAnimation() {
@@ -201,22 +199,13 @@ public class IssuePagerView extends BaseActivity<IssuePagerMvp.View, IssuePagerP
         }
         pager.setAdapter(new FragmentsPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapterModel.buildForIssues(this, issueModel)));
         tabs.setupWithViewPager(pager);
-        QuickReturnFooterBehavior quickReturnFooterBehavior = (QuickReturnFooterBehavior)
-                ((CoordinatorLayout.LayoutParams) fab.getLayoutParams()).getBehavior();
         if (!getPresenter().isLocked() && !getPresenter().isOwner()) {
             pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
                 @Override public void onPageSelected(int position) {
                     super.onPageSelected(position);
-                    if (quickReturnFooterBehavior != null) {
-                        quickReturnFooterBehavior.setEnabled(position == 1);
-                    }
                     hideShowFab();
                 }
             });
-        } else {
-            if (quickReturnFooterBehavior != null) {
-                quickReturnFooterBehavior.setEnabled(false);
-            }
         }
         hideShowFab();
     }

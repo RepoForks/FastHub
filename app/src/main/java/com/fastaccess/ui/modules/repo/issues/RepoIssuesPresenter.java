@@ -5,7 +5,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.annimon.stream.Collectors;
+import com.annimon.stream.Stream;
 import com.fastaccess.data.dao.IssueModel;
+import com.fastaccess.data.dao.types.IssueState;
 import com.fastaccess.data.rest.RestClient;
 import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.Bundler;
@@ -57,14 +60,15 @@ public class RepoIssuesPresenter extends BasePresenter<RepoIssuesMvp.View> imple
             return;
         }
         if (repoId == null || login == null) return;
-        manageSubscription(RxHelper.getObserver(RestClient.getRepoIssues(login, repoId, page))
+        manageSubscription(RxHelper.getObserver(RestClient.getRepoIssues(login, repoId, IssueState.closed, page))
                 .doOnSubscribe(() -> sendToView(RepoIssuesMvp.View::onShowProgress))
                 .doOnNext(issues -> {
                     lastPage = issues.getLast();
                     if (page == 1) {
                         getIssues().clear();
                     }
-                    getIssues().addAll(issues.getItems());
+                    //filter issues only.
+                    getIssues().addAll(Stream.of(issues.getItems()).filter(value -> value.getPullRequest() == null).collect(Collectors.toList()));
                     sendToView(RepoIssuesMvp.View::onNotifyAdapter);
                 })
                 .onErrorReturn(throwable -> {

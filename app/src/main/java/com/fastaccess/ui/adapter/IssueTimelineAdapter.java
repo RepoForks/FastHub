@@ -30,10 +30,11 @@ public class IssueTimelineAdapter extends BaseRecyclerAdapter<IssueEventAdapterM
     }
 
     @Override protected void onBindView(BaseViewHolder holder, int position) {
-        if (getItemViewType(position) == IssueEventAdapterModel.HEADER) {
-            ((IssueDetailsViewHolder) holder).bind(getItem(position).getIssueModel());
+        IssueEventAdapterModel model = getItem(position);
+        if (model.getType() == IssueEventAdapterModel.HEADER) {
+            ((IssueDetailsViewHolder) holder).bind(model);
         } else {
-            ((IssueTimelineViewHolder) holder).bind(getItem(position).getIssueEvent());
+            ((IssueTimelineViewHolder) holder).bind(model);
         }
     }
 

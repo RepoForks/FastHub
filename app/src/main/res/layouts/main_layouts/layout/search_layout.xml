@@ -68,7 +68,7 @@
             app:tabGravity="fill"
             app:tabMode="scrollable"
             app:tabSelectedTextColor="?colorAccent"
-            app:tabTextColor="@color/primary_dark"/>
+            app:tabTextColor="@color/dark_gray"/>
 
         <View
             android:id="@+id/toolbarShadow"

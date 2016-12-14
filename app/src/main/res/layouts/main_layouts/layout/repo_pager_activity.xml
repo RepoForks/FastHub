@@ -90,7 +90,7 @@
             android:layout_height="wrap_content"
             android:background="?colorPrimary"
             app:tabSelectedTextColor="?colorAccent"
-            app:tabTextColor="?colorPrimaryDark"/>
+            app:tabTextColor="@color/dark_gray"/>
 
         <View
             android:layout_width="match_parent"

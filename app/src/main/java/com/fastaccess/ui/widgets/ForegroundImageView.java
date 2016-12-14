@@ -15,13 +15,12 @@ import android.view.Gravity;
 import android.widget.Toast;
 
 import com.fastaccess.R;
-import com.fastaccess.helper.InputHelper;
-import com.fastaccess.helper.Logger;
 import com.fastaccess.helper.ViewHelper;
 
 
 public class ForegroundImageView extends AppCompatImageView {
     private Drawable foreground;
+    private Toast toast;
 
     public ForegroundImageView(Context context) {
         this(context, null);
@@ -29,14 +28,13 @@ public class ForegroundImageView extends AppCompatImageView {
 
     public ForegroundImageView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
-        if (InputHelper.isEmpty(getContentDescription()))
-            setOnLongClickListener(view -> {
-                Logger.e();
-                Toast toast = Toast.makeText(getContext(), getContentDescription(), Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
-                return true;
-            });
+        setOnLongClickListener(view -> {
+            if (toast != null) toast.cancel();
+            toast = Toast.makeText(getContext(), getContentDescription(), Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+            return true;
+        });
     }
 
     public ForegroundImageView(Context context, AttributeSet attrs, int defStyleAttr) {

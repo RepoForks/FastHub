@@ -74,15 +74,14 @@ public class LoginPresenter extends BasePresenter<LoginMvp.View> implements Logi
                 String token = modelResponse.body().getAccessToken();
                 if (!InputHelper.isEmpty(token)) {
                     PrefGetter.setToken(token);
-                    manageSubscription(
-                            RxHelper.getObserver(RestClient.getUser())
-                                    .doOnSubscribe(() -> sendToView(LoginMvp.View::onShowProgress))
-                                    .doOnNext(this::onUserResponse)
-                                    .onErrorReturn(throwable -> {
-                                        sendToView(view -> view.onShowMessage(throwable.getMessage()));
-                                        return null;
-                                    })
-                                    .subscribe());
+                    manageSubscription(RxHelper.getObserver(RestClient.getUser())
+                            .doOnSubscribe(() -> sendToView(LoginMvp.View::onShowProgress))
+                            .doOnNext(this::onUserResponse)
+                            .onErrorReturn(throwable -> {
+                                sendToView(view -> view.onShowMessage(throwable.getMessage()));
+                                return null;
+                            })
+                            .subscribe());
                     return;
                 }
             } else {

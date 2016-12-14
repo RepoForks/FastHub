@@ -41,6 +41,12 @@ public interface ViewerMvp {
 
         void onWorkOffline(@NonNull FilesListModel filesListModel);
 
+        void onWorkOffline(@NonNull String repoId, @NonNull String login, @Nullable String refNo);
+
         void onWorkOnline(@NonNull FilesListModel filesListModel);
+
+        void onWorkOnline(@NonNull String repoId, @NonNull String login, @Nullable String refNo);
+
+        boolean isRepo();
     }
 }

@@ -1,14 +1,18 @@
 package com.fastaccess.ui.modules.issue.details;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.fastaccess.data.dao.IssueEventAdapterModel;
+import com.fastaccess.data.dao.IssueEventModel;
 import com.fastaccess.data.dao.IssueModel;
 import com.fastaccess.data.rest.RestClient;
+import com.fastaccess.helper.ActivityHelper;
 import com.fastaccess.helper.BundleConstant;
+import com.fastaccess.helper.Logger;
 import com.fastaccess.helper.RxHelper;
 import com.fastaccess.ui.base.mvp.presenter.BasePresenter;
 
@@ -39,7 +43,18 @@ public class IssueDetailsPresenter extends BasePresenter<IssueDetailsMvp.View> i
     }
 
     @Override public void onItemClick(int position, View v, IssueEventAdapterModel item) {
+        Logger.e(item.getType());
+        if (item.getType() == IssueEventAdapterModel.HEADER) {
 
+        } else {
+            IssueEventModel issueEventModel = item.getIssueEvent();
+            if (issueEventModel.getCommitUrl() != null) {
+                Activity activity = ActivityHelper.getActivity(v.getContext());
+                if (activity != null) {
+                    ActivityHelper.startCustomTab(activity, issueEventModel.getCommitUrl());
+                }
+            }
+        }
     }
 
     @Override public void onItemLongClick(int position, View v, IssueEventAdapterModel item) {

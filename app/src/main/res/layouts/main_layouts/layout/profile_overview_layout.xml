@@ -8,7 +8,7 @@
     android:paddingBottom="@dimen/spacing_xs_large"
     android:paddingEnd="@dimen/layout_margin"
     android:paddingStart="@dimen/layout_margin"
-    android:paddingTop="@dimen/spacing_xs_large">
+    android:paddingTop="@dimen/spacing_normal">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -142,6 +142,7 @@
                             android:autoLink="map"
                             android:drawablePadding="@dimen/spacing_xs_large"
                             android:drawableStart="@drawable/ic_location"
+
                             tools:text="Cum classis nocere"/>
 
                         <com.fastaccess.ui.widgets.FontTextView

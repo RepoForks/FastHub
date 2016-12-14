@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.fastaccess.R;
+import com.fastaccess.data.dao.IssueEventAdapterModel;
 import com.fastaccess.data.dao.IssueModel;
 import com.fastaccess.helper.InputHelper;
 import com.fastaccess.helper.ParseDateFormat;
@@ -21,7 +22,7 @@ import butterknife.BindView;
  * Created by Kosh on 13 Dec 2016, 1:03 AM
  */
 
-public class IssueDetailsViewHolder extends BaseViewHolder<IssueModel> {
+public class IssueDetailsViewHolder extends BaseViewHolder<IssueEventAdapterModel> {
 
     @BindView(R.id.avatarView) AvatarLayout avatarView;
     @BindView(R.id.name) FontTextView name;
@@ -36,7 +37,8 @@ public class IssueDetailsViewHolder extends BaseViewHolder<IssueModel> {
         return new IssueDetailsViewHolder(getView(viewGroup, R.layout.issue_detail_header_row_item), adapter);
     }
 
-    @Override public void bind(@NonNull IssueModel issueModel) {
+    @Override public void bind(@NonNull IssueEventAdapterModel model) {
+        IssueModel issueModel = model.getIssueModel();
         avatarView.setUrl(issueModel.getUser().getAvatarUrl(), issueModel.getUser().getLogin());
         name.setText(issueModel.getUser().getLogin());
         date.setText(ParseDateFormat.getTimeAgo(issueModel.getCreatedAt()));

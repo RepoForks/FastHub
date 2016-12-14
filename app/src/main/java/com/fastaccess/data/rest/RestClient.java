@@ -1,6 +1,7 @@
 package com.fastaccess.data.rest;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.fastaccess.BuildConfig;
 import com.fastaccess.data.dao.AccessTokenModel;
@@ -17,12 +18,14 @@ import com.fastaccess.data.dao.PullRequestModel;
 import com.fastaccess.data.dao.RepoModel;
 import com.fastaccess.data.dao.SearchCodeModel;
 import com.fastaccess.data.dao.UserModel;
+import com.fastaccess.data.dao.types.IssueState;
 import com.fastaccess.data.rest.service.ContentService;
 import com.fastaccess.data.rest.service.GistService;
 import com.fastaccess.data.rest.service.IssueService;
 import com.fastaccess.data.rest.service.RepoService;
 import com.fastaccess.data.rest.service.RestService;
 import com.fastaccess.data.rest.service.SearchService;
+import com.fastaccess.provider.rest.AuthRestProvider;
 import com.fastaccess.provider.rest.RestProvider;
 
 import okhttp3.ResponseBody;
@@ -36,7 +39,7 @@ import rx.Observable;
 public class RestClient {
 
     public static Observable<Response<AccessTokenModel>> getAccessToken(@NonNull String code) {
-        return RestProvider.getLoginRestService().getAccessToken(code, BuildConfig.GITHUB_CLIENT_ID,
+        return AuthRestProvider.getLoginRestService().getAccessToken(code, BuildConfig.GITHUB_CLIENT_ID,
                 BuildConfig.GITHUB_SECRET, BuildConfig.APPLICATION_ID, BuildConfig.REDIRECT_URL);
     }
 
@@ -167,8 +170,8 @@ public class RestClient {
         return RestProvider.createService(IssueService.class).editIssue(login, repoId, number, model);
     }
 
-    public static Observable<Pageable<IssueModel>> getRepoIssues(@NonNull String login, @NonNull String repoId, int page) {
-        return RestProvider.createService(IssueService.class).getRepositoryIssues(login, repoId, page);
+    public static Observable<Pageable<IssueModel>> getRepoIssues(@NonNull String login, @NonNull String repoId, @NonNull IssueState state, int page) {
+        return RestProvider.createService(IssueService.class).getRepositoryIssues(login, repoId, state.name(), page);
     }
 
     public static Observable<Pageable<IssueEventModel>> getIssueTimeline(@NonNull String login, @NonNull String repoId, int number, int page) {
@@ -181,6 +184,10 @@ public class RestClient {
 
     public static Observable<String> getRawReadMe(@NonNull String login, @NonNull String repoId) {
         return RestProvider.createService(ContentService.class, true).getRawReadme(login, repoId);
+    }
+
+    public static Observable<String> getRepoReadme(@NonNull String login, @NonNull String repoId, @Nullable String ref) {
+        return RestProvider.createStringService(RepoService.class).getReadmeHtml(login, repoId, ref);
     }
 
     public static Observable<Response<Boolean>> checkStarringRepo(@NonNull String login, @NonNull String repoId) {

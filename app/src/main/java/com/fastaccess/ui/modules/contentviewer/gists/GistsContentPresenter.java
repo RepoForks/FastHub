@@ -46,9 +46,7 @@ public class GistsContentPresenter extends BasePresenter<GistsContentMvp.View> i
             manageSubscription(RxHelper.getObserver(RestClient.getGist(gistId))
                     .doOnSubscribe(() -> sendToView(GistsContentMvp.View::onShowProgress))
                     .doOnNext(gistsModel -> {
-                        if (gistsModel != null) {
-                            this.gist = gistsModel;
-                        }
+                        this.gist = gistsModel;
                         sendToView(GistsContentMvp.View::onSetupDetails);
                     })
                     .onErrorReturn(throwable -> {

@@ -11,6 +11,7 @@ import com.fastaccess.data.dao.UserModel;
 import retrofit2.Response;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
@@ -25,6 +26,10 @@ public interface RepoService {
 
     @GET("repos/{login}/{repoId}")
     Observable<RepoModel> getRepo(@Path("login") String login, @Path("repoId") String repoId);
+
+    @GET("repos/{owner}/{repo}/readme")
+    @Headers("Accept: application/vnd.github.html")
+    Observable<String> getReadmeHtml(@Path("owner") String owner, @Path("repo") String repo, @Query("ref") String ref);
 
 
     @GET("repos/{owner}/{repo}/issues/comments")

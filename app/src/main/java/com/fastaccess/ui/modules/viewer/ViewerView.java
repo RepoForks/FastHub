@@ -30,10 +30,11 @@ public class ViewerView extends BaseFragment<ViewerMvp.View, ViewerPresenter> im
     @BindView(R.id.webView) PrettifyWebView webView;
     @BindView(R.id.stateLayout) StateLayout stateLayout;
 
-    public static ViewerView newInstance(@NonNull String repoId, @NonNull String login) {
+    public static ViewerView newInstance(@NonNull String repoId, @NonNull String login, @Nullable String refNo) {
         return newInstance(Bundler.start()
                 .put(BundleConstant.EXTRA_ID, login)
                 .put(BundleConstant.ID, repoId)
+                .put(BundleConstant.EXTRA, refNo)
                 .end());
     }
 
@@ -50,16 +51,17 @@ public class ViewerView extends BaseFragment<ViewerMvp.View, ViewerPresenter> im
     }
 
     @Override public void onSetMdText(@NonNull String text) {
-//        stateLayout.hideProgress();
-//        textViewHolder.setVisibility(View.VISIBLE);
-//        MarkDownProvider.convertTextToMarkDown(textView, text);
-        webView.setOnContentChangedListener(this);
+        stateLayout.hideProgress();
         webView.setVisibility(View.VISIBLE);
-        webView.setMdSource(text);
+        if (getPresenter().isRepo()) {
+            webView.setGithubContent(text);
+        } else {
+            webView.setMdSource(text);
+        }
     }
 
     @Override public void onSetCode(@NonNull String text) {
-        webView.setOnContentChangedListener(this);
+        stateLayout.hideProgress();
         webView.setVisibility(View.VISIBLE);
         webView.setSource(text);
     }

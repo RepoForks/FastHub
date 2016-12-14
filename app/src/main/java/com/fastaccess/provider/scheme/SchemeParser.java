@@ -131,7 +131,7 @@ public class SchemeParser {
 
     public static Intent getRepo(@NonNull Context context, @NonNull Uri uri) {
         List<String> segments = uri.getPathSegments();
-        if (segments == null || segments.size() > 2) return null;
+        if (segments == null || segments.size() < 2) return null;
         String owner = segments.get(0);
         String repoName = segments.get(1);
         return RepoPagerView.createIntent(context, repoName, owner);

@@ -19,6 +19,7 @@ import android.webkit.WebViewClient;
 import com.fastaccess.helper.ActivityHelper;
 import com.fastaccess.helper.InputHelper;
 import com.prettifier.pretty.callback.MarkDownInterceptorInterface;
+import com.prettifier.pretty.helper.GithubHelper;
 import com.prettifier.pretty.helper.MarkDownHelper;
 import com.prettifier.pretty.helper.PrettifyHelper;
 
@@ -92,9 +93,18 @@ public class PrettifyWebView extends NestedWebView {
         } else Log.e(getClass().getSimpleName(), "Source can't be null or empty.");
     }
 
+    public void setGithubContent(@NonNull String source) {
+        if (!InputHelper.isEmpty(source)) {
+            addJavascriptInterface(new MarkDownInterceptorInterface(this), "Android");
+            this.content = source;
+            String page = GithubHelper.generateContent(source);
+            post(() -> loadDataWithBaseURL("file:///android_asset/md/", page, "text/html", "utf-8", null));
+        }
+    }
+
     public void setMdSource(@NonNull String source) {
         if (!InputHelper.isEmpty(source)) {
-            addJavascriptInterface(new MarkDownInterceptorInterface(PrettifyWebView.this), "Android");
+            addJavascriptInterface(new MarkDownInterceptorInterface(this), "Android");
             this.content = source;
             String page = MarkDownHelper.generateContent(source);
             post(() -> loadDataWithBaseURL("file:///android_asset/md/", page, "text/html", "utf-8", null));

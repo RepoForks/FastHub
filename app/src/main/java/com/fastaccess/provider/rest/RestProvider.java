@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.fastaccess.R;
-import com.fastaccess.data.rest.service.RestService;
 import com.fastaccess.data.rest.service.UserRestService;
 import com.fastaccess.helper.InputHelper;
 import com.fastaccess.helper.PrefGetter;
@@ -49,6 +48,15 @@ public class RestProvider {
                 .build();
     }
 
+    @NonNull private static Retrofit getRetrofitString() {
+        return new Retrofit.Builder()
+                .baseUrl(REST_URL)
+                .client(getHttpClient(false, true))
+                .addConverterFactory(new StringConverter())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+    }
+
     @NonNull private static Retrofit getRetrofit() {
         return getRetrofit(false);
     }
@@ -71,24 +79,6 @@ public class RestProvider {
                 .build();
     }
 
-    @NonNull public static UserRestService getLoginRestService() {
-        return new Retrofit.Builder()
-                .client(getHttpClient(false))
-                .baseUrl("https://github.com/login/oauth/")
-                .addConverterFactory(GsonConverterFactory.create(getGson()))
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build()
-                .create(UserRestService.class);
-    }
-
-    @NonNull public static RestService getRestService() {
-        return createService(RestService.class);
-    }
-
-    @NonNull public static RestService getRestService(@NonNull Gson gson) {
-        return createService(RestService.class, gson);
-    }
-
     @NonNull public static UserRestService getUserRestService() {
         return createService(UserRestService.class);
     }
@@ -109,20 +99,27 @@ public class RestProvider {
         return createService(service, false);
     }
 
+    @NonNull public static <S> S createStringService(@NonNull Class<S> service) {
+        return getRetrofitString().create(service);
+    }
+
     @NonNull public static <S> S createService(@NonNull Class<S> service, @NonNull Gson gson) {
         return getRetrofit(gson).create(service);
     }
 
     @NonNull private static OkHttpClient getHttpClient(boolean isRaw) {
+        return getHttpClient(isRaw, false);
+    }
+
+    @NonNull private static OkHttpClient getHttpClient(boolean isRaw, boolean isHtml) {
         return new OkHttpClient.Builder()
-                .retryOnConnectionFailure(false)
                 .addInterceptor(loggingInterceptor(HttpLoggingInterceptor.Level.BODY))
                 .addInterceptor(new PaginationInterceptor())
                 .addInterceptor(chain -> {
                     Request original = chain.request();
                     Request.Builder requestBuilder = original.newBuilder()
-                            .header("Accept", !isRaw ? "application/vnd.github.v3+json" : "application/vnd.github.VERSION.raw")
-                            .header("Content-type", !isRaw ? "application/vnd.github.v3+json" : "application/vnd.github.VERSION.raw; charset=utf-8");
+                            .header("Accept", getAccept(isRaw, isHtml))
+                            .header("Content-type", getContentType(isRaw, isHtml));
                     if (!InputHelper.isEmpty(PrefGetter.getToken())) {
                         requestBuilder.header("Authorization", "token " + PrefGetter.getToken());
                     }
@@ -133,7 +130,19 @@ public class RestProvider {
                 .build();
     }
 
-    @NonNull private static Gson getGson() {
+    @NonNull private static String getAccept(boolean isRaw, boolean isHtml) {
+        return isHtml ? "application/vnd.github.html"
+                      : !isRaw ? "application/vnd.github.v3+json"
+                               : "application/vnd.github.VERSION.raw";
+    }
+
+    @NonNull private static String getContentType(boolean isRaw, boolean isHtml) {
+        return isHtml ? "application/vnd.github.html"
+                      : !isRaw ? "application/vnd.github.v3+json"
+                               : "application/vnd.github.VERSION.raw; charset=utf-8";
+    }
+
+    @NonNull public static Gson getGson() {
         return new GsonBuilder()
                 .setPrettyPrinting()
                 .excludeFieldsWithModifiers(Modifier.FINAL, Modifier.TRANSIENT, Modifier.STATIC)
@@ -150,7 +159,7 @@ public class RestProvider {
         return downloadManager.enqueue(request);
     }
 
-    public static int getCode(Throwable throwable) {
+    public static int getErrorCode(Throwable throwable) {
         if (throwable instanceof HttpException) {
             return ((HttpException) throwable).code();
 

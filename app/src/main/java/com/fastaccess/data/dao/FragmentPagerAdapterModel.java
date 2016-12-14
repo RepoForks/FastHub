@@ -78,7 +78,7 @@ public class FragmentPagerAdapterModel {
         List<FragmentPagerAdapterModel> fragments = new ArrayList<>();
         String login = repoModel.getOwner().getLogin();
         String repoId = String.valueOf(repoModel.getName());
-        fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.readme), ViewerView.newInstance(repoId, login)));
+        fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.readme), ViewerView.newInstance(repoId, login, null)));
         fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.issues), RepoIssuesView.newInstance(repoId, login)));
         return fragments;
     }

@@ -79,6 +79,8 @@ public class IssueEventAdapterModel implements Parcelable {
         dest.writeParcelable(this.issueModel, flags);
     }
 
+    public IssueEventAdapterModel() {}
+
     protected IssueEventAdapterModel(Parcel in) {
         this.type = in.readInt();
         this.issueEvent = in.readParcelable(IssueEventModel.class.getClassLoader());

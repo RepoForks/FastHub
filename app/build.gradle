@@ -73,7 +73,7 @@ repositories {
 
 dependencies {
     ext {
-        supportVerion = "25.0.1"
+        supportVerion = "25.1.0"
         firebase = "9.8.0"
         thirtyinchVersion = '0.8.0-rc1'
         retrofit = '2.1.0'

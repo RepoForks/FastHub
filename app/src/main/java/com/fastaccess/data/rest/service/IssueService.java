@@ -36,7 +36,7 @@ public interface IssueService {
 
     @GET("repos/{owner}/{repo}/issues")
     Observable<Pageable<IssueModel>> getRepositoryIssues(@Path("owner") String owner, @Path("repo") String repo,
-                                                         @Query("page") int page);
+                                                         @Query("state") String state, @Query("page") int page);
 
     @GET("repos/{owner}/{repo}/issues/{number}")
     Observable<IssueModel> getIssue(@Path("owner") String owner, @Path("repo") String repo,

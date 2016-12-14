@@ -21,6 +21,7 @@ public class FileModel implements Parcelable {
     private String content;
     private String fileName;
     private String id;
+    private boolean isRepo;
 
     public String getId() {
         return id;
@@ -64,6 +65,19 @@ public class FileModel implements Parcelable {
         return RxPaperBook.with(BOOK_NAME).read(getSafeKey(id, fileName));
     }
 
+    private static String getSafeKey(@NonNull String id, @NonNull String fileName) {
+        String key = id + "_" + fileName;
+        return key.length() < 80 ? key : key.substring(0, 80);
+    }
+
+    public boolean isRepo() {
+        return isRepo;
+    }
+
+    public void setRepo(boolean repo) {
+        isRepo = repo;
+    }
+
     @Override public int describeContents() { return 0; }
 
     @Override public void writeToParcel(Parcel dest, int flags) {
@@ -71,6 +85,7 @@ public class FileModel implements Parcelable {
         dest.writeString(this.content);
         dest.writeString(this.fileName);
         dest.writeString(this.id);
+        dest.writeByte(this.isRepo ? (byte) 1 : (byte) 0);
     }
 
     protected FileModel(Parcel in) {
@@ -78,6 +93,7 @@ public class FileModel implements Parcelable {
         this.content = in.readString();
         this.fileName = in.readString();
         this.id = in.readString();
+        this.isRepo = in.readByte() != 0;
     }
 
     public static final Creator<FileModel> CREATOR = new Creator<FileModel>() {
@@ -85,9 +101,4 @@ public class FileModel implements Parcelable {
 
         @Override public FileModel[] newArray(int size) {return new FileModel[size];}
     };
-
-    private static String getSafeKey(@NonNull String id, @NonNull String fileName) {
-        String key = id + "_" + fileName;
-        return key.length() < 80 ? key : key.substring(0, 80);
-    }
 }

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.fastaccess.R;
+import com.fastaccess.data.dao.IssueEventAdapterModel;
 import com.fastaccess.data.dao.IssueEventModel;
 import com.fastaccess.data.dao.LabelModel;
 import com.fastaccess.data.dao.types.IssueEventType;
@@ -25,7 +26,7 @@ import butterknife.BindView;
  * Created by Kosh on 13 Dec 2016, 1:42 AM
  */
 
-public class IssueTimelineViewHolder extends BaseViewHolder<IssueEventModel> {
+public class IssueTimelineViewHolder extends BaseViewHolder<IssueEventAdapterModel> {
 
     @BindView(R.id.stateImage) ForegroundImageView stateImage;
     @BindView(R.id.avatarLayout) AvatarLayout avatarLayout;
@@ -34,19 +35,19 @@ public class IssueTimelineViewHolder extends BaseViewHolder<IssueEventModel> {
 
     private IssueTimelineViewHolder(@NonNull View itemView, @Nullable BaseRecyclerAdapter adapter) {
         super(itemView, adapter);
-        stateText.setOnClickListener(this);
-        stateText.setOnLongClickListener(this);
     }
 
     public static IssueTimelineViewHolder newInstance(ViewGroup viewGroup, BaseRecyclerAdapter adapter) {
         return new IssueTimelineViewHolder(getView(viewGroup, R.layout.issue_timeline_row_item), adapter);
     }
 
-    @Override public void bind(@NonNull IssueEventModel issueEventModel) {
+    @Override public void bind(@NonNull IssueEventAdapterModel model) {
+        IssueEventModel issueEventModel = model.getIssueEvent();
         IssueEventType event = issueEventModel.getEvent();
         SpannableBuilder spannableBuilder = SpannableBuilder.builder()
                 .bold(issueEventModel.getActor().getLogin());
         if (event != null) {
+            stateImage.setContentDescription(event.name());
             spannableBuilder
                     .append(" ")
                     .append(event.name());
@@ -70,13 +71,14 @@ public class IssueTimelineViewHolder extends BaseViewHolder<IssueEventModel> {
                 spannableBuilder
                         .append(" ")
                         .bold(issueEventModel.getRename().getFrom())
+                        .append(" ")
                         .append(to)
                         .append(" ")
                         .bold(issueEventModel.getRename().getTo());
             } else if (event == IssueEventType.referenced || event == IssueEventType.merged) {
                 spannableBuilder
                         .append(" ")
-                        .url(issueEventModel.getCommitUrl());
+                        .url("This");
             }
         } else {
             stateImage.setImageResource(R.drawable.ic_label);

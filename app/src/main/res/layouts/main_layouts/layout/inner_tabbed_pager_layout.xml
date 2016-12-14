@@ -19,7 +19,7 @@
             android:clipToPadding="false"
             android:paddingStart="@dimen/keyline_1"
             app:tabSelectedTextColor="?colorAccent"
-            app:tabTextColor="@color/primary_dark"/>
+            app:tabTextColor="@color/dark_gray"/>
 
         <View
             android:id="@+id/toolbarShadow"

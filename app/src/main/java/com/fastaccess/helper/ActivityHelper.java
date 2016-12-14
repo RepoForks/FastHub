@@ -59,6 +59,10 @@ public class ActivityHelper {
         tabsIntent.launchUrl(context, url);
     }
 
+    public static void startCustomTab(@NonNull Activity context, @NonNull String url) {
+        startCustomTab(context, Uri.parse(url));
+    }
+
     @SafeVarargs public static void start(Activity activity, Class cl, Pair<View, String>... sharedElements) {
         Intent intent = new Intent(activity, cl);
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, sharedElements);

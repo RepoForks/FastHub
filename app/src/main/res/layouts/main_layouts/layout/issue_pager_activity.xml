@@ -67,6 +67,8 @@
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/keyline_1"
         app:layout_behavior="@string/scroll_behavior"/>
 
     <android.support.design.widget.FloatingActionButton
@@ -77,7 +79,6 @@
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_comment"
         android:tint="@color/white"
-        app:fabSize="auto"
-        app:layout_behavior="@string/quick_return_behavior"/>
+        app:fabSize="auto"/>
 
 </android.support.design.widget.CoordinatorLayout>

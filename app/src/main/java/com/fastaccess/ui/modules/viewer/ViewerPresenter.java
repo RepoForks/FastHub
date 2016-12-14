@@ -13,6 +13,7 @@ import com.fastaccess.helper.InputHelper;
 import com.fastaccess.helper.RxHelper;
 import com.fastaccess.provider.markdown.MarkDownProvider;
 import com.fastaccess.ui.base.mvp.presenter.BasePresenter;
+import com.fastaccess.ui.modules.viewer.ViewerMvp.Presenter;
 
 import java.io.IOException;
 
@@ -20,15 +21,17 @@ import java.io.IOException;
  * Created by Kosh on 27 Nov 2016, 3:43 PM
  */
 
-public class ViewerPresenter extends BasePresenter<ViewerMvp.View> implements ViewerMvp.Presenter {
+public class ViewerPresenter extends BasePresenter<ViewerMvp.View> implements Presenter {
     private String downloadedStream;
     private boolean isMarkdown;
+    private boolean isRepo;
 
     @Override public void onHandleIntent(@Nullable Bundle intent) {
         if (intent == null) return;
         FilesListModel filesListModel = intent.getParcelable(BundleConstant.EXTRA);
         String repoId = intent.getString(BundleConstant.ID);
         String login = intent.getString(BundleConstant.EXTRA_ID);
+        String refNo = intent.getString(BundleConstant.EXTRA);
         if (filesListModel != null) {
             if (MarkDownProvider.isArchive(filesListModel.getFilename()) || MarkDownProvider.isArchive(filesListModel.getRawUrl())) {
                 sendToView(view -> view.onShowError(R.string.archive_file_detected_error));
@@ -37,19 +40,7 @@ public class ViewerPresenter extends BasePresenter<ViewerMvp.View> implements Vi
             //work offline first.
             onWorkOffline(filesListModel);
         } else if (!InputHelper.isEmpty(repoId) && !InputHelper.isEmpty(login)) {
-            manageSubscription(RxHelper.getObserver(RestClient.getRawReadMe(login, repoId))
-                    .doOnSubscribe(() -> sendToView(ViewerMvp.View::onShowMdProgress))
-                    .doOnNext(s -> {
-                        isMarkdown = true;
-                        downloadedStream = s;
-                        sendToView(view -> view.onSetMdText(downloadedStream));
-                    })
-                    .onErrorReturn(throwable -> {
-                        throwable.printStackTrace();
-                        sendToView(view -> view.onShowError(throwable.getMessage()));
-                        return null;
-                    })
-                    .subscribe());
+            onWorkOffline(repoId, login, refNo);
         }
     }
 
@@ -63,8 +54,8 @@ public class ViewerPresenter extends BasePresenter<ViewerMvp.View> implements Vi
 
     @Override public void onWorkOffline(@NonNull FilesListModel filesListModel) {
         if (downloadedStream == null) {
-            sendToView(ViewerMvp.View::onShowMdProgress);
             manageSubscription(FileModel.getFile(filesListModel.getId(), filesListModel.getFilename())
+                    .doOnSubscribe(() -> sendToView(ViewerMvp.View::onShowMdProgress))
                     .subscribe(fileModel -> {
                         if (fileModel != null) {
                             downloadedStream = fileModel.getContent();
@@ -78,6 +69,23 @@ public class ViewerPresenter extends BasePresenter<ViewerMvp.View> implements Vi
                             });
                         } else {
                             onWorkOnline(filesListModel);
+                        }
+                    }));
+        }
+    }
+
+    @Override public void onWorkOffline(@NonNull String repoId, @NonNull String login, @Nullable String refNo) {
+        if (downloadedStream == null) {
+            manageSubscription(FileModel.getFile(repoId, login)
+                    .doOnSubscribe(() -> sendToView(ViewerMvp.View::onShowMdProgress))
+                    .subscribe(fileModel -> {
+                        if (fileModel != null) {
+                            downloadedStream = fileModel.getContent();
+                            isMarkdown = true;
+                            isRepo = true;
+                            sendToView(view -> view.onSetMdText(downloadedStream));
+                        } else {
+                            onWorkOnline(repoId, login, refNo);
                         }
                     }));
         }
@@ -125,5 +133,33 @@ public class ViewerPresenter extends BasePresenter<ViewerMvp.View> implements Vi
                     return null;
                 })
                 .subscribe());
+    }
+
+    @Override public void onWorkOnline(@NonNull String repoId, @NonNull String login, @Nullable String refNo) {
+        manageSubscription(RxHelper.getObserver(RestClient.getRepoReadme(login, repoId, refNo))
+                .doOnSubscribe(() -> sendToView(ViewerMvp.View::onShowMdProgress))
+                .doOnNext(s -> {
+                    isMarkdown = true;
+                    isRepo = true;
+                    downloadedStream = s;
+                    sendToView(view -> view.onSetMdText(downloadedStream));
+                    FileModel fileModel = new FileModel();
+                    fileModel.setContent(downloadedStream);
+                    fileModel.setId(repoId);
+                    fileModel.setFileName(login);
+                    fileModel.setMarkdown(true);
+                    fileModel.setRepo(true);
+                    manageSubscription(FileModel.save(fileModel).subscribe());
+                })
+                .onErrorReturn(throwable -> {
+                    throwable.printStackTrace();
+                    sendToView(view -> view.onShowError(throwable.getMessage()));
+                    return null;
+                })
+                .subscribe());
+    }
+
+    @Override public boolean isRepo() {
+        return isRepo;
     }
 }

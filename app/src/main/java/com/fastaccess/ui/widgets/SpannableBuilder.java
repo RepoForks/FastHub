@@ -18,7 +18,7 @@ import static android.graphics.Typeface.BOLD;
 
 public class SpannableBuilder extends SpannableStringBuilder {
 
-    private SpannableBuilder() {}//force usage of builder
+    private SpannableBuilder() {}
 
     public static SpannableBuilder builder() {
         return new SpannableBuilder();
@@ -60,7 +60,8 @@ public class SpannableBuilder extends SpannableStringBuilder {
     }
 
     public SpannableBuilder background(final CharSequence text, final int color) {
-        if (!InputHelper.isEmpty(text)) return append("  " + text + "  "/*give it sort of padding*/, new BackgroundColorSpan(color));
+        if (!InputHelper.isEmpty(text))
+            return append(text, new BackgroundColorSpan(color));
         return this;
     }
 
