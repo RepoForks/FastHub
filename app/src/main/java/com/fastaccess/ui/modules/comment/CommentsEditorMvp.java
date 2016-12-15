@@ -13,7 +13,7 @@ import com.fastaccess.ui.base.mvp.BaseMvp;
  * Created by Kosh on 27 Nov 2016, 1:31 AM
  */
 
-public interface CommentsMvp {
+public interface CommentsEditorMvp {
 
     interface View extends BaseMvp.FAView {
         void onSendResultAndFinish(@NonNull CommentsModel commentModel, boolean isNew);
@@ -29,11 +29,15 @@ public interface CommentsMvp {
 
         void onActionClicked(@NonNull EditText editText, @IdRes int id);
 
-        void onEditComment(long id, @Nullable CharSequence savedText, @NonNull String gistId);
+        void onEditGistComment(long id, @Nullable CharSequence savedText, @NonNull String gistId);
 
-        void onSubmitComment(@Nullable CharSequence savedText, @NonNull String gistId);
+        void onSubmitGistComment(@Nullable CharSequence savedText, @NonNull String gistId);
+
+        void onSubmitIssueComment(CharSequence savedText, @NonNull String itemId, @NonNull String login, int issueNumber);
+
+        void onEditIssueComment(CharSequence savedText, @NonNull String itemId, long id, @NonNull String login, int issueNumber);
 
         void onHandleSubmission(@Nullable CharSequence savedText, @Nullable @BundleConstant.ExtraTYpe String extraType,
-                                @Nullable String itemId, long id);
+                                @Nullable String itemId, long commentId, @Nullable String login, int issueNumber);
     }
 }

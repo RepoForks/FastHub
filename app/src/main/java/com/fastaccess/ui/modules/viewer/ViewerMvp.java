@@ -17,7 +17,7 @@ public interface ViewerMvp {
 
     interface View extends BaseMvp.FAView, PrettifyWebView.OnContentChangedListener {
 
-        void onSetNormalText(@NonNull String text);
+        void onSetImageUrl(@NonNull String url);
 
         void onSetMdText(@NonNull String text);
 
@@ -48,5 +48,7 @@ public interface ViewerMvp {
         void onWorkOnline(@NonNull String repoId, @NonNull String login, @Nullable String refNo);
 
         boolean isRepo();
+
+        boolean isImage();
     }
 }

@@ -153,20 +153,20 @@ public class RestClient {
         return RestProvider.createService(RepoService.class).getRepo(login, repoId);
     }
 
-    public static Observable<IssueModel> getIssue(@NonNull String login, @NonNull String repoId, long number) {
+    public static Observable<IssueModel> getIssue(@NonNull String login, @NonNull String repoId, int number) {
         return RestProvider.createService(IssueService.class).getIssue(login, repoId, number);
     }
 
-    public static Observable<Response<Boolean>> lockIssue(@NonNull String login, @NonNull String repoId, long number) {
+    public static Observable<Response<Boolean>> lockIssue(@NonNull String login, @NonNull String repoId, int number) {
         return RestProvider.createService(IssueService.class).lockIssue(login, repoId, number);
     }
 
-    public static Observable<Response<Boolean>> unLockIssue(@NonNull String login, @NonNull String repoId, long number) {
+    public static Observable<Response<Boolean>> unLockIssue(@NonNull String login, @NonNull String repoId, int number) {
         return RestProvider.createService(IssueService.class).unlockIssue(login, repoId, number);
     }
 
     public static Observable<IssueModel> editIssue(@NonNull String login, @NonNull String repoId,
-                                                   long number, @NonNull IssueRequestModel model) {
+                                                   int number, @NonNull IssueRequestModel model) {
         return RestProvider.createService(IssueService.class).editIssue(login, repoId, number, model);
     }
 
@@ -180,6 +180,20 @@ public class RestClient {
 
     public static Observable<Pageable<CommentsModel>> getIssuesComments(@NonNull String login, @NonNull String repoId, int number, int page) {
         return RestProvider.createService(IssueService.class).getIssueComments(login, repoId, number, page);
+    }
+
+    public static Observable<CommentsModel> createIssueComment(@NonNull String login, @NonNull String repoId,
+                                                               int number, @NonNull CommentRequestModel commentsModel) {
+        return RestProvider.createService(IssueService.class).createIssueComment(login, repoId, number, commentsModel);
+    }
+
+    public static Observable<CommentsModel> editIssueComment(@NonNull String login, @NonNull String repoId, long commentId,
+                                                             @NonNull CommentRequestModel commentsModel) {
+        return RestProvider.createService(IssueService.class).editIssueComment(login, repoId, commentId, commentsModel);
+    }
+
+    public static Observable<Response<Boolean>> deleteIssueComment(@NonNull String login, @NonNull String repoId, long commentId) {
+        return RestProvider.createService(IssueService.class).deleteIssueComment(login, repoId, commentId);
     }
 
     public static Observable<String> getRawReadMe(@NonNull String login, @NonNull String repoId) {

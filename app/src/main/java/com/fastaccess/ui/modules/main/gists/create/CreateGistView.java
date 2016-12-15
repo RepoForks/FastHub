@@ -15,7 +15,7 @@ import com.fastaccess.helper.Bundler;
 import com.fastaccess.helper.InputHelper;
 import com.fastaccess.provider.markdown.MarkDownProvider;
 import com.fastaccess.ui.base.BaseActivity;
-import com.fastaccess.ui.modules.comment.CommentsView;
+import com.fastaccess.ui.modules.comment.CommentsEditorView;
 import com.fastaccess.ui.widgets.FontButton;
 
 import butterknife.BindView;
@@ -103,10 +103,10 @@ public class CreateGistView extends BaseActivity<CreateGistMvp.View, CreateGistP
 
     @OnTouch(R.id.fileContent) boolean onTouch(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            Intent intent = new Intent(this, CommentsView.class);
+            Intent intent = new Intent(this, CommentsEditorView.class);
             intent.putExtras(Bundler.start()
                     .put(BundleConstant.EXTRA, InputHelper.toString(savedText))
-                    .put(BundleConstant.EXTRA_TYPE, BundleConstant.FOR_RESULT_EXTRA)
+                    .put(BundleConstant.EXTRA_TYPE, BundleConstant.ExtraTYpe.FOR_RESULT_EXTRA)
                     .end());
             startActivityForResult(intent, BundleConstant.REQUEST_CODE);
             return true;

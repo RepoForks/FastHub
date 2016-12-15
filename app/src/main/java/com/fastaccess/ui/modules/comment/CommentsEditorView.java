@@ -28,7 +28,7 @@ import icepick.State;
  * Created by Kosh on 27 Nov 2016, 1:32 AM
  */
 
-public class CommentsView extends BaseActivity<CommentsMvp.View, CommentsPresenter> implements CommentsMvp.View {
+public class CommentsEditorView extends BaseActivity<CommentsEditorMvp.View, CommentsEditorPresenter> implements CommentsEditorMvp.View {
 
     private RichText richText;
     private CharSequence savedText;
@@ -40,7 +40,9 @@ public class CommentsView extends BaseActivity<CommentsMvp.View, CommentsPresent
 
     @State @BundleConstant.ExtraTYpe String extraType;
     @State String itemId;
-    @State long id = 0;
+    @State String login;
+    @State int issueNumber;
+    @State long commentId = 0;
 
     @Override protected int layout() {
         return R.layout.add_comment_dialog_layout;
@@ -62,8 +64,8 @@ public class CommentsView extends BaseActivity<CommentsMvp.View, CommentsPresent
         return false;
     }
 
-    @NonNull @Override public CommentsPresenter providePresenter() {
-        return new CommentsPresenter();
+    @NonNull @Override public CommentsEditorPresenter providePresenter() {
+        return new CommentsEditorPresenter();
     }
 
     @OnTextChanged(value = R.id.editText, callback = OnTextChanged.Callback.TEXT_CHANGED) void onEdited(CharSequence charSequence) {
@@ -95,7 +97,7 @@ public class CommentsView extends BaseActivity<CommentsMvp.View, CommentsPresent
 
     @OnClick(value = {R.id.ok, R.id.cancel}) void onClick(View view) {
         if (view.getId() == R.id.ok) {
-            getPresenter().onHandleSubmission(savedText, extraType, itemId, id);
+            getPresenter().onHandleSubmission(savedText, extraType, itemId, commentId, login, issueNumber);
         } else {
             finish();
         }
@@ -111,11 +113,13 @@ public class CommentsView extends BaseActivity<CommentsMvp.View, CommentsPresent
             Intent intent = getIntent();
             if (intent != null && intent.getExtras() != null) {
                 Bundle bundle = intent.getExtras();
-                editText.setText(bundle.getString(BundleConstant.EXTRA));
                 itemId = bundle.getString(BundleConstant.ID);
-                id = bundle.getLong(BundleConstant.EXTRA_ID);
+                commentId = bundle.getLong(BundleConstant.EXTRA_ID);
+                login = bundle.getString(BundleConstant.EXTRA2_ID);
+                issueNumber = bundle.getInt(BundleConstant.EXTRA3_ID);
                 //noinspection WrongConstant
                 extraType = bundle.getString(BundleConstant.EXTRA_TYPE);
+                editText.setText(bundle.getString(BundleConstant.EXTRA));
             }
         }
     }

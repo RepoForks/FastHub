@@ -118,9 +118,8 @@ public class IssueCommentsPresenter extends BasePresenter<IssueCommentsMvp.View>
     @Override public void onHandleDeletion(@Nullable Bundle bundle) {
         if (bundle != null) {
             long commId = bundle.getLong(BundleConstant.EXTRA, 0);
-            String gistId = bundle.getString(BundleConstant.ID);
-            if (commId != 0 && gistId != null) {
-                manageSubscription(RxHelper.getObserver(RestClient.deleteGistComment(gistId, commId))
+            if (commId != 0) {
+                manageSubscription(RxHelper.getObserver(RestClient.deleteIssueComment(login, repoId, commId))
                         .doOnSubscribe(() -> sendToView(IssueCommentsMvp.View::onShowProgressDialog))
                         .doOnNext(booleanResponse -> sendToView(view -> view.onHandleCommentDelete(booleanResponse, commId)))
                         .onErrorReturn(throwable -> {
@@ -152,6 +151,8 @@ public class IssueCommentsPresenter extends BasePresenter<IssueCommentsMvp.View>
             } else {
                 if (getView() != null) getView().onTagUser(item.getUser());
             }
+        } else if (getView() != null) {
+            getView().onTagUser(item.getUser());
         }
     }
 

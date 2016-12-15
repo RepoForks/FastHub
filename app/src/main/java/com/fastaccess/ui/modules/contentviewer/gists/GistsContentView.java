@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -28,7 +27,6 @@ import com.fastaccess.ui.modules.contentviewer.gists.comments.GistCommentsView;
 import com.fastaccess.ui.widgets.AvatarLayout;
 import com.fastaccess.ui.widgets.FontTextView;
 import com.fastaccess.ui.widgets.ForegroundImageView;
-import com.fastaccess.ui.widgets.QuickReturnFooterBehavior;
 import com.fastaccess.ui.widgets.ViewPagerView;
 import com.fastaccess.ui.widgets.dialog.MessageDialogView;
 
@@ -198,14 +196,9 @@ public class GistsContentView extends BaseActivity<GistsContentMvp.View, GistsCo
         size.setText(Formatter.formatFileSize(this, gistsModel.getSize()));
         pager.setAdapter(new GistsPagerAdapter(getSupportFragmentManager(), gistsModel, this));
         tabs.setupWithViewPager(pager);
-        QuickReturnFooterBehavior quickReturnFooterBehavior = (QuickReturnFooterBehavior)
-                ((CoordinatorLayout.LayoutParams) fab.getLayoutParams()).getBehavior();
         pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                if (quickReturnFooterBehavior != null) {
-                    quickReturnFooterBehavior.setEnabled(position == 0);
-                }
                 hideShowFab();
             }
         });

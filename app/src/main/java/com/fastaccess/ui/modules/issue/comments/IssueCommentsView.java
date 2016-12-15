@@ -15,7 +15,9 @@ import com.fastaccess.helper.Bundler;
 import com.fastaccess.provider.rest.implementation.OnLoadMore;
 import com.fastaccess.ui.adapter.CommentsAdapter;
 import com.fastaccess.ui.base.BaseFragment;
+import com.fastaccess.ui.modules.comment.CommentsEditorView;
 import com.fastaccess.ui.widgets.StateLayout;
+import com.fastaccess.ui.widgets.dialog.MessageDialogView;
 import com.fastaccess.ui.widgets.recyclerview.DynamicRecyclerView;
 
 import butterknife.BindView;
@@ -100,25 +102,21 @@ public class IssueCommentsView extends BaseFragment<IssueCommentsMvp.View, Issue
     }
 
     @Override public void onEditComment(@NonNull CommentsModel item) {
-//        Intent intent = new Intent(getContext(), CommentsView.class);
-//        intent.putExtras(Bundler
-//                .start()
-//                .put(BundleConstant.ID)
-//                .put(BundleConstant.EXTRA, item.getBody())
-//                .put(BundleConstant.EXTRA_ID, item.getId())
-//                .put(BundleConstant.EXTRA_TYPE, BundleConstant.EDIT_COMMENT_EXTRA)
-//                .end());
-//        startActivityForResult(intent, BundleConstant.REQUEST_CODE);
+        Intent intent = new Intent(getContext(), CommentsEditorView.class);
+        intent.putExtras(Bundler
+                .start()
+                .put(BundleConstant.ID, getPresenter().repoId())
+                .put(BundleConstant.EXTRA2_ID, getPresenter().login())
+                .put(BundleConstant.EXTRA3_ID, getPresenter().number())
+                .put(BundleConstant.EXTRA_ID, item.getId())
+                .put(BundleConstant.EXTRA, item.getBody())
+                .put(BundleConstant.EXTRA_TYPE, BundleConstant.ExtraTYpe.EDIT_ISSUE_COMMENT_EXTRA)
+                .end());
+        startActivityForResult(intent, BundleConstant.REQUEST_CODE);
     }
 
     @Override public void onStartNewComment() {
-//        Intent intent = new Intent(getContext(), CommentsView.class);
-//        intent.putExtras(Bundler
-//                .start()
-//                .put(BundleConstant.ID, gistId)
-//                .put(BundleConstant.EXTRA_TYPE, BundleConstant.NEW_COMMENT_EXTRA)
-//                .end());
-//        startActivityForResult(intent, BundleConstant.REQUEST_CODE);
+        onTagUser(null);
     }
 
     @Override public void onHandleCommentDelete(@NonNull Response<Boolean> booleanResponse, long commId) {
@@ -133,27 +131,28 @@ public class IssueCommentsView extends BaseFragment<IssueCommentsMvp.View, Issue
     }
 
     @Override public void onShowDeleteMsg(long id) {
-//        MessageDialogView.newInstance(getString(R.string.delete), getString(R.string.confirm_message),
-//                Bundler.start()
-//                        .put(BundleConstant.EXTRA, id)
-//                        .put(BundleConstant.ID, gistId)
-//                        .end())
-//                .show(getChildFragmentManager(), MessageDialogView.TAG);
+        MessageDialogView.newInstance(getString(R.string.delete), getString(R.string.confirm_message),
+                Bundler.start()
+                        .put(BundleConstant.EXTRA, id)
+                        .end())
+                .show(getChildFragmentManager(), MessageDialogView.TAG);
     }
 
     @Override public void onShowProgressDialog() {
         if (navigationCallback != null) navigationCallback.showProgress(0);
     }
 
-    @Override public void onTagUser(@NonNull UserModel user) {
-//        Intent intent = new Intent(getContext(), CommentsView.class);
-//        intent.putExtras(Bundler
-//                .start()
-//                .put(BundleConstant.ID, gistId)
-//                .put(BundleConstant.EXTRA, "@" + user.getLogin())
-//                .put(BundleConstant.EXTRA_TYPE, BundleConstant.NEW_COMMENT_EXTRA)
-//                .end());
-//        startActivityForResult(intent, BundleConstant.REQUEST_CODE);
+    @Override public void onTagUser(@Nullable UserModel user) {
+        Intent intent = new Intent(getContext(), CommentsEditorView.class);
+        intent.putExtras(Bundler
+                .start()
+                .put(BundleConstant.ID, getPresenter().repoId())
+                .put(BundleConstant.EXTRA2_ID, getPresenter().login())
+                .put(BundleConstant.EXTRA3_ID, getPresenter().number())
+                .put(BundleConstant.EXTRA, user != null ? "@" + user.getLogin() : "")
+                .put(BundleConstant.EXTRA_TYPE, BundleConstant.ExtraTYpe.NEW_ISSUE_COMMENT_EXTRA)
+                .end());
+        startActivityForResult(intent, BundleConstant.REQUEST_CODE);
     }
 
     @Override public void onDestroyView() {

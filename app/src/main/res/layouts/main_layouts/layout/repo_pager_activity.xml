@@ -112,7 +112,6 @@
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_comment"
         android:tint="@color/white"
-        app:fabSize="auto"
-        app:layout_behavior="@string/quick_return_behavior"/>
+        app:fabSize="auto"/>
 
 </android.support.design.widget.CoordinatorLayout>

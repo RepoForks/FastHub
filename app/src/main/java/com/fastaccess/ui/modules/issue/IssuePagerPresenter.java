@@ -32,7 +32,7 @@ public class IssuePagerPresenter extends BasePresenter<IssuePagerMvp.View> imple
     @Override public void onActivityCreated(@Nullable Intent intent) {
         if (intent != null && intent.getExtras() != null) {
             issueModel = intent.getExtras().getParcelable(BundleConstant.ITEM);
-            long issueNumber = intent.getExtras().getInt(BundleConstant.ID);
+            int issueNumber = intent.getExtras().getInt(BundleConstant.ID);
             String login = intent.getExtras().getString(BundleConstant.EXTRA_ID);
             String repoId = intent.getExtras().getString(BundleConstant.EXTRA2_ID);
             if (issueModel != null) {
@@ -60,7 +60,7 @@ public class IssuePagerPresenter extends BasePresenter<IssuePagerMvp.View> imple
     }
 
     @Override public void onWorkOffline(long issueNumber, @NonNull String repoId, @NonNull String login) {
-//TODO
+        //TODO
     }
 
     @Override public boolean isOwner() {

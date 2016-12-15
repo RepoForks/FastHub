@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.annimon.stream.IntStream;
 import com.fastaccess.helper.ActivityHelper;
 import com.fastaccess.helper.InputHelper;
 import com.zzhoujay.richtext.RichText;
@@ -16,7 +17,6 @@ import com.zzhoujay.richtext.RichText;
  */
 
 public class MarkDownProvider {
-    private static final MarkDownProvider instance = new MarkDownProvider();
     private static final String[] IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif"};
     private static final String[] MARKDOWN_EXTENSIONS = {
             ".md", ".mkdn", ".mdwn", ".mdown", ".markdown", ".mkd", ".mkdown", ".ron", ".rst"
@@ -25,10 +25,6 @@ public class MarkDownProvider {
     private static final String[] ARCHIVE_EXTENSIONS = {
             ".zip", ".7z", ".rar", ".tar.gz", ".tgz", ".tar.Z", ".tar.bz2", ".tbz2", ".tar.lzma", ".tlz", ".apk", ".jar", ".dmg"
     };
-
-    public static MarkDownProvider getInstance() {
-        return instance;
-    }
 
     private MarkDownProvider() {}
 
@@ -96,10 +92,8 @@ public class MarkDownProvider {
         String substring = source.substring(selectionStart, selectionEnd);
         if (!hasNewLine(source, selectionStart))
             result.append("\n");
-        for (int i = 0; i < level; i++) {
-            result.append("#");
-        }
-        result.append(substring);
+        IntStream.range(0, level).forEach(integer -> result.append("#"));
+        result.append(" ").append(substring);
         editText.getText().replace(selectionStart, selectionEnd, result.toString());
         editText.setSelection(selectionStart + result.length());
 
@@ -215,11 +209,10 @@ public class MarkDownProvider {
         }
     }
 
-    public static boolean isImage(@Nullable String name) {
+    public static boolean isImage(@Nullable final String name) {
         if (InputHelper.isEmpty(name)) return false;
-        name = name.toLowerCase();
         for (String extension : IMAGE_EXTENSIONS)
-            if (name.endsWith(extension)) return true;
+            if (name.toLowerCase().endsWith(extension)) return true;
 
         return false;
     }

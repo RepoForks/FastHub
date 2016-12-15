@@ -69,6 +69,9 @@ public class PrettifyWebView extends NestedWebView {
             setWebViewClient(new WebClientCompat());
         }
         WebSettings settings = getSettings();
+        settings.setAppCachePath(getContext().getCacheDir().getPath());
+        settings.setAppCacheEnabled(true);
+        settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         settings.setDefaultTextEncodingName("utf-8");
         settings.setJavaScriptEnabled(true);
         settings.setLoadsImagesAutomatically(true);

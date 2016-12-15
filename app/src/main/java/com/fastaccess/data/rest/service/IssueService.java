@@ -40,7 +40,7 @@ public interface IssueService {
 
     @GET("repos/{owner}/{repo}/issues/{number}")
     Observable<IssueModel> getIssue(@Path("owner") String owner, @Path("repo") String repo,
-                                    @Path("number") long number);
+                                    @Path("number") int number);
 
     @GET("repos/{owner}/{repo}/issues/{issue_number}/events")
     Observable<Pageable<IssueEventModel>> getTimeline(@Path("owner") String owner, @Path("repo") String repo,
@@ -53,37 +53,35 @@ public interface IssueService {
 
     @PATCH("repos/{owner}/{repo}/issues/{number}")
     Observable<IssueModel> editIssue(@Path("owner") String owner, @Path("repo") String repo,
-                                     @Path("number") long number,
+                                     @Path("number") int number,
                                      @Body IssueRequestModel issue);
 
     @Headers("Content-Length: 0")
     @PUT("repos/{owner}/{repo}/issues/{number}/lock")
-    Observable<Response<Boolean>> lockIssue(@Path("owner") String owner, @Path("repo") String repo, @Path("number") long number);
+    Observable<Response<Boolean>> lockIssue(@Path("owner") String owner, @Path("repo") String repo, @Path("number") int number);
 
     @DELETE("repos/{owner}/{repo}/issues/{number}/lock")
-    Observable<Response<Boolean>> unlockIssue(@Path("owner") String owner, @Path("repo") String repo, @Path("number") long number);
+    Observable<Response<Boolean>> unlockIssue(@Path("owner") String owner, @Path("repo") String repo, @Path("number") int number);
 
 
     @GET("repos/{owner}/{repo}/issues/{number}/comments")
     Observable<Pageable<CommentsModel>> getIssueComments(@Path("owner") String owner,
                                                          @Path("repo") String repo,
-                                                         @Path("number") long number,
+                                                         @Path("number") int number,
                                                          @Query("page") int page);
 
     @GET("repos/{owner}/{repo}/issues/{number}/comments/{id}")
     Observable<CommentsModel> getIssueComment(@Path("owner") String owner, @Path("repo") String repo,
-                                              @Path("number") long number, @Path("id") long id);
+                                              @Path("number") int number, @Path("id") long id);
 
     @POST("repos/{owner}/{repo}/issues/{number}/comments")
     Observable<CommentsModel> createIssueComment(@Path("owner") String owner, @Path("repo") String repo,
-                                                 @Path("number") long number, @Body CommentRequestModel body);
+                                                 @Path("number") int number, @Body CommentRequestModel body);
 
-    @PATCH("repos/{owner}/{repo}/issues/{number}/comments/{id}")
-    Observable<CommentsModel> editIssueComment(@Path("owner") String owner, @Path("repo") String repo,
-                                               @Path("number") long number, @Path("id") long id,
+    @PATCH("repos/{owner}/{repo}/issues/comments/{id}")
+    Observable<CommentsModel> editIssueComment(@Path("owner") String owner, @Path("repo") String repo, @Path("id") long id,
                                                @Body CommentRequestModel body);
 
-    @DELETE("repos/{owner}/{repo}/issues/{number}/comments/{id}")
-    Observable<Response<Boolean>> deleteIssueComment(@Path("owner") String owner, @Path("repo") String repo,
-                                                     @Path("number") long number, @Path("id") long id);
+    @DELETE("repos/{owner}/{repo}/issues/comments/{id}")
+    Observable<Response<Boolean>> deleteIssueComment(@Path("owner") String owner, @Path("repo") String repo, @Path("id") long id);
 }

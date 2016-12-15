@@ -44,10 +44,10 @@ public class ViewerView extends BaseFragment<ViewerMvp.View, ViewerPresenter> im
         return fragmentView;
     }
 
-    @Override public void onSetNormalText(@NonNull String text) {
-        stateLayout.hideProgress();
-        textViewHolder.setVisibility(View.VISIBLE);
-        textView.setText(text);
+    @Override public void onSetImageUrl(@NonNull String url) {
+        webView.loadUrl(url);
+        webView.setOnContentChangedListener(this);
+        webView.setVisibility(View.VISIBLE);
     }
 
     @Override public void onSetMdText(@NonNull String text) {

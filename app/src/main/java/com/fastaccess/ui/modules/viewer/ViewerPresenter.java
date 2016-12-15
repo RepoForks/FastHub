@@ -12,6 +12,7 @@ import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.InputHelper;
 import com.fastaccess.helper.RxHelper;
 import com.fastaccess.provider.markdown.MarkDownProvider;
+import com.fastaccess.provider.rest.RestProvider;
 import com.fastaccess.ui.base.mvp.presenter.BasePresenter;
 import com.fastaccess.ui.modules.viewer.ViewerMvp.Presenter;
 
@@ -25,6 +26,7 @@ public class ViewerPresenter extends BasePresenter<ViewerMvp.View> implements Pr
     private String downloadedStream;
     private boolean isMarkdown;
     private boolean isRepo;
+    private boolean isImage;
 
     @Override public void onHandleIntent(@Nullable Bundle intent) {
         if (intent == null) return;
@@ -58,6 +60,11 @@ public class ViewerPresenter extends BasePresenter<ViewerMvp.View> implements Pr
                     .doOnSubscribe(() -> sendToView(ViewerMvp.View::onShowMdProgress))
                     .subscribe(fileModel -> {
                         if (fileModel != null) {
+                            isImage = MarkDownProvider.isImage(fileModel.getFileName());
+                            if (isImage) {
+                                sendToView(view -> view.onSetImageUrl(fileModel.getFileName()));
+                                return;
+                            }
                             downloadedStream = fileModel.getContent();
                             isMarkdown = MarkDownProvider.isMarkdown(filesListModel.getFilename());
                             sendToView(view -> {
@@ -95,29 +102,19 @@ public class ViewerPresenter extends BasePresenter<ViewerMvp.View> implements Pr
         manageSubscription(RxHelper.getObserver(RestClient.getFileData(filesListModel.getRawUrl()))
                 .doOnSubscribe(() -> sendToView(ViewerMvp.View::onShowMdProgress))
                 .doOnNext(s -> {
-                    if (MarkDownProvider.isMarkdown(filesListModel.getFilename())) {
-                        isMarkdown = true;
-                        sendToView(view -> {
-                            try {
-                                downloadedStream = s.string();
-                                view.onSetMdText(downloadedStream);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                view.onShowError(e.getMessage());
-                            }
-                        });
-                    } else {
-                        isMarkdown = false;
-                        sendToView(view -> {
-                            try {
-                                downloadedStream = s.string();
-                                view.onSetCode(downloadedStream);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                view.onShowError(e.getMessage());
-                            }
-                        });
-                    }
+                    isMarkdown = MarkDownProvider.isMarkdown(filesListModel.getFilename());
+                    sendToView(view -> {
+                        try {
+                            downloadedStream = s.string();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if (isMarkdown) {
+                            view.onSetMdText(downloadedStream);
+                        } else {
+                            view.onSetCode(downloadedStream);
+                        }
+                    });
                     if (downloadedStream != null) {
                         FileModel fileModel = new FileModel();
                         fileModel.setContent(downloadedStream);
@@ -129,7 +126,12 @@ public class ViewerPresenter extends BasePresenter<ViewerMvp.View> implements Pr
                 })
                 .onErrorReturn(throwable -> {
                     throwable.printStackTrace();
-                    sendToView(view -> view.onShowError(throwable.getMessage()));
+                    int code = RestProvider.getErrorCode(throwable);
+                    if (code == 404) {
+                        sendToView(view -> view.onShowError(R.string.no_file_found));
+                    } else {
+                        sendToView(view -> view.onShowError(throwable.getMessage()));
+                    }
                     return null;
                 })
                 .subscribe());
@@ -153,7 +155,12 @@ public class ViewerPresenter extends BasePresenter<ViewerMvp.View> implements Pr
                 })
                 .onErrorReturn(throwable -> {
                     throwable.printStackTrace();
-                    sendToView(view -> view.onShowError(throwable.getMessage()));
+                    int code = RestProvider.getErrorCode(throwable);
+                    if (code == 404) {
+                        sendToView(view -> view.onShowError(R.string.no_readme_found));
+                    } else {
+                        sendToView(view -> view.onShowError(throwable.getMessage()));
+                    }
                     return null;
                 })
                 .subscribe());
@@ -161,5 +168,9 @@ public class ViewerPresenter extends BasePresenter<ViewerMvp.View> implements Pr
 
     @Override public boolean isRepo() {
         return isRepo;
+    }
+
+    @Override public boolean isImage() {
+        return isImage;
     }
 }

@@ -24,6 +24,7 @@ import com.fastaccess.helper.Bundler;
 import com.fastaccess.helper.ParseDateFormat;
 import com.fastaccess.ui.adapter.FragmentsPagerAdapter;
 import com.fastaccess.ui.base.BaseActivity;
+import com.fastaccess.ui.modules.issue.comments.IssueCommentsView;
 import com.fastaccess.ui.widgets.AvatarLayout;
 import com.fastaccess.ui.widgets.FontTextView;
 import com.fastaccess.ui.widgets.ForegroundImageView;
@@ -83,7 +84,10 @@ public class IssuePagerView extends BaseActivity<IssuePagerMvp.View, IssuePagerP
     }
 
     @OnClick(R.id.fab) void onAddComment() {
-        //TODO
+        IssueCommentsView view = (IssueCommentsView) pager.getAdapter().instantiateItem(pager, 1);
+        if (view != null) {
+            view.onStartNewComment();
+        }
     }
 
     @Override protected int layout() {
