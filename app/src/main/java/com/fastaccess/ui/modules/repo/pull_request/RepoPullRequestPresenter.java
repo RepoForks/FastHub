@@ -1,13 +1,11 @@
-package com.fastaccess.ui.modules.repo.issues;
+package com.fastaccess.ui.modules.repo.pull_request;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 
-import com.annimon.stream.Collectors;
-import com.annimon.stream.Stream;
-import com.fastaccess.data.dao.IssueModel;
+import com.fastaccess.data.dao.PullRequestModel;
 import com.fastaccess.data.dao.types.IssueState;
 import com.fastaccess.data.rest.RestClient;
 import com.fastaccess.helper.BundleConstant;
@@ -16,7 +14,7 @@ import com.fastaccess.helper.InputHelper;
 import com.fastaccess.helper.Logger;
 import com.fastaccess.helper.RxHelper;
 import com.fastaccess.ui.base.mvp.presenter.BasePresenter;
-import com.fastaccess.ui.modules.issue.IssuePagerView;
+import com.fastaccess.ui.modules.pull_request.PullRequestPagerView;
 
 import java.util.ArrayList;
 
@@ -24,9 +22,9 @@ import java.util.ArrayList;
  * Created by Kosh on 03 Dec 2016, 3:48 PM
  */
 
-public class RepoIssuesPresenter extends BasePresenter<RepoIssuesMvp.View> implements RepoIssuesMvp.Presenter {
+public class RepoPullRequestPresenter extends BasePresenter<RepoPullRequestMvp.View> implements RepoPullRequestMvp.Presenter {
 
-    private ArrayList<IssueModel> issues = new ArrayList<>();
+    private ArrayList<PullRequestModel> pullRequests = new ArrayList<>();
     private String login;
     private String repoId;
     private int page;
@@ -59,20 +57,19 @@ public class RepoIssuesPresenter extends BasePresenter<RepoIssuesMvp.View> imple
         }
         setCurrentPage(page);
         if (page > lastPage || lastPage == 0) {
-            sendToView(RepoIssuesMvp.View::onHideProgress);
+            sendToView(RepoPullRequestMvp.View::onHideProgress);
             return;
         }
         if (repoId == null || login == null) return;
-        manageSubscription(RxHelper.getObserver(RestClient.getRepoIssues(login, repoId, parameter, page))
-                .doOnSubscribe(() -> sendToView(RepoIssuesMvp.View::onShowProgress))
-                .doOnNext(issues -> {
-                    lastPage = issues.getLast();
+        manageSubscription(RxHelper.getObserver(RestClient.getRepoPullRequests(login, repoId, parameter, page))
+                .doOnSubscribe(() -> sendToView(RepoPullRequestMvp.View::onShowProgress))
+                .doOnNext(response -> {
+                    lastPage = response.getLast();
                     if (page == 1) {
-                        getIssues().clear();
+                        getPullRequests().clear();
                     }
-                    //filter issues only.
-                    getIssues().addAll(Stream.of(issues.getItems()).filter(value -> value.getPullRequest() == null).collect(Collectors.toList()));
-                    sendToView(RepoIssuesMvp.View::onNotifyAdapter);
+                    getPullRequests().addAll(response.getItems());
+                    sendToView(RepoPullRequestMvp.View::onNotifyAdapter);
                 })
                 .onErrorReturn(throwable -> {
                     sendToView(view -> view.onShowMessage(throwable.getMessage()));
@@ -89,16 +86,16 @@ public class RepoIssuesPresenter extends BasePresenter<RepoIssuesMvp.View> imple
         }
     }
 
-    @NonNull @Override public ArrayList<IssueModel> getIssues() {
-        return issues;
+    @NonNull public ArrayList<PullRequestModel> getPullRequests() {
+        return pullRequests;
     }
 
-    @Override public void onItemClick(int position, View v, IssueModel item) {
+    @Override public void onItemClick(int position, View v, PullRequestModel item) {
         Logger.e(Bundler.start().put("item", item).end().size());
-        IssuePagerView.createIntentForOffline(v.getContext(), item);
+        PullRequestPagerView.createIntentForOffline(v.getContext(), item);
     }
 
-    @Override public void onItemLongClick(int position, View v, IssueModel item) {
+    @Override public void onItemLongClick(int position, View v, PullRequestModel item) {
         onItemClick(position, v, item);
     }
 }

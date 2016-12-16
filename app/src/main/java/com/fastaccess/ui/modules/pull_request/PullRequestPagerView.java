@@ -1,4 +1,4 @@
-package com.fastaccess.ui.modules.issue;
+package com.fastaccess.ui.modules.pull_request;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,17 +14,18 @@ import android.view.View;
 
 import com.fastaccess.R;
 import com.fastaccess.data.dao.FragmentPagerAdapterModel;
-import com.fastaccess.data.dao.IssueModel;
+import com.fastaccess.data.dao.PullRequestModel;
 import com.fastaccess.data.dao.PullsIssuesParser;
 import com.fastaccess.data.dao.UserModel;
 import com.fastaccess.data.dao.types.IssueState;
 import com.fastaccess.helper.ActivityHelper;
 import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.Bundler;
+import com.fastaccess.helper.Logger;
 import com.fastaccess.helper.ParseDateFormat;
 import com.fastaccess.ui.adapter.FragmentsPagerAdapter;
 import com.fastaccess.ui.base.BaseActivity;
-import com.fastaccess.ui.modules.issue.comments.IssueCommentsView;
+import com.fastaccess.ui.modules.pull_request.comments.PullRequestCommentsView;
 import com.fastaccess.ui.widgets.AvatarLayout;
 import com.fastaccess.ui.widgets.FontTextView;
 import com.fastaccess.ui.widgets.ForegroundImageView;
@@ -39,7 +40,7 @@ import butterknife.OnClick;
  * Created by Kosh on 10 Dec 2016, 9:23 AM
  */
 
-public class IssuePagerView extends BaseActivity<IssuePagerMvp.View, IssuePagerPresenter> implements IssuePagerMvp.View {
+public class PullRequestPagerView extends BaseActivity<PullRequestPagerMvp.View, PullRequestPagerPresenter> implements PullRequestPagerMvp.View {
 
     @BindView(R.id.startGist) ForegroundImageView startGist;
     @BindView(R.id.forkGist) ForegroundImageView forkGist;
@@ -52,7 +53,7 @@ public class IssuePagerView extends BaseActivity<IssuePagerMvp.View, IssuePagerP
     @BindView(R.id.fab) FloatingActionButton fab;
 
     public static Intent createIntent(@NonNull Context context, @NonNull String repoId, @NonNull String login, int number) {
-        Intent intent = new Intent(context, IssuePagerView.class);
+        Intent intent = new Intent(context, PullRequestPagerView.class);
         intent.putExtras(Bundler.start()
                 .put(BundleConstant.ID, number)
                 .put(BundleConstant.EXTRA_ID, login)
@@ -62,30 +63,23 @@ public class IssuePagerView extends BaseActivity<IssuePagerMvp.View, IssuePagerP
 
     }
 
-    public static void createIntentForOffline(@NonNull Context context, @NonNull IssueModel issueModel) {
-        String repoId;
-        String login;
-        if (issueModel.getRepository() == null) {
-            PullsIssuesParser pullsIssuesParser = PullsIssuesParser.getForIssue(issueModel.getHtmlUrl());
-            if (pullsIssuesParser == null) throw new NullPointerException("pullsIssuesParser is null");
-            repoId = pullsIssuesParser.getRepoId();
-            login = pullsIssuesParser.getLogin();
-        } else {
-            repoId = issueModel.getRepository().getName();
-            login = issueModel.getRepository().getOwner().getLogin();
-        }
-        issueModel.setLogin(login);
-        issueModel.setRepoId(repoId);
-        Intent intent = new Intent(context, IssuePagerView.class);
+    public static void createIntentForOffline(@NonNull Context context, @NonNull PullRequestModel pullRequest) {
+        PullsIssuesParser pullsIssuesParser = PullsIssuesParser.getForPullRequest(pullRequest.getHtmlUrl());
+        if (pullsIssuesParser == null) throw new NullPointerException("Pulls Parser is null");
+        Logger.e(pullsIssuesParser);
+        pullRequest.setLogin(pullsIssuesParser.getLogin());
+        pullRequest.setRepoId(pullsIssuesParser.getRepoId());
+        pullRequest.setNumber(pullsIssuesParser.getNumber());
+        Intent intent = new Intent(context, PullRequestPagerView.class);
         intent.putExtras(Bundler.start()
-                .put(BundleConstant.ITEM, issueModel)
+                .put(BundleConstant.ITEM, pullRequest)
                 .end());
         context.startActivity(intent);
 
     }
 
     @OnClick(R.id.fab) void onAddComment() {
-        IssueCommentsView view = (IssueCommentsView) pager.getAdapter().instantiateItem(pager, 1);
+        PullRequestCommentsView view = (PullRequestCommentsView) pager.getAdapter().instantiateItem(pager, 1);
         if (view != null) {
             view.onStartNewComment();
         }
@@ -111,8 +105,8 @@ public class IssuePagerView extends BaseActivity<IssuePagerMvp.View, IssuePagerP
         return false;
     }
 
-    @NonNull @Override public IssuePagerPresenter providePresenter() {
-        return new IssuePagerPresenter();
+    @NonNull @Override public PullRequestPagerPresenter providePresenter() {
+        return new PullRequestPagerPresenter();
     }
 
     @Override protected void onCreate(Bundle savedInstanceState) {
@@ -135,13 +129,13 @@ public class IssuePagerView extends BaseActivity<IssuePagerMvp.View, IssuePagerP
 
     @Override public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.share) {
-            if (getPresenter().getIssue() != null) ActivityHelper.shareUrl(this, getPresenter().getIssue().getHtmlUrl());
+            if (getPresenter().getPullRequest() != null) ActivityHelper.shareUrl(this, getPresenter().getPullRequest().getHtmlUrl());
             return true;
         } else if (item.getItemId() == R.id.closeIssue) {
-            IssueModel issueModel = getPresenter().getIssue();
-            if (issueModel == null) return true;
+            PullRequestModel pullRequest = getPresenter().getPullRequest();
+            if (pullRequest == null) return true;
             MessageDialogView.newInstance(
-                    issueModel.getState() == IssueState.open ? getString(R.string.close_issue) : getString(R.string.re_open_issue),
+                    pullRequest.getState() == IssueState.open ? getString(R.string.close_issue) : getString(R.string.re_open_issue),
                     getString(R.string.confirm_message), Bundler.start().put(BundleConstant.EXTRA, true).end())
                     .show(getSupportFragmentManager(), MessageDialogView.TAG);
             return true;
@@ -164,7 +158,8 @@ public class IssuePagerView extends BaseActivity<IssuePagerMvp.View, IssuePagerP
         menu.findItem(R.id.lockIssue).setVisible(isOwner);
         if (isOwner) {
             //noinspection ConstantConditions ( getIssue at this stage is not null but AS doesn't know. )
-            closeIssue.setTitle(getPresenter().getIssue().getState() == IssueState.closed ? getString(R.string.re_open) : getString(R.string.close));
+            closeIssue.setTitle(getPresenter().getPullRequest().getState() == IssueState.closed ? getString(R.string.re_open) : getString(R.string
+                    .close));
             lockIssue.setTitle(isLocked ? getString(R.string.unlock_issue) : getString(R.string.lock_issue));
         }
 
@@ -186,23 +181,23 @@ public class IssuePagerView extends BaseActivity<IssuePagerMvp.View, IssuePagerP
 
     @Override public void onSetupIssue() {
         hideProgress();
-        if (getPresenter().getIssue() == null) {
+        if (getPresenter().getPullRequest() == null) {
             finish();
             return;
         }
         supportInvalidateOptionsMenu();
-        IssueModel issueModel = getPresenter().getIssue();
-        setTitle(String.format("#%s", issueModel.getNumber()));
-        UserModel userModel = issueModel.getUser();
-        title.setText(issueModel.getTitle());
+        PullRequestModel pullRequest = getPresenter().getPullRequest();
+        setTitle(String.format("#%s", pullRequest.getNumber()));
+        UserModel userModel = pullRequest.getUser();
+        title.setText(pullRequest.getTitle());
         if (userModel != null) {
             date.setVisibility(View.GONE);
-            size.setText(SpannableBuilder.builder().append(getString(issueModel.getState().getStatus()))
+            size.setText(SpannableBuilder.builder().append(getString(pullRequest.getState().getStatus()))
                     .append(" ").append(getString(R.string.by)).append(" ").append(userModel.getLogin()).append(" ")
-                    .append(ParseDateFormat.getTimeAgo(issueModel.getCreatedAt())));
+                    .append(ParseDateFormat.getTimeAgo(pullRequest.getCreatedAt())));
             avatarLayout.setUrl(userModel.getAvatarUrl(), userModel.getLogin());
         }
-        pager.setAdapter(new FragmentsPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapterModel.buildForIssues(this, issueModel)));
+        pager.setAdapter(new FragmentsPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapterModel.buildForPullRequest(this, pullRequest)));
         tabs.setupWithViewPager(pager);
         if (!getPresenter().isLocked() && !getPresenter().isOwner()) {
             pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
@@ -245,7 +240,7 @@ public class IssuePagerView extends BaseActivity<IssuePagerMvp.View, IssuePagerP
             fab.hide();
             return;
         }
-        if (pager.getCurrentItem() == 1) {
+        if (pager.getCurrentItem() == 0) {
             fab.show();
         } else {
             fab.hide();

@@ -7,6 +7,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 
 import com.fastaccess.R;
+import com.fastaccess.data.dao.types.IssueState;
 import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.Bundler;
 import com.fastaccess.helper.Logger;
@@ -14,6 +15,7 @@ import com.fastaccess.provider.rest.implementation.OnLoadMore;
 import com.fastaccess.ui.adapter.IssuesAdapter;
 import com.fastaccess.ui.base.BaseFragment;
 import com.fastaccess.ui.widgets.StateLayout;
+import com.fastaccess.ui.widgets.recyclerview.BottomPaddingDecoration;
 import com.fastaccess.ui.widgets.recyclerview.DynamicRecyclerView;
 
 import butterknife.BindView;
@@ -26,7 +28,7 @@ public class RepoIssuesView extends BaseFragment<RepoIssuesMvp.View, RepoIssuesP
     @BindView(R.id.recycler) DynamicRecyclerView recycler;
     @BindView(R.id.refresh) SwipeRefreshLayout refresh;
     @BindView(R.id.stateLayout) StateLayout stateLayout;
-    private OnLoadMore onLoadMore;
+    private OnLoadMore<IssueState> onLoadMore;
     private IssuesAdapter adapter;
 
     public static RepoIssuesView newInstance(@NonNull String repoId, @NonNull String login) {
@@ -45,7 +47,7 @@ public class RepoIssuesView extends BaseFragment<RepoIssuesMvp.View, RepoIssuesP
     }
 
     @Override protected int fragmentLayout() {
-        return R.layout.small_grid_refresh_list_padding;
+        return R.layout.small_grid_refresh_list;
     }
 
     @Override protected void onFragmentCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -55,9 +57,10 @@ public class RepoIssuesView extends BaseFragment<RepoIssuesMvp.View, RepoIssuesP
         stateLayout.setOnReloadListener(this);
         refresh.setOnRefreshListener(this);
         recycler.setEmptyView(stateLayout, refresh);
-        adapter = new IssuesAdapter(getPresenter().getIssues());
+        adapter = new IssuesAdapter(getPresenter().getIssues(), true);
         adapter.setListener(getPresenter());
         getLoadMore().setCurrent_page(getPresenter().getCurrentPage(), getPresenter().getPreviousTotal());
+
         recycler.setAdapter(adapter);
         recycler.addOnScrollListener(getLoadMore());
         if (savedInstanceState == null) {
@@ -87,9 +90,9 @@ public class RepoIssuesView extends BaseFragment<RepoIssuesMvp.View, RepoIssuesP
         if (navigationCallback != null) navigationCallback.showMessage(getString(R.string.error), message);
     }
 
-    @NonNull @Override public OnLoadMore getLoadMore() {
+    @NonNull @Override public OnLoadMore<IssueState> getLoadMore() {
         if (onLoadMore == null) {
-            onLoadMore = new OnLoadMore(getPresenter());
+            onLoadMore = new OnLoadMore<>(getPresenter());
         }
         return onLoadMore;
     }

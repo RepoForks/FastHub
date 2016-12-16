@@ -12,6 +12,7 @@ import com.fastaccess.helper.ActivityHelper;
 import com.fastaccess.helper.InputHelper;
 import com.fastaccess.ui.modules.contentviewer.gists.GistsContentView;
 import com.fastaccess.ui.modules.issue.IssuePagerView;
+import com.fastaccess.ui.modules.pull_request.PullRequestPagerView;
 import com.fastaccess.ui.modules.repo.RepoPagerView;
 import com.fastaccess.ui.modules.user.UserPagerView;
 
@@ -91,9 +92,13 @@ public class SchemeParser {
         } else if (HOST_DEFAULT.equals(data.getHost())) {
 //            CommitMatch commit = CommitUriMatcher.getCommit(data);
 //            if (commit != null) {
-//                return CommitViewActivity.createIntent(commit.repository, commit.commit);
+//                return CommitViewActivity.createIn tent(commit.repository, commit.commit);
 //            }
 //
+            Intent pullRequestIntent = getPullRequestIntent(context, data);
+            if (pullRequestIntent != null) {
+                return pullRequestIntent;
+            }
             Intent issueIntent = getIssueIntent(context, data);
             if (issueIntent != null) {
                 return issueIntent;
@@ -110,10 +115,29 @@ public class SchemeParser {
         return null;
     }
 
+    private static Intent getPullRequestIntent(@NonNull Context context, @NonNull Uri uri) {
+        List<String> segments = uri.getPathSegments();
+        if (segments == null || segments.size() < 4) return null;
+        if (!"pull".equals(segments.get(2))) return null;
+        String owner = segments.get(0);
+        String repo = segments.get(1);
+        String number = segments.get(3);
+        if (TextUtils.isEmpty(number))
+            return null;
+        int issueNumber;
+        try {
+            issueNumber = Integer.parseInt(number);
+        } catch (NumberFormatException nfe) {
+            return null;
+        }
+        if (issueNumber < 1) return null;
+        return PullRequestPagerView.createIntent(context, repo, owner, issueNumber);
+    }
+
     private static Intent getIssueIntent(@NonNull Context context, @NonNull Uri uri) {
         List<String> segments = uri.getPathSegments();
         if (segments == null || segments.size() < 4) return null;
-        if (!"issues".equals(segments.get(2)) && !"pull".equals(segments.get(2))) return null;
+        if (!"issues".equals(segments.get(2))) return null;
         String owner = segments.get(0);
         String repo = segments.get(1);
         String number = segments.get(3);

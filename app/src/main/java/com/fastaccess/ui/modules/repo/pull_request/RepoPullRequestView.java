@@ -1,4 +1,4 @@
-package com.fastaccess.ui.modules.search.issues;
+package com.fastaccess.ui.modules.repo.pull_request;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,32 +7,36 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 
 import com.fastaccess.R;
-import com.fastaccess.helper.InputHelper;
+import com.fastaccess.data.dao.types.IssueState;
+import com.fastaccess.helper.BundleConstant;
+import com.fastaccess.helper.Bundler;
 import com.fastaccess.helper.Logger;
 import com.fastaccess.provider.rest.implementation.OnLoadMore;
-import com.fastaccess.ui.adapter.IssuesAdapter;
+import com.fastaccess.ui.adapter.PullRequestAdapter;
 import com.fastaccess.ui.base.BaseFragment;
 import com.fastaccess.ui.widgets.StateLayout;
 import com.fastaccess.ui.widgets.recyclerview.DynamicRecyclerView;
 
 import butterknife.BindView;
-import icepick.State;
 
 /**
  * Created by Kosh on 03 Dec 2016, 3:56 PM
  */
 
-public class SearchIssuesView extends BaseFragment<SearchIssuesMvp.View, SearchIssuesPresenter> implements SearchIssuesMvp.View {
-
-    @State String searchQuery;
+public class RepoPullRequestView extends BaseFragment<RepoPullRequestMvp.View, RepoPullRequestPresenter> implements RepoPullRequestMvp.View {
     @BindView(R.id.recycler) DynamicRecyclerView recycler;
     @BindView(R.id.refresh) SwipeRefreshLayout refresh;
     @BindView(R.id.stateLayout) StateLayout stateLayout;
-    private OnLoadMore<String> onLoadMore;
-    private IssuesAdapter adapter;
+    private OnLoadMore<IssueState> onLoadMore;
+    private PullRequestAdapter adapter;
 
-    public static SearchIssuesView newInstance() {
-        return new SearchIssuesView();
+    public static RepoPullRequestView newInstance(@NonNull String repoId, @NonNull String login) {
+        RepoPullRequestView view = new RepoPullRequestView();
+        view.setArguments(Bundler.start()
+                .put(BundleConstant.EXTRA_ID, login)
+                .put(BundleConstant.ID, repoId)
+                .end());
+        return view;
     }
 
     @Override public void onNotifyAdapter() {
@@ -46,23 +50,26 @@ public class SearchIssuesView extends BaseFragment<SearchIssuesMvp.View, SearchI
     }
 
     @Override protected void onFragmentCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        if (savedInstanceState == null) {
-            stateLayout.hideProgress();
+        if (getArguments() == null) {
+            throw new NullPointerException("Bundle is null, therefore, issues can't be proceeded.");
         }
-        getLoadMore().setCurrent_page(getPresenter().getCurrentPage(), getPresenter().getPreviousTotal());
         stateLayout.setOnReloadListener(this);
         refresh.setOnRefreshListener(this);
         recycler.setEmptyView(stateLayout, refresh);
-        adapter = new IssuesAdapter(getPresenter().getIssues());
+        adapter = new PullRequestAdapter(getPresenter().getPullRequests(), true);
         adapter.setListener(getPresenter());
+        getLoadMore().setCurrent_page(getPresenter().getCurrentPage(), getPresenter().getPreviousTotal());
         recycler.setAdapter(adapter);
-        if (!InputHelper.isEmpty(searchQuery) && getPresenter().getIssues().isEmpty()) {
+        recycler.addOnScrollListener(getLoadMore());
+        if (savedInstanceState == null) {
+            getPresenter().onFragmentCreated(getArguments());
+        } else if (getPresenter().getPullRequests().isEmpty()) {
             onRefresh();
         }
     }
 
-    @NonNull @Override public SearchIssuesPresenter providePresenter() {
-        return new SearchIssuesPresenter();
+    @NonNull @Override public RepoPullRequestPresenter providePresenter() {
+        return new RepoPullRequestPresenter();
     }
 
     @Override public void onHideProgress() {
@@ -81,29 +88,15 @@ public class SearchIssuesView extends BaseFragment<SearchIssuesMvp.View, SearchI
         if (navigationCallback != null) navigationCallback.showMessage(getString(R.string.error), message);
     }
 
-    @Override public void onSetSearchQuery(@NonNull String query) {
-        this.searchQuery = query;
-        getLoadMore().reset();
-        getPresenter().getIssues().clear();
-        onNotifyAdapter();
-        recycler.scrollToPosition(0);
-        if (!InputHelper.isEmpty(query)) {
-            recycler.removeOnScrollListener(getLoadMore());
-            recycler.addOnScrollListener(getLoadMore());
-            onRefresh();
-        }
-    }
-
-    @NonNull @Override public OnLoadMore<String> getLoadMore() {
+    @NonNull @Override public OnLoadMore<IssueState> getLoadMore() {
         if (onLoadMore == null) {
-            onLoadMore = new OnLoadMore<>(getPresenter(), searchQuery);
+            onLoadMore = new OnLoadMore<>(getPresenter());
         }
-        onLoadMore.setParameter(searchQuery);
         return onLoadMore;
     }
 
     @Override public void onRefresh() {
-        getPresenter().onCallApi(1, searchQuery);
+        getPresenter().onCallApi(1, null);
     }
 
     @Override public void onClick(View view) {

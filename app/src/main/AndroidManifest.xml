@@ -78,6 +78,9 @@
             android:label="@string/issue"/>
 
         <activity
+            android:name=".ui.modules.pull_request.PullRequestPagerView"
+            android:label="@string/pull_request"/>
+        <activity
             android:name=".ui.modules.interceptor.SchemeInterceptorView"
             android:configChanges="keyboard|orientation|screenSize"
             android:excludeFromRecents="true"

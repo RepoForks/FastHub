@@ -29,7 +29,7 @@ public class PullRequestModel implements Parcelable {
     private boolean mergable;
     private boolean merged;
     private IssueState state;
-    private UserModel userModel;
+    private UserModel user;
     private UserModel assignee;
     private List<Label> labels;
     private MilestoneModel milestone;
@@ -48,6 +48,8 @@ public class PullRequestModel implements Parcelable {
     @SerializedName("merge_commit_sha") private String mergeCommitSha;
     @SerializedName("merged_at") private String mergedAt;
     @SerializedName("merged_by") private UserModel mergedBy;
+    private String repoId;
+    private String login;
 
     public String getUrl() {
         return url;
@@ -153,12 +155,12 @@ public class PullRequestModel implements Parcelable {
         this.state = state;
     }
 
-    public UserModel getUserModel() {
-        return userModel;
+    public UserModel getUser() {
+        return user;
     }
 
-    public void setUserModel(UserModel userModel) {
-        this.userModel = userModel;
+    public void setUser(UserModel user) {
+        this.user = user;
     }
 
     public UserModel getAssignee() {
@@ -305,6 +307,24 @@ public class PullRequestModel implements Parcelable {
         this.mergedBy = mergedBy;
     }
 
+    public PullRequestModel() {}
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getRepoId() {
+        return repoId;
+    }
+
+    public void setRepoId(String repoId) {
+        this.repoId = repoId;
+    }
+
     @Override public int describeContents() { return 0; }
 
     @Override public void writeToParcel(Parcel dest, int flags) {
@@ -321,7 +341,7 @@ public class PullRequestModel implements Parcelable {
         dest.writeByte(this.mergable ? (byte) 1 : (byte) 0);
         dest.writeByte(this.merged ? (byte) 1 : (byte) 0);
         dest.writeInt(this.state == null ? -1 : this.state.ordinal());
-        dest.writeParcelable(this.userModel, flags);
+        dest.writeParcelable(this.user, flags);
         dest.writeParcelable(this.assignee, flags);
         dest.writeList(this.labels);
         dest.writeParcelable(this.milestone, flags);
@@ -340,9 +360,9 @@ public class PullRequestModel implements Parcelable {
         dest.writeString(this.mergeCommitSha);
         dest.writeString(this.mergedAt);
         dest.writeParcelable(this.mergedBy, flags);
+        dest.writeString(this.repoId);
+        dest.writeString(this.login);
     }
-
-    public PullRequestModel() {}
 
     protected PullRequestModel(Parcel in) {
         this.url = in.readString();
@@ -359,7 +379,7 @@ public class PullRequestModel implements Parcelable {
         this.merged = in.readByte() != 0;
         int tmpState = in.readInt();
         this.state = tmpState == -1 ? null : IssueState.values()[tmpState];
-        this.userModel = in.readParcelable(UserModel.class.getClassLoader());
+        this.user = in.readParcelable(UserModel.class.getClassLoader());
         this.assignee = in.readParcelable(UserModel.class.getClassLoader());
         this.labels = new ArrayList<Label>();
         in.readList(this.labels, Label.class.getClassLoader());
@@ -379,9 +399,11 @@ public class PullRequestModel implements Parcelable {
         this.mergeCommitSha = in.readString();
         this.mergedAt = in.readString();
         this.mergedBy = in.readParcelable(UserModel.class.getClassLoader());
+        this.repoId = in.readString();
+        this.login = in.readString();
     }
 
-    public static final Parcelable.Creator<PullRequestModel> CREATOR = new Parcelable.Creator<PullRequestModel>() {
+    public static final Creator<PullRequestModel> CREATOR = new Creator<PullRequestModel>() {
         @Override public PullRequestModel createFromParcel(Parcel source) {return new PullRequestModel(source);}
 
         @Override public PullRequestModel[] newArray(int size) {return new PullRequestModel[size];}

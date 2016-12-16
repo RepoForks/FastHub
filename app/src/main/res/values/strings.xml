@@ -132,4 +132,7 @@
     <string name="image">Image</string>
     <string name="no_file_found">No File Found</string>
     <string name="no_readme_found">No Readme Found</string>
+    <string name="pull_requests">Pull Requests</string>
+    <string name="conversation">Conversations</string>
+    <string name="pull_request">Pull Request</string>
 </resources>

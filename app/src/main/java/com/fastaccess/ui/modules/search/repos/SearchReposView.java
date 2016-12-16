@@ -56,6 +56,9 @@ public class SearchReposView extends BaseFragment<SearchReposMvp.View, SearchRep
         adapter = new ReposAdapter(getPresenter().getRepos(), false, true);
         adapter.setListener(getPresenter());
         recycler.setAdapter(adapter);
+        if (!InputHelper.isEmpty(searchQuery) && getPresenter().getRepos().isEmpty()) {
+            onRefresh();
+        }
     }
 
     @NonNull @Override public SearchReposPresenter providePresenter() {
@@ -83,6 +86,7 @@ public class SearchReposView extends BaseFragment<SearchReposMvp.View, SearchRep
         getLoadMore().reset();
         getPresenter().getRepos().clear();
         onNotifyAdapter();
+        recycler.scrollToPosition(0);
         if (!InputHelper.isEmpty(query)) {
             recycler.removeOnScrollListener(getLoadMore());
             recycler.addOnScrollListener(getLoadMore());

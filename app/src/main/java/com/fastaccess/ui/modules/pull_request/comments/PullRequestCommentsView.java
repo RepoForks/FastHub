@@ -1,4 +1,4 @@
-package com.fastaccess.ui.modules.contentviewer.gists.comments;
+package com.fastaccess.ui.modules.pull_request.comments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,32 +18,30 @@ import com.fastaccess.ui.base.BaseFragment;
 import com.fastaccess.ui.modules.comment.CommentsEditorView;
 import com.fastaccess.ui.widgets.StateLayout;
 import com.fastaccess.ui.widgets.dialog.MessageDialogView;
-import com.fastaccess.ui.widgets.recyclerview.BottomPaddingDecoration;
 import com.fastaccess.ui.widgets.recyclerview.DynamicRecyclerView;
 
 import butterknife.BindView;
 import retrofit2.Response;
 
-import static com.fastaccess.helper.BundleConstant.ExtraTYpe.EDIT_GIST_COMMENT_EXTRA;
-import static com.fastaccess.helper.BundleConstant.ExtraTYpe.NEW_GIST_COMMENT_EXTRA;
-
 /**
  * Created by Kosh on 11 Nov 2016, 12:36 PM
  */
 
-public class GistCommentsView extends BaseFragment<GistCommentsMvp.View, GistCommentsPresenter> implements GistCommentsMvp.View {
+public class PullRequestCommentsView extends BaseFragment<PullRequestCommentsMvp.View, PullRequestCommentsPresenter> implements PullRequestCommentsMvp.View {
 
     @BindView(R.id.recycler) DynamicRecyclerView recycler;
     @BindView(R.id.refresh) SwipeRefreshLayout refresh;
     @BindView(R.id.stateLayout) StateLayout stateLayout;
-
-    private String gistId;
     private CommentsAdapter adapter;
-    private OnLoadMore<String> onLoadMore;
+    private OnLoadMore onLoadMore;
 
-    public static GistCommentsView newInstance(@NonNull String gistId) {
-        GistCommentsView view = new GistCommentsView();
-        view.setArguments(Bundler.start().put("gistId", gistId).end());
+    public static PullRequestCommentsView newInstance(@NonNull String login, @NonNull String repoId, int number) {
+        PullRequestCommentsView view = new PullRequestCommentsView();
+        view.setArguments(Bundler.start()
+                .put(BundleConstant.ID, repoId)
+                .put(BundleConstant.EXTRA_ID, login)
+                .put(BundleConstant.EXTRA2_ID, number)
+                .end());
         return view;
     }
 
@@ -52,15 +50,13 @@ public class GistCommentsView extends BaseFragment<GistCommentsMvp.View, GistCom
     }
 
     @Override protected void onFragmentCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        gistId = getArguments().getString("gistId");
+        if (savedInstanceState == null) getPresenter().onFragmentCreated(getArguments());
         recycler.setEmptyView(stateLayout, refresh);
-        if (gistId == null) return;
         refresh.setOnRefreshListener(this);
         stateLayout.setOnReloadListener(this);
         adapter = new CommentsAdapter(getPresenter().getComments());
         adapter.setListener(getPresenter());
         getLoadMore().setCurrent_page(getPresenter().getCurrentPage(), getPresenter().getPreviousTotal());
-
         recycler.setAdapter(adapter);
         recycler.addOnScrollListener(getLoadMore());
         if (getPresenter().getComments().isEmpty()) {
@@ -69,7 +65,7 @@ public class GistCommentsView extends BaseFragment<GistCommentsMvp.View, GistCom
     }
 
     @Override public void onRefresh() {
-        getPresenter().onCallApi(1, gistId);
+        getPresenter().onCallApi(1, null);
     }
 
     @Override public void onNotifyAdapter() {
@@ -94,13 +90,13 @@ public class GistCommentsView extends BaseFragment<GistCommentsMvp.View, GistCom
         if (navigationCallback != null) navigationCallback.showMessage(getString(R.string.error), message);
     }
 
-    @NonNull @Override public GistCommentsPresenter providePresenter() {
-        return new GistCommentsPresenter();
+    @NonNull @Override public PullRequestCommentsPresenter providePresenter() {
+        return new PullRequestCommentsPresenter();
     }
 
-    @NonNull @Override public OnLoadMore<String> getLoadMore() {
+    @NonNull @Override public OnLoadMore getLoadMore() {
         if (onLoadMore == null) {
-            onLoadMore = new OnLoadMore<>(getPresenter(), gistId);
+            onLoadMore = new OnLoadMore<>(getPresenter());
         }
         return onLoadMore;
     }
@@ -109,22 +105,18 @@ public class GistCommentsView extends BaseFragment<GistCommentsMvp.View, GistCom
         Intent intent = new Intent(getContext(), CommentsEditorView.class);
         intent.putExtras(Bundler
                 .start()
-                .put(BundleConstant.ID, gistId)
-                .put(BundleConstant.EXTRA, item.getBody())
+                .put(BundleConstant.ID, getPresenter().repoId())
+                .put(BundleConstant.EXTRA2_ID, getPresenter().login())
+                .put(BundleConstant.EXTRA3_ID, getPresenter().number())
                 .put(BundleConstant.EXTRA_ID, item.getId())
-                .put(BundleConstant.EXTRA_TYPE, EDIT_GIST_COMMENT_EXTRA)
+                .put(BundleConstant.EXTRA, item.getBody())
+                .put(BundleConstant.EXTRA_TYPE, BundleConstant.ExtraTYpe.EDIT_ISSUE_COMMENT_EXTRA)
                 .end());
         startActivityForResult(intent, BundleConstant.REQUEST_CODE);
     }
 
     @Override public void onStartNewComment() {
-        Intent intent = new Intent(getContext(), CommentsEditorView.class);
-        intent.putExtras(Bundler
-                .start()
-                .put(BundleConstant.ID, gistId)
-                .put(BundleConstant.EXTRA_TYPE, NEW_GIST_COMMENT_EXTRA)
-                .end());
-        startActivityForResult(intent, BundleConstant.REQUEST_CODE);
+        onTagUser(null);
     }
 
     @Override public void onHandleCommentDelete(@NonNull Response<Boolean> booleanResponse, long commId) {
@@ -142,7 +134,6 @@ public class GistCommentsView extends BaseFragment<GistCommentsMvp.View, GistCom
         MessageDialogView.newInstance(getString(R.string.delete), getString(R.string.confirm_message),
                 Bundler.start()
                         .put(BundleConstant.EXTRA, id)
-                        .put(BundleConstant.ID, gistId)
                         .end())
                 .show(getChildFragmentManager(), MessageDialogView.TAG);
     }
@@ -151,13 +142,15 @@ public class GistCommentsView extends BaseFragment<GistCommentsMvp.View, GistCom
         if (navigationCallback != null) navigationCallback.showProgress(0);
     }
 
-    @Override public void onTagUser(@NonNull UserModel user) {
+    @Override public void onTagUser(@Nullable UserModel user) {
         Intent intent = new Intent(getContext(), CommentsEditorView.class);
         intent.putExtras(Bundler
                 .start()
-                .put(BundleConstant.ID, gistId)
-                .put(BundleConstant.EXTRA, "@" + user.getLogin())
-                .put(BundleConstant.EXTRA_TYPE, NEW_GIST_COMMENT_EXTRA)
+                .put(BundleConstant.ID, getPresenter().repoId())
+                .put(BundleConstant.EXTRA2_ID, getPresenter().login())
+                .put(BundleConstant.EXTRA3_ID, getPresenter().number())
+                .put(BundleConstant.EXTRA, user != null ? "@" + user.getLogin() : "")
+                .put(BundleConstant.EXTRA_TYPE, BundleConstant.ExtraTYpe.NEW_ISSUE_COMMENT_EXTRA)
                 .end());
         startActivityForResult(intent, BundleConstant.REQUEST_CODE);
     }

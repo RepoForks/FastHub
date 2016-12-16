@@ -84,4 +84,5 @@ public interface IssueService {
 
     @DELETE("repos/{owner}/{repo}/issues/comments/{id}")
     Observable<Response<Boolean>> deleteIssueComment(@Path("owner") String owner, @Path("repo") String repo, @Path("id") long id);
+
 }

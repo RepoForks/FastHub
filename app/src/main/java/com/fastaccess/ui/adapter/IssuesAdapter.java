@@ -15,8 +15,16 @@ import java.util.List;
  */
 
 public class IssuesAdapter extends BaseRecyclerAdapter<IssueModel, IssuesViewHolder, BaseViewHolder.OnItemClickListener<IssueModel>> {
+
+    private boolean withAvatar;
+
     public IssuesAdapter(@NonNull List<IssueModel> data) {
+        this(data, false);
+    }
+
+    public IssuesAdapter(@NonNull List<IssueModel> data, boolean withAvatar) {
         super(data);
+        this.withAvatar = withAvatar;
     }
 
     @Override protected IssuesViewHolder viewHolder(ViewGroup parent, int viewType) {
@@ -24,6 +32,6 @@ public class IssuesAdapter extends BaseRecyclerAdapter<IssueModel, IssuesViewHol
     }
 
     @Override protected void onBindView(IssuesViewHolder holder, int position) {
-        holder.bind(getItem(position));
+        holder.bind(getItem(position), withAvatar);
     }
 }

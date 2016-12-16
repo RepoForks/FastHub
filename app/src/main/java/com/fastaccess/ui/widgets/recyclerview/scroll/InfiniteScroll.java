@@ -2,6 +2,8 @@ package com.fastaccess.ui.widgets.recyclerview.scroll;
 
 import android.support.v7.widget.RecyclerView;
 
+import com.fastaccess.helper.Logger;
+
 /**
  * Created by Kosh on 8/2/2015. copyrights are reserved @Innov8tif
  */
@@ -17,6 +19,7 @@ public abstract class InfiniteScroll extends RecyclerView.OnScrollListener {
     private static final int HIDE_THRESHOLD = 20;
     private int scrolledDistance = 0;
     private boolean controlsVisible = true;
+    private final int PAGING_SIZE = 30;
 
     public InfiniteScroll() {}
 
@@ -26,6 +29,8 @@ public abstract class InfiniteScroll extends RecyclerView.OnScrollListener {
         visibleItemCount = recyclerView.getChildCount();
         totalItemCount = mRecyclerViewHelper.getItemCount();
         firstVisibleItem = mRecyclerViewHelper.findFirstVisibleItemPosition();
+        if (PAGING_SIZE > totalItemCount) return;
+        Logger.e(totalItemCount);
         if (loading) {
             if (totalItemCount > previousTotal) {
                 loading = false;

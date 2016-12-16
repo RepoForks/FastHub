@@ -56,6 +56,9 @@ public class SearchUsersView extends BaseFragment<SearchUsersMvp.View, SearchUse
         adapter = new UsersAdapter(getPresenter().getUsers());
         adapter.setListener(getPresenter());
         recycler.setAdapter(adapter);
+        if (!InputHelper.isEmpty(searchQuery) && getPresenter().getUsers().isEmpty()) {
+            onRefresh();
+        }
     }
 
     @NonNull @Override public SearchUsersPresenter providePresenter() {
@@ -83,6 +86,7 @@ public class SearchUsersView extends BaseFragment<SearchUsersMvp.View, SearchUse
         getLoadMore().reset();
         getPresenter().getUsers().clear();
         onNotifyAdapter();
+        recycler.scrollToPosition(0);
         if (!InputHelper.isEmpty(query)) {
             recycler.removeOnScrollListener(getLoadMore());
             recycler.addOnScrollListener(getLoadMore());

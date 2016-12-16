@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.fastaccess.R;
-import com.fastaccess.data.dao.IssueModel;
+import com.fastaccess.data.dao.PullRequestModel;
 import com.fastaccess.helper.ParseDateFormat;
 import com.fastaccess.ui.widgets.AvatarLayout;
 import com.fastaccess.ui.widgets.FontTextView;
@@ -21,23 +21,22 @@ import butterknife.BindView;
  * Created by Kosh on 11 Nov 2016, 2:08 PM
  */
 
-public class IssuesViewHolder extends BaseViewHolder<IssueModel> {
+public class PullRequestViewHolder extends BaseViewHolder<PullRequestModel> {
 
     @BindView(R.id.title) FontTextView title;
     @BindView(R.id.avatarLayout) AvatarLayout avatarLayout;
     @BindView(R.id.details) FontTextView details;
     @BindString(R.string.by) String by;
 
-
-    private IssuesViewHolder(@NonNull View itemView, @Nullable BaseRecyclerAdapter adapter) {
+    private PullRequestViewHolder(@NonNull View itemView, @Nullable BaseRecyclerAdapter adapter) {
         super(itemView, adapter);
     }
 
-    public static IssuesViewHolder newInstance(ViewGroup viewGroup, BaseRecyclerAdapter adapter) {
-        return new IssuesViewHolder(getView(viewGroup, R.layout.issue_row_item), adapter);
+    public static PullRequestViewHolder newInstance(ViewGroup viewGroup, BaseRecyclerAdapter adapter) {
+        return new PullRequestViewHolder(getView(viewGroup, R.layout.issue_row_item), adapter);
     }
 
-    public void bind(@NonNull IssueModel issueModel, boolean withAvatar) {
+    public void bind(@NonNull PullRequestModel issueModel, boolean withAvatar) {
         title.setText(issueModel.getTitle());
         details.setText(SpannableBuilder.builder().append(itemView.getResources().getString(issueModel.getState().getStatus()))
                 .append(" ").append(by).append(" ").append(issueModel.getUser().getLogin()).append(" ")
@@ -48,5 +47,5 @@ public class IssuesViewHolder extends BaseViewHolder<IssueModel> {
         }
     }
 
-    @Override public void bind(@NonNull IssueModel issueModel) {}
+    @Override public void bind(@NonNull PullRequestModel issueModel) {}
 }

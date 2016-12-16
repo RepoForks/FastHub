@@ -148,6 +148,7 @@ public class RichText implements ImageLoadNotify {
         });
     }
 
+
     private void recycleTarget(HashSet<ImageTarget> ts) {
         if (ts != null) {
             for (ImageTarget it : ts) {

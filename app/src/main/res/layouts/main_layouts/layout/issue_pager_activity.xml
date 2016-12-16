@@ -67,8 +67,6 @@
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingBottom="@dimen/keyline_1"
         app:layout_behavior="@string/scroll_behavior"/>
 
     <android.support.design.widget.FloatingActionButton

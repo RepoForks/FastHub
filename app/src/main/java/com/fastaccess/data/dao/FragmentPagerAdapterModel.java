@@ -13,7 +13,9 @@ import com.fastaccess.ui.modules.main.profile.gists.ProfileGistsView;
 import com.fastaccess.ui.modules.main.profile.overview.ProfileOverviewView;
 import com.fastaccess.ui.modules.main.profile.repos.ProfileReposView;
 import com.fastaccess.ui.modules.main.profile.starred.ProfileStarredView;
+import com.fastaccess.ui.modules.pull_request.details.PullRequestDetailsView;
 import com.fastaccess.ui.modules.repo.issues.RepoIssuesView;
+import com.fastaccess.ui.modules.repo.pull_request.RepoPullRequestView;
 import com.fastaccess.ui.modules.search.code.SearchCodeView;
 import com.fastaccess.ui.modules.search.issues.SearchIssuesView;
 import com.fastaccess.ui.modules.search.repos.SearchReposView;
@@ -80,6 +82,7 @@ public class FragmentPagerAdapterModel {
         String repoId = String.valueOf(repoModel.getName());
         fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.readme), ViewerView.newInstance(repoId, login, null)));
         fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.issues), RepoIssuesView.newInstance(repoId, login)));
+        fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.pull_requests), RepoPullRequestView.newInstance(repoId, login)));
         return fragments;
     }
 
@@ -93,4 +96,13 @@ public class FragmentPagerAdapterModel {
                         IssueCommentsView.newInstance(login, repoId, number)));
     }
 
+    public static List<FragmentPagerAdapterModel> buildForPullRequest(@NonNull Context context, @NonNull PullRequestModel pullRequest) {
+        String login = pullRequest.getLogin();
+        String repoId = pullRequest.getRepoId();
+        int number = pullRequest.getNumber();
+        return Arrays.asList(new FragmentPagerAdapterModel(context.getString(R.string.details),
+                        PullRequestDetailsView.newInstance(pullRequest)),
+                new FragmentPagerAdapterModel(context.getString(R.string.conversation),
+                        IssueCommentsView.newInstance(login, repoId, number)));
+    }
 }

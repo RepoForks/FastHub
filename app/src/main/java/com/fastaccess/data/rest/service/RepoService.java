@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 
 import com.fastaccess.data.dao.CommentsModel;
 import com.fastaccess.data.dao.Pageable;
-import com.fastaccess.data.dao.PullRequestModel;
 import com.fastaccess.data.dao.RepoModel;
 import com.fastaccess.data.dao.UserModel;
 
@@ -63,8 +62,4 @@ public interface RepoService {
 
     @DELETE("user/subscriptions/{owner}/{repo}")
     Observable<Response<Boolean>> unwatchRepo(@Path("owner") String owner, @Path("repo") String repo);
-
-    @GET("repos/{owner}/{repo}/pulls")
-    Observable<Pageable<PullRequestModel>> getPullRequests(@Path("owner") String owner, @Path("repo") String repo, @Query("page") int page);
-
 }
