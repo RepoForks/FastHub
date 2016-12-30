@@ -156,7 +156,7 @@ public class CommitModel implements Parcelable {
         this.htmlUrl = in.readString();
     }
 
-    public static final Parcelable.Creator<CommitModel> CREATOR = new Parcelable.Creator<CommitModel>() {
+    public static final Creator<CommitModel> CREATOR = new Creator<CommitModel>() {
         @Override public CommitModel createFromParcel(Parcel source) {return new CommitModel(source);}
 
         @Override public CommitModel[] newArray(int size) {return new CommitModel[size];}

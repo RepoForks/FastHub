@@ -1,5 +1,7 @@
 package com.fastaccess.data.rest.service;
 
+import com.fastaccess.data.dao.FilesListModel;
+
 import okhttp3.ResponseBody;
 import retrofit2.http.GET;
 import retrofit2.http.Url;
@@ -12,4 +14,6 @@ import rx.Observable;
 public interface RestService {
 
     @GET Observable<ResponseBody> getFileAsStream(@Url String url);
+
+    @GET Observable<FilesListModel> getCodeFileContent(@Url String url);
 }

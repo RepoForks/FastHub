@@ -30,11 +30,11 @@ public class ViewerView extends BaseFragment<ViewerMvp.View, ViewerPresenter> im
     @BindView(R.id.webView) PrettifyWebView webView;
     @BindView(R.id.stateLayout) StateLayout stateLayout;
 
-    public static ViewerView newInstance(@NonNull String repoId, @NonNull String login, @Nullable String refNo) {
+    public static ViewerView newInstance(@NonNull String repoId, @NonNull String login, @Nullable String repoUrl) {
         return newInstance(Bundler.start()
                 .put(BundleConstant.EXTRA_ID, login)
                 .put(BundleConstant.ID, repoId)
-                .put(BundleConstant.EXTRA, refNo)
+                .put(BundleConstant.EXTRA, repoUrl)
                 .end());
     }
 
@@ -50,11 +50,11 @@ public class ViewerView extends BaseFragment<ViewerMvp.View, ViewerPresenter> im
         webView.setVisibility(View.VISIBLE);
     }
 
-    @Override public void onSetMdText(@NonNull String text) {
+    @Override public void onSetMdText(@NonNull String text, String baseUrl) {
         stateLayout.hideProgress();
         webView.setVisibility(View.VISIBLE);
         if (getPresenter().isRepo()) {
-            webView.setGithubContent(text);
+            webView.setGithubContent(text, baseUrl);
         } else {
             webView.setMdSource(text);
         }
@@ -101,7 +101,7 @@ public class ViewerView extends BaseFragment<ViewerMvp.View, ViewerPresenter> im
             getPresenter().onHandleIntent(getArguments());
         } else {
             if (getPresenter().isMarkDown()) {
-                onSetMdText(getPresenter().downloadedStream());
+                onSetMdText(getPresenter().downloadedStream(), getArguments().getString(BundleConstant.EXTRA));
             } else {
                 onSetCode(getPresenter().downloadedStream());
             }

@@ -92,6 +92,8 @@ public class RepoModel implements Parcelable {
     @SerializedName("organization") private UserModel organization;
     @SerializedName("parent") private RepoModel parent;
     @SerializedName("source") private RepoModel source;
+    @SerializedName("network_count") private int networkCount;
+    @SerializedName("subscribers_count") private int subsCount;
 
     public RepoModel(long repoId) {
         this.repoId = repoId;
@@ -763,6 +765,22 @@ public class RepoModel implements Parcelable {
         this.source = source;
     }
 
+    public int getSubsCount() {
+        return subsCount;
+    }
+
+    public void setSubsCount(int subsCount) {
+        this.subsCount = subsCount;
+    }
+
+    public int getNetworkCount() {
+        return networkCount;
+    }
+
+    public void setNetworkCount(int networkCount) {
+        this.networkCount = networkCount;
+    }
+
     @Override public int describeContents() { return 0; }
 
     @Override public void writeToParcel(Parcel dest, int flags) {
@@ -837,6 +855,8 @@ public class RepoModel implements Parcelable {
         dest.writeParcelable(this.organization, flags);
         dest.writeParcelable(this.parent, flags);
         dest.writeParcelable(this.source, flags);
+        dest.writeInt(this.networkCount);
+        dest.writeInt(this.subsCount);
     }
 
     protected RepoModel(Parcel in) {
@@ -911,6 +931,8 @@ public class RepoModel implements Parcelable {
         this.organization = in.readParcelable(UserModel.class.getClassLoader());
         this.parent = in.readParcelable(RepoModel.class.getClassLoader());
         this.source = in.readParcelable(RepoModel.class.getClassLoader());
+        this.networkCount = in.readInt();
+        this.subsCount = in.readInt();
     }
 
     public static final Creator<RepoModel> CREATOR = new Creator<RepoModel>() {

@@ -116,6 +116,7 @@ public class PullRequestPagerView extends BaseActivity<PullRequestPagerMvp.View,
         } else {
             onSetupIssue();
         }
+        tabs.setTabMode(TabLayout.MODE_SCROLLABLE);
         startGist.setVisibility(View.GONE);
         forkGist.setVisibility(View.GONE);
     }
@@ -240,7 +241,7 @@ public class PullRequestPagerView extends BaseActivity<PullRequestPagerMvp.View,
             fab.hide();
             return;
         }
-        if (pager.getCurrentItem() == 0) {
+        if (pager.getCurrentItem() == 1) {
             fab.show();
         } else {
             fab.hide();

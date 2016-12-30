@@ -19,7 +19,7 @@ public interface ViewerMvp {
 
         void onSetImageUrl(@NonNull String url);
 
-        void onSetMdText(@NonNull String text);
+        void onSetMdText(@NonNull String text, String baseUrl);
 
         void onSetCode(@NonNull String text);
 

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 
+import com.annimon.stream.Collectors;
+import com.annimon.stream.Stream;
 import com.fastaccess.R;
 import com.fastaccess.ui.modules.issue.comments.IssueCommentsView;
 import com.fastaccess.ui.modules.issue.details.IssueDetailsView;
@@ -22,8 +24,6 @@ import com.fastaccess.ui.modules.search.repos.SearchReposView;
 import com.fastaccess.ui.modules.search.users.SearchUsersView;
 import com.fastaccess.ui.modules.viewer.ViewerView;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -57,52 +57,49 @@ public class FragmentPagerAdapterModel {
     }
 
     public static List<FragmentPagerAdapterModel> buildForProfile(@NonNull Context context, @NonNull String login) {
-        List<FragmentPagerAdapterModel> fragments = new ArrayList<>();
-        fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.overview), ProfileOverviewView.newInstance(login)));
-        fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.repos), ProfileReposView.newInstance(login)));
-        fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.starred), ProfileStarredView.newInstance(login)));
-        fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.gists), ProfileGistsView.newInstance(login)));
-        fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.followers), ProfileFollowersView.newInstance(login)));
-        fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.following), ProfileFollowingView.newInstance(login)));
-        return fragments;
+        return Stream.of(new FragmentPagerAdapterModel(context.getString(R.string.overview), ProfileOverviewView.newInstance(login)),
+                new FragmentPagerAdapterModel(context.getString(R.string.repos), ProfileReposView.newInstance(login)),
+                new FragmentPagerAdapterModel(context.getString(R.string.starred), ProfileStarredView.newInstance(login)),
+                new FragmentPagerAdapterModel(context.getString(R.string.gists), ProfileGistsView.newInstance(login)),
+                new FragmentPagerAdapterModel(context.getString(R.string.followers), ProfileFollowersView.newInstance(login)),
+                new FragmentPagerAdapterModel(context.getString(R.string.following), ProfileFollowingView.newInstance(login)))
+                .collect(Collectors.toList());
     }
 
     public static List<FragmentPagerAdapterModel> buildForSearch(@NonNull Context context) {
-        List<FragmentPagerAdapterModel> fragments = new ArrayList<>();
-        fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.repos), SearchReposView.newInstance()));
-        fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.users), SearchUsersView.newInstance()));
-        fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.issues), SearchIssuesView.newInstance()));
-        fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.code), SearchCodeView.newInstance()));
-        return fragments;
+        return Stream.of(new FragmentPagerAdapterModel(context.getString(R.string.repos), SearchReposView.newInstance()),
+                new FragmentPagerAdapterModel(context.getString(R.string.users), SearchUsersView.newInstance()),
+                new FragmentPagerAdapterModel(context.getString(R.string.issues), SearchIssuesView.newInstance()),
+                new FragmentPagerAdapterModel(context.getString(R.string.code), SearchCodeView.newInstance()))
+                .collect(Collectors.toList());
     }
 
     public static List<FragmentPagerAdapterModel> buildForRepo(@NonNull Context context, @NonNull RepoModel repoModel) {
-        List<FragmentPagerAdapterModel> fragments = new ArrayList<>();
         String login = repoModel.getOwner().getLogin();
         String repoId = String.valueOf(repoModel.getName());
-        fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.readme), ViewerView.newInstance(repoId, login, null)));
-        fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.issues), RepoIssuesView.newInstance(repoId, login)));
-        fragments.add(new FragmentPagerAdapterModel(context.getString(R.string.pull_requests), RepoPullRequestView.newInstance(repoId, login)));
-        return fragments;
+        return Stream.of(new FragmentPagerAdapterModel(context.getString(R.string.readme), ViewerView
+                        .newInstance(repoId, login, repoModel.getHtmlUrl())),
+                new FragmentPagerAdapterModel(context.getString(R.string.issues), RepoIssuesView.newInstance(repoId, login)),
+                new FragmentPagerAdapterModel(context.getString(R.string.pull_requests), RepoPullRequestView.newInstance(repoId, login)))
+                .collect(Collectors.toList());
     }
 
     public static List<FragmentPagerAdapterModel> buildForIssues(@NonNull Context context, @NonNull IssueModel issueModel) {
         String login = issueModel.getLogin();
         String repoId = issueModel.getRepoId();
         int number = issueModel.getNumber();
-        return Arrays.asList(new FragmentPagerAdapterModel(context.getString(R.string.details),
-                        IssueDetailsView.newInstance(issueModel)),
-                new FragmentPagerAdapterModel(context.getString(R.string.comments),
-                        IssueCommentsView.newInstance(login, repoId, number)));
+        return Stream.of(new FragmentPagerAdapterModel(context.getString(R.string.details), IssueDetailsView.newInstance(issueModel)),
+                new FragmentPagerAdapterModel(context.getString(R.string.comments), IssueCommentsView.newInstance(login, repoId, number)))
+                .collect(Collectors.toList());
     }
 
     public static List<FragmentPagerAdapterModel> buildForPullRequest(@NonNull Context context, @NonNull PullRequestModel pullRequest) {
         String login = pullRequest.getLogin();
         String repoId = pullRequest.getRepoId();
         int number = pullRequest.getNumber();
-        return Arrays.asList(new FragmentPagerAdapterModel(context.getString(R.string.details),
-                        PullRequestDetailsView.newInstance(pullRequest)),
-                new FragmentPagerAdapterModel(context.getString(R.string.conversation),
-                        IssueCommentsView.newInstance(login, repoId, number)));
+        return Stream.of(new FragmentPagerAdapterModel(context.getString(R.string.details), PullRequestDetailsView.newInstance(pullRequest)),
+                new FragmentPagerAdapterModel(context.getString(R.string.conversation), IssueCommentsView.newInstance(login, repoId, number)))
+                .filter(value -> value.getTitle() != null && value.getFragment() != null)
+                .collect(Collectors.toList());
     }
 }

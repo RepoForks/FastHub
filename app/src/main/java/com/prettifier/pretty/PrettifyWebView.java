@@ -6,6 +6,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -18,6 +19,7 @@ import android.webkit.WebViewClient;
 
 import com.fastaccess.helper.ActivityHelper;
 import com.fastaccess.helper.InputHelper;
+import com.fastaccess.helper.Logger;
 import com.prettifier.pretty.callback.MarkDownInterceptorInterface;
 import com.prettifier.pretty.helper.GithubHelper;
 import com.prettifier.pretty.helper.MarkDownHelper;
@@ -96,11 +98,11 @@ public class PrettifyWebView extends NestedWebView {
         } else Log.e(getClass().getSimpleName(), "Source can't be null or empty.");
     }
 
-    public void setGithubContent(@NonNull String source) {
+    public void setGithubContent(@NonNull String source, @Nullable String baseUrl) {
         if (!InputHelper.isEmpty(source)) {
             addJavascriptInterface(new MarkDownInterceptorInterface(this), "Android");
             this.content = source;
-            String page = GithubHelper.generateContent(source);
+            String page = GithubHelper.generateContent(source, baseUrl);
             post(() -> loadDataWithBaseURL("file:///android_asset/md/", page, "text/html", "utf-8", null));
         }
     }
@@ -146,6 +148,7 @@ public class PrettifyWebView extends NestedWebView {
 
     private class WebClientCompat extends WebViewClient {
         @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            Logger.e(url);
             Activity activity = ActivityHelper.getActivity(view.getContext());
             if (activity != null) {
                 ActivityHelper.startCustomTab(activity, Uri.parse(url));

@@ -15,6 +15,7 @@ import com.fastaccess.R;
 import com.fastaccess.data.dao.FragmentPagerAdapterModel;
 import com.fastaccess.data.dao.RepoModel;
 import com.fastaccess.helper.ActivityHelper;
+import com.fastaccess.helper.AppHelper;
 import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.Bundler;
 import com.fastaccess.helper.InputHelper;
@@ -56,7 +57,11 @@ public class RepoPagerView extends BaseActivity<RepoPagerMvp.View, RepoPagerPres
     public static void startRepoPager(@NonNull Context context, @NonNull RepoModel repoModel) {
         Intent intent = new Intent(context, RepoPagerView.class);
         intent.putExtras(Bundler.start().put(BundleConstant.ITEM, repoModel).end());
-        context.startActivity(intent);
+        if (AppHelper.isOnline(context)) {
+            context.startActivity(createIntent(context, repoModel.getName(), repoModel.getOwner().getLogin()));//for the sake of subs count.
+        } else {
+            context.startActivity(createIntent(context, repoModel.getName(), repoModel.getOwner().getLogin()));
+        }
     }
 
     public static Intent createIntent(@NonNull Context context, @NonNull String repoId, @NonNull String login) {
@@ -131,7 +136,7 @@ public class RepoPagerView extends BaseActivity<RepoPagerMvp.View, RepoPagerPres
         hideProgress();
         forkRepo.setText(numberFormat.format(repoModel.getForksCount()));
         starRepo.setText(numberFormat.format(repoModel.getStargazersCount()));
-        watchRepo.setText(numberFormat.format(repoModel.getWatchersCount()));
+        watchRepo.setText(numberFormat.format(repoModel.getSubsCount()));
         if (repoModel.getOwner() != null) {
             avatarLayout.setUrl(repoModel.getOwner().getAvatarUrl(), repoModel.getOwner().getLogin());
         } else if (repoModel.getOrganization() != null) {

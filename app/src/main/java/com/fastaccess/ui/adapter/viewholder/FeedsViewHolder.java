@@ -41,7 +41,7 @@ public class FeedsViewHolder extends BaseViewHolder<EventsModel> {
             avatar.setUrl(null, null);
         }
         SpannableBuilder spannableBuilder = SpannableBuilder.builder();
-        spannableBuilder.append(eventsModel.getActor().getLogin()).append(" ");
+        spannableBuilder.bold(eventsModel.getPayload().getAction()).append(" ");
         spannableBuilder.bold(eventsModel.getType().getType()).append(" ");
         spannableBuilder.append(eventsModel.getRepo().getName());
         title.setText(spannableBuilder);

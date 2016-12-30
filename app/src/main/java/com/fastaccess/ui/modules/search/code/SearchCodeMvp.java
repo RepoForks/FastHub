@@ -28,6 +28,8 @@ public interface SearchCodeMvp {
         void onSetSearchQuery(@NonNull String query);
 
         @NonNull OnLoadMore<String> getLoadMore();
+
+        void onItemClicked(@NonNull SearchCodeModel item);
     }
 
     interface Presenter extends BaseMvp.FAPresenter<View>,

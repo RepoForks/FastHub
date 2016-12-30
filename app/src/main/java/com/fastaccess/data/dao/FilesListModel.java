@@ -19,6 +19,7 @@ public class FilesListModel implements Parcelable, Serializable {
     @SerializedName("raw_url") private String rawUrl;
     @SerializedName("size") private int size;
     @SerializedName("content") private String content;
+    private boolean needFetching;
     private String id;
 
     public String getFilename() { return filename;}
@@ -63,6 +64,14 @@ public class FilesListModel implements Parcelable, Serializable {
         this.id = id;
     }
 
+    public boolean isNeedFetching() {
+        return needFetching;
+    }
+
+    public void setNeedFetching(boolean needFetching) {
+        this.needFetching = needFetching;
+    }
+
     @Override public int describeContents() { return 0; }
 
     @Override public void writeToParcel(Parcel dest, int flags) {
@@ -72,6 +81,7 @@ public class FilesListModel implements Parcelable, Serializable {
         dest.writeString(this.rawUrl);
         dest.writeInt(this.size);
         dest.writeString(this.content);
+        dest.writeByte(this.needFetching ? (byte) 1 : (byte) 0);
         dest.writeString(this.id);
     }
 
@@ -82,6 +92,7 @@ public class FilesListModel implements Parcelable, Serializable {
         this.rawUrl = in.readString();
         this.size = in.readInt();
         this.content = in.readString();
+        this.needFetching = in.readByte() != 0;
         this.id = in.readString();
     }
 

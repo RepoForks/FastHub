@@ -1,5 +1,6 @@
 package com.fastaccess.data.rest;
 
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -9,6 +10,7 @@ import com.fastaccess.data.dao.CommentRequestModel;
 import com.fastaccess.data.dao.CommentsModel;
 import com.fastaccess.data.dao.CreateGistModel;
 import com.fastaccess.data.dao.EventsModel;
+import com.fastaccess.data.dao.FilesListModel;
 import com.fastaccess.data.dao.GistsModel;
 import com.fastaccess.data.dao.IssueEventModel;
 import com.fastaccess.data.dao.IssueModel;
@@ -107,7 +109,11 @@ public class RestClient {
     }
 
     public static Observable<ResponseBody> getFileData(@NonNull String baseUrl) {
-        return RestProvider.createService(RestService.class, baseUrl).getFileAsStream(baseUrl.endsWith("/") ? baseUrl : baseUrl + "/");
+        return RestProvider.createService(RestService.class, baseUrl, false).getFileAsStream(baseUrl.endsWith("/") ? baseUrl : baseUrl + "/");
+    }
+
+    public static Observable<FilesListModel> getCodeFileData(@NonNull String baseUrl) {
+        return RestProvider.createService(RestService.class, baseUrl, true).getCodeFileContent(baseUrl);
     }
 
     public static Observable<Pageable<RepoModel>> getRepos(@NonNull String username, int page) {

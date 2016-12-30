@@ -22,12 +22,13 @@ public class PullRequestModel implements Parcelable {
     private int id;
     private int comments;
     private int number;
-    private int additions;
-    private int commits;
-    private int deletions;
     private boolean locked;
     private boolean mergable;
     private boolean merged;
+    private boolean mergeable;
+    private int commits;
+    private int additions;
+    private int deletions;
     private IssueState state;
     private UserModel user;
     private UserModel assignee;
@@ -48,6 +49,8 @@ public class PullRequestModel implements Parcelable {
     @SerializedName("merge_commit_sha") private String mergeCommitSha;
     @SerializedName("merged_at") private String mergedAt;
     @SerializedName("merged_by") private UserModel mergedBy;
+    @SerializedName("mergeable_state") private String mergeState;
+    @SerializedName("review_comments") private int reviewComments;
     private String repoId;
     private String login;
 
@@ -123,6 +126,22 @@ public class PullRequestModel implements Parcelable {
         this.deletions = deletions;
     }
 
+    public String getRepoId() {
+        return repoId;
+    }
+
+    public void setRepoId(String repoId) {
+        this.repoId = repoId;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
     public boolean isLocked() {
         return locked;
     }
@@ -167,7 +186,7 @@ public class PullRequestModel implements Parcelable {
         return assignee;
     }
 
-    public void setAssignee(com.fastaccess.data.dao.UserModel assignee) {
+    public void setAssignee(UserModel assignee) {
         this.assignee = assignee;
     }
 
@@ -255,7 +274,7 @@ public class PullRequestModel implements Parcelable {
         return closedBy;
     }
 
-    public void setClosedBy(com.fastaccess.data.dao.UserModel closedBy) {
+    public void setClosedBy(UserModel closedBy) {
         this.closedBy = closedBy;
     }
 
@@ -303,27 +322,35 @@ public class PullRequestModel implements Parcelable {
         return mergedBy;
     }
 
-    public void setMergedBy(com.fastaccess.data.dao.UserModel mergedBy) {
+    public void setMergedBy(UserModel mergedBy) {
         this.mergedBy = mergedBy;
     }
 
+    public String getMergeState() {
+        return mergeState;
+    }
+
+    public void setMergeState(String mergeState) {
+        this.mergeState = mergeState;
+    }
+
+    public int getReviewComments() {
+        return reviewComments;
+    }
+
+    public void setReviewComments(int reviewComments) {
+        this.reviewComments = reviewComments;
+    }
+
+    public boolean isMergeable() {
+        return mergeable;
+    }
+
+    public void setMergeable(boolean mergeable) {
+        this.mergeable = mergeable;
+    }
+
     public PullRequestModel() {}
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getRepoId() {
-        return repoId;
-    }
-
-    public void setRepoId(String repoId) {
-        this.repoId = repoId;
-    }
 
     @Override public int describeContents() { return 0; }
 
@@ -334,12 +361,13 @@ public class PullRequestModel implements Parcelable {
         dest.writeInt(this.id);
         dest.writeInt(this.comments);
         dest.writeInt(this.number);
-        dest.writeInt(this.additions);
-        dest.writeInt(this.commits);
-        dest.writeInt(this.deletions);
         dest.writeByte(this.locked ? (byte) 1 : (byte) 0);
         dest.writeByte(this.mergable ? (byte) 1 : (byte) 0);
         dest.writeByte(this.merged ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.mergeable ? (byte) 1 : (byte) 0);
+        dest.writeInt(this.commits);
+        dest.writeInt(this.additions);
+        dest.writeInt(this.deletions);
         dest.writeInt(this.state == null ? -1 : this.state.ordinal());
         dest.writeParcelable(this.user, flags);
         dest.writeParcelable(this.assignee, flags);
@@ -360,6 +388,8 @@ public class PullRequestModel implements Parcelable {
         dest.writeString(this.mergeCommitSha);
         dest.writeString(this.mergedAt);
         dest.writeParcelable(this.mergedBy, flags);
+        dest.writeString(this.mergeState);
+        dest.writeInt(this.reviewComments);
         dest.writeString(this.repoId);
         dest.writeString(this.login);
     }
@@ -371,12 +401,13 @@ public class PullRequestModel implements Parcelable {
         this.id = in.readInt();
         this.comments = in.readInt();
         this.number = in.readInt();
-        this.additions = in.readInt();
-        this.commits = in.readInt();
-        this.deletions = in.readInt();
         this.locked = in.readByte() != 0;
         this.mergable = in.readByte() != 0;
         this.merged = in.readByte() != 0;
+        this.mergeable = in.readByte() != 0;
+        this.commits = in.readInt();
+        this.additions = in.readInt();
+        this.deletions = in.readInt();
         int tmpState = in.readInt();
         this.state = tmpState == -1 ? null : IssueState.values()[tmpState];
         this.user = in.readParcelable(UserModel.class.getClassLoader());
@@ -399,6 +430,8 @@ public class PullRequestModel implements Parcelable {
         this.mergeCommitSha = in.readString();
         this.mergedAt = in.readString();
         this.mergedBy = in.readParcelable(UserModel.class.getClassLoader());
+        this.mergeState = in.readString();
+        this.reviewComments = in.readInt();
         this.repoId = in.readString();
         this.login = in.readString();
     }

@@ -73,8 +73,12 @@ public class SearchCodePresenter extends BasePresenter<SearchCodeMvp.View> imple
     }
 
     @Override public void onItemClick(int position, View v, SearchCodeModel item) {
-
+        if (getView() != null) {
+            getView().onItemClicked(item);
+        }
     }
 
-    @Override public void onItemLongClick(int position, View v, SearchCodeModel item) {}
+    @Override public void onItemLongClick(int position, View v, SearchCodeModel item) {
+        onItemClick(position, v, item);
+    }
 }

@@ -7,11 +7,14 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 
 import com.fastaccess.R;
+import com.fastaccess.data.dao.FilesListModel;
+import com.fastaccess.data.dao.SearchCodeModel;
 import com.fastaccess.helper.InputHelper;
 import com.fastaccess.helper.Logger;
 import com.fastaccess.provider.rest.implementation.OnLoadMore;
 import com.fastaccess.ui.adapter.CodeAdapter;
 import com.fastaccess.ui.base.BaseFragment;
+import com.fastaccess.ui.modules.viewer.FilesViewerView;
 import com.fastaccess.ui.widgets.StateLayout;
 import com.fastaccess.ui.widgets.recyclerview.DynamicRecyclerView;
 
@@ -100,6 +103,15 @@ public class SearchCodeView extends BaseFragment<SearchCodeMvp.View, SearchCodeP
         }
         onLoadMore.setParameter(searchQuery);
         return onLoadMore;
+    }
+
+    @Override public void onItemClicked(@NonNull SearchCodeModel item) {
+        FilesListModel filesListModel = new FilesListModel();
+        filesListModel.setId(item.getSha());
+        filesListModel.setFilename(item.getName());
+        filesListModel.setNeedFetching(true);
+        filesListModel.setRawUrl(item.getGitUrl());
+        FilesViewerView.startActivity(getContext(), filesListModel);
     }
 
     @Override public void onRefresh() {

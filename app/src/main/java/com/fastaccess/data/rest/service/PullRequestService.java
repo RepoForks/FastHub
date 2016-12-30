@@ -46,5 +46,20 @@ public interface PullRequestService {
     @GET("repos/{owner}/{repo}/pulls/{number}/merge")
     Observable<Response<Boolean>> hasPullRequestBeenMerged(@Path("owner") String owner, @Path("repo") String repo,
                                                            @Path("number") long number);
-
+//
+//    @GET("repos/{owner}/{repo}/commits")
+//    Observable<Pageable<CommitModel>> getCommits(@Path("owner") String owner, @Path("repo") String repo,
+//                                                            @Query("page") long page);
+//
+//    @GET("repos/{owner}/{repo}/commits")
+//    Observable<Pageable<CommitModel>> getCommits(@Path("owner") String owner, @Path("repo") String repo,
+//                                                            @Query("sha") String sha, @Query("page") long page);
+//
+//    @GET("repos/{owner}/{repo}/commits/{sha}")
+//    Observable<CommitModel> getCommit(@Path("owner") String owner, @Path("repo") String repo,
+//                                                 @Path("sha") String sha);
+//
+//    @GET("repos/{owner}/{repo}/compare/{base}...{head}")
+//    Observable<CommitCompareModel> compareCommits(@Path("owner") String owner, @Path("repo") String repo,
+//                                                  @Path("base") String base, @Path("head") String head);
 }

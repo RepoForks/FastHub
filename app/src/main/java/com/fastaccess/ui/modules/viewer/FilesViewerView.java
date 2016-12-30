@@ -1,13 +1,19 @@
 package com.fastaccess.ui.modules.viewer;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.fastaccess.R;
+import com.fastaccess.data.dao.FilesListModel;
 import com.fastaccess.helper.BundleConstant;
+import com.fastaccess.helper.Bundler;
+import com.fastaccess.helper.FileHelper;
 import com.fastaccess.helper.InputHelper;
 import com.fastaccess.provider.rest.RestProvider;
 import com.fastaccess.ui.base.BaseActivity;
@@ -20,6 +26,15 @@ import net.grandcentrix.thirtyinch.TiPresenter;
  */
 
 public class FilesViewerView extends BaseActivity {
+
+
+    public static void startActivity(@NonNull Context context, @NonNull FilesListModel item) {
+        Intent intent = new Intent(context, FilesViewerView.class);
+        intent.putExtras(Bundler.start()
+                .put(BundleConstant.EXTRA, (Parcelable) item)
+                .end());
+        context.startActivity(intent);
+    }
 
     @Override protected int layout() {
         return R.layout.activity_fragment_layout;
@@ -62,9 +77,19 @@ public class FilesViewerView extends BaseActivity {
 
     @Override public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.download) {
-            String url = getIntent().getExtras().getString(BundleConstant.EXTRA);
-            if (!InputHelper.isEmpty(url)) {
-                RestProvider.downloadFile(this, url);
+
+            if (getIntent().getExtras().get(BundleConstant.EXTRA) instanceof String) {
+                String url = getIntent().getExtras().getString(BundleConstant.EXTRA);
+                if (!InputHelper.isEmpty(url)) {
+                    RestProvider.downloadFile(this, url);
+                }
+            } else {
+                FilesListModel filesListModel = getIntent().getExtras().getParcelable(BundleConstant.EXTRA);
+                if (filesListModel != null) {
+                    RestProvider.downloadFile(this, filesListModel.getRawUrl(),
+                            FileHelper.getExtension(filesListModel.getFilename())
+                                    != null ? filesListModel.getFilename() : null);
+                }
             }
             return true;
         }

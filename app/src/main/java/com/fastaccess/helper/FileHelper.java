@@ -48,4 +48,8 @@ public class FileHelper {
     public static String getExtension(String file) {
         return MimeTypeMap.getFileExtensionFromUrl(file);
     }
+
+    public static String getDownloadDirectory() {
+        return Environment.DIRECTORY_DOWNLOADS;
+    }
 }

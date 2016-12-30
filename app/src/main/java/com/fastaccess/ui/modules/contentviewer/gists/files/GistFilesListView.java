@@ -1,8 +1,6 @@
 package com.fastaccess.ui.modules.contentviewer.gists.files;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -64,13 +62,9 @@ public class GistFilesListView extends BaseFragment<GistFilesListMvp.View, GistF
 
     @Override public void onOpenFile(@NonNull FilesListModel item) {
         GistsModel gistsModel = getArguments().getParcelable(BundleConstant.ITEM);
-        Intent intent = new Intent(getContext(), FilesViewerView.class);
         if (gistsModel != null) {
             item.setId(gistsModel.getGistId());
-            intent.putExtras(Bundler.start()
-                    .put(BundleConstant.EXTRA, (Parcelable) item)
-                    .end());
+            FilesViewerView.startActivity(getContext(), item);
         }
-        startActivity(intent);
     }
 }

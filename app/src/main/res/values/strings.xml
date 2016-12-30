@@ -135,4 +135,5 @@
     <string name="pull_requests">Pull Requests</string>
     <string name="conversation">Conversations</string>
     <string name="pull_request">Pull Request</string>
+    <string name="files_changed">Files Changed</string>
 </resources>

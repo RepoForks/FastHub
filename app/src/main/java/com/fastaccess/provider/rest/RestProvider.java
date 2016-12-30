@@ -4,10 +4,13 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.fastaccess.R;
 import com.fastaccess.data.rest.service.UserRestService;
+import com.fastaccess.helper.FileHelper;
 import com.fastaccess.helper.InputHelper;
+import com.fastaccess.helper.Logger;
 import com.fastaccess.helper.PrefGetter;
 import com.fastaccess.provider.rest.implementation.PaginationInterceptor;
 import com.fastaccess.provider.rest.implementation.StringConverter;
@@ -61,11 +64,11 @@ public class RestProvider {
         return getRetrofit(false);
     }
 
-    @NonNull private static Retrofit getRetrofit(String baseUrl) {
+    @NonNull private static Retrofit getRetrofit(String baseUrl, boolean isGson) {
         return new Retrofit.Builder()
                 .baseUrl(baseUrl.endsWith("/") ? baseUrl : baseUrl + "/")
                 .client(getHttpClient(false))
-                .addConverterFactory(new StringConverter())
+                .addConverterFactory(!isGson ? new StringConverter() : GsonConverterFactory.create(getGson()))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
     }
@@ -87,8 +90,8 @@ public class RestProvider {
         return createService(UserRestService.class, gson);
     }
 
-    @NonNull public static <S> S createService(@NonNull Class<S> service, String baseUrl) {
-        return getRetrofit(baseUrl).create(service);
+    @NonNull public static <S> S createService(@NonNull Class<S> service, String baseUrl, boolean isGson) {
+        return getRetrofit(baseUrl, isGson).create(service);
     }
 
     @NonNull public static <S> S createService(@NonNull Class<S> service, boolean isRaw) {
@@ -149,14 +152,25 @@ public class RestProvider {
                 .create();
     }
 
-    public static long downloadFile(@NonNull Context context, @NonNull String url) {
+    public static long downloadFile(@NonNull Context context, @NonNull String url, @Nullable String fileName) {
         DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         Uri uri = Uri.parse(url);
         DownloadManager.Request request = new DownloadManager.Request(uri);
+        Logger.e(FileHelper.getDownloadDirectory(), fileName);
+        if (!InputHelper.isEmpty(fileName)) {
+            request.setDestinationInExternalPublicDir(FileHelper.getDownloadDirectory(), fileName);
+            request.setDescription(String.format("%s %s", context.getString(R.string.downloading), fileName));
+        } else {
+            request.setDescription(String.format("%s %s", context.getString(R.string.downloading), url));
+        }
         request.setTitle(context.getString(R.string.downloading_file));
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         return downloadManager.enqueue(request);
+    }
+
+    public static long downloadFile(@NonNull Context context, @NonNull String url) {
+        return downloadFile(context, url, null);
     }
 
     public static int getErrorCode(Throwable throwable) {

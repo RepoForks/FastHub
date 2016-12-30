@@ -33,7 +33,7 @@ public class StateLayout extends NestedScrollView {
     @BindView(R.id.reload) FontButton reload;
     @BindView(R.id.progressBar) ProgressBar progressBar;
     private OnClickListener onReloadListener;
-    @State int layoutState = SHOW_PROGRESS_STATE;
+    @State int layoutState = HIDDEN;
     @State String emptyTextValue;
     @State int adapterSize;
 
