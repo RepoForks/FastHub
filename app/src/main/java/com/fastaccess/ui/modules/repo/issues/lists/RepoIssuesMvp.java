@@ -1,4 +1,4 @@
-package com.fastaccess.ui.modules.repo.issues;
+package com.fastaccess.ui.modules.repo.issues.lists;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;

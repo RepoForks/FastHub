@@ -45,7 +45,7 @@ public class PullRequestPagerView extends BaseActivity<PullRequestPagerMvp.View,
     @BindView(R.id.startGist) ForegroundImageView startGist;
     @BindView(R.id.forkGist) ForegroundImageView forkGist;
     @BindView(R.id.avatarLayout) AvatarLayout avatarLayout;
-    @BindView(R.id.title) FontTextView title;
+    @BindView(R.id.headerTitle) FontTextView title;
     @BindView(R.id.size) FontTextView size;
     @BindView(R.id.date) FontTextView date;
     @BindView(R.id.tabs) TabLayout tabs;

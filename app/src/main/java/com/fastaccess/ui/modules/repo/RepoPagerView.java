@@ -6,13 +6,13 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TabLayout;
+import android.support.v4.view.MenuItemCompat;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.fastaccess.R;
-import com.fastaccess.data.dao.FragmentPagerAdapterModel;
 import com.fastaccess.data.dao.RepoModel;
 import com.fastaccess.helper.ActivityHelper;
 import com.fastaccess.helper.AppHelper;
@@ -20,17 +20,16 @@ import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.Bundler;
 import com.fastaccess.helper.InputHelper;
 import com.fastaccess.helper.ParseDateFormat;
-import com.fastaccess.ui.adapter.FragmentsPagerAdapter;
 import com.fastaccess.ui.base.BaseActivity;
 import com.fastaccess.ui.widgets.AvatarLayout;
 import com.fastaccess.ui.widgets.FontTextView;
-import com.fastaccess.ui.widgets.ViewPagerView;
 
 import java.text.NumberFormat;
 
 import butterknife.BindColor;
 import butterknife.BindView;
 import butterknife.OnClick;
+import it.sephiroth.android.library.bottomnavigation.BottomNavigation;
 
 /**
  * Created by Kosh on 09 Dec 2016, 4:17 PM
@@ -38,20 +37,17 @@ import butterknife.OnClick;
 
 public class RepoPagerView extends BaseActivity<RepoPagerMvp.View, RepoPagerPresenter> implements RepoPagerMvp.View {
 
-
     @BindView(R.id.avatarLayout) AvatarLayout avatarLayout;
-    @BindView(R.id.title) FontTextView title;
+    @BindView(R.id.headerTitle) FontTextView title;
     @BindView(R.id.size) FontTextView size;
     @BindView(R.id.date) FontTextView date;
     @BindView(R.id.forkRepo) FontTextView forkRepo;
     @BindView(R.id.starRepo) FontTextView starRepo;
     @BindView(R.id.watchRepo) FontTextView watchRepo;
-    @BindView(R.id.tabs) TabLayout tabs;
     @BindView(R.id.appbar) AppBarLayout appbar;
-    @BindView(R.id.pager) ViewPagerView pager;
     @BindView(R.id.fab) FloatingActionButton fab;
-    @BindView(R.id.coordinatorLayout) CoordinatorLayout coordinatorLayout;
     @BindColor(R.color.carrot) int carrotColor;
+    @BindView(R.id.bottomNavigation) BottomNavigation bottomNavigation;
     private NumberFormat numberFormat = NumberFormat.getNumberInstance();
 
     public static void startRepoPager(@NonNull Context context, @NonNull RepoModel repoModel) {
@@ -70,7 +66,7 @@ public class RepoPagerView extends BaseActivity<RepoPagerMvp.View, RepoPagerPres
         return intent;
     }
 
-    @OnClick({R.id.forkRepo, R.id.starRepo, R.id.watchRepo, R.id.share}) public void onClick(View view) {
+    @OnClick({R.id.forkRepo, R.id.starRepo, R.id.watchRepo}) public void onClick(View view) {
         switch (view.getId()) {
             case R.id.forkRepo:
                 getPresenter().onFork();
@@ -80,9 +76,6 @@ public class RepoPagerView extends BaseActivity<RepoPagerMvp.View, RepoPagerPres
                 break;
             case R.id.watchRepo:
                 getPresenter().onWatch();
-                break;
-            case R.id.share:
-                if (getPresenter().getRepo() != null) ActivityHelper.shareUrl(this, getPresenter().getRepo().getHtmlUrl());
                 break;
         }
     }
@@ -113,14 +106,21 @@ public class RepoPagerView extends BaseActivity<RepoPagerMvp.View, RepoPagerPres
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("");
         if (savedInstanceState == null) {
             getPresenter().onActivityCreated(getIntent());
+            bottomNavigation.setDefaultSelectedIndex(0);
         } else {
             if (getPresenter().getRepo() != null) {
                 onInitRepo();
             }
         }
+    }
+
+    @Override public void onNavigationChanged(@RepoPagerMvp.RepoNavigationType int navType) {
+        //noinspection WrongConstant
+        if (bottomNavigation.getSelectedIndex() != navType) bottomNavigation.setSelectedIndex(navType, true);
+
+        getPresenter().onModuleChanged(getSupportFragmentManager(), navType);
     }
 
     @Override public void onFinishActivity() {
@@ -132,6 +132,7 @@ public class RepoPagerView extends BaseActivity<RepoPagerMvp.View, RepoPagerPres
             finish();
             return;
         }
+        bottomNavigation.setOnMenuItemClickListener(getPresenter());
         RepoModel repoModel = getPresenter().getRepo();
         hideProgress();
         forkRepo.setText(numberFormat.format(repoModel.getForksCount()));
@@ -145,9 +146,6 @@ public class RepoPagerView extends BaseActivity<RepoPagerMvp.View, RepoPagerPres
         size.setText(ParseDateFormat.getTimeAgo(repoModel.getCreatedAt()));
         date.setText(ParseDateFormat.getTimeAgo(repoModel.getUpdatedAt()));
         title.setText(repoModel.getFullName());
-        pager.setAdapter(new FragmentsPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapterModel
-                .buildForRepo(this, getPresenter().getRepo())));
-        tabs.setupWithViewPager(pager);
     }
 
     @Override public void onShowProgress() {
@@ -199,5 +197,19 @@ public class RepoPagerView extends BaseActivity<RepoPagerMvp.View, RepoPagerPres
     @Override public void onChangeForkCount(boolean isForked) {
         long count = InputHelper.toLong(forkRepo);
         forkRepo.setText(numberFormat.format(isForked ? (count + 1) : (count > 0 ? (count - 1) : 0)));
+    }
+
+    @Override public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.share_menu, menu);
+        MenuItemCompat.setShowAsAction(menu.findItem(R.id.share), MenuItem.SHOW_AS_ACTION_NEVER);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.share) {
+            if (getPresenter().getRepo() != null) ActivityHelper.shareUrl(this, getPresenter().getRepo().getHtmlUrl());
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

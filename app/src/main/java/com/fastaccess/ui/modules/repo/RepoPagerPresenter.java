@@ -2,18 +2,28 @@ package com.fastaccess.ui.modules.repo;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 
+import com.fastaccess.R;
 import com.fastaccess.data.dao.RepoModel;
 import com.fastaccess.data.rest.RestClient;
+import com.fastaccess.helper.AppHelper;
 import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.InputHelper;
 import com.fastaccess.helper.RxHelper;
 import com.fastaccess.ui.base.mvp.presenter.BasePresenter;
+import com.fastaccess.ui.modules.repo.code.RepoCodePagerView;
+import com.fastaccess.ui.modules.repo.issues.RepoIssuesPagerView;
+import com.fastaccess.ui.modules.repo.pull_request.RepoPullRequestPagerView;
 
 import retrofit2.Response;
 import rx.Observable;
+
+import static com.fastaccess.helper.AppHelper.getVisibleFragment;
 
 /**
  * Created by Kosh on 09 Dec 2016, 4:17 PM
@@ -44,7 +54,10 @@ public class RepoPagerPresenter extends BasePresenter<RepoPagerMvp.View> impleme
                         .doOnSubscribe(() -> sendToView(RepoPagerMvp.View::onShowProgress))
                         .doOnNext(repoModel -> {
                             repo = repoModel;
-                            sendToView(RepoPagerMvp.View::onInitRepo);
+                            sendToView(view -> {
+                                view.onInitRepo();
+                                view.onNavigationChanged(RepoPagerMvp.CODE);
+                            });
                             onCheckStarring();
                             onCheckWatching();
                         })
@@ -188,8 +201,79 @@ public class RepoPagerPresenter extends BasePresenter<RepoPagerMvp.View> impleme
             manageSubscription(RepoModel.getRepo(repoId(), login())
                     .subscribe(repoModel -> {
                         repo = repoModel;
-                        sendToView(RepoPagerMvp.View::onInitRepo);
+                        sendToView(view -> {
+                            view.onInitRepo();
+                            view.onNavigationChanged(RepoPagerMvp.CODE);
+                        });
                     }));
         }
     }
+
+    @Override public void onModuleChanged(@NonNull FragmentManager fragmentManager, @RepoPagerMvp.RepoNavigationType int type) {
+        Fragment currentVisible = getVisibleFragment(fragmentManager);
+        RepoCodePagerView codePagerView = (RepoCodePagerView) AppHelper.getFragmentByTag(fragmentManager, RepoCodePagerView.TAG);
+        RepoIssuesPagerView repoIssuesPagerView = (RepoIssuesPagerView) AppHelper.getFragmentByTag(fragmentManager, RepoIssuesPagerView.TAG);
+        RepoPullRequestPagerView pullRequestPagerView = (RepoPullRequestPagerView) AppHelper.getFragmentByTag(fragmentManager,
+                RepoPullRequestPagerView.TAG);
+        if (getRepo() == null) return;
+        if (currentVisible == null) {
+            fragmentManager.beginTransaction()
+                    .add(R.id.container, RepoCodePagerView.newInstance(getRepo()), RepoCodePagerView.TAG)
+                    .commit();
+            return;
+        }
+        switch (type) {
+            case RepoPagerMvp.CODE:
+                if (codePagerView == null) {
+                    onAddAndHide(fragmentManager, RepoCodePagerView.newInstance(getRepo()), currentVisible);
+                } else {
+                    onShowHideFragment(fragmentManager, codePagerView, currentVisible);
+                }
+                break;
+            case RepoPagerMvp.ISSUES:
+                if (repoIssuesPagerView == null) {
+                    onAddAndHide(fragmentManager, RepoIssuesPagerView.newInstance(getRepo().getName(),
+                            getRepo().getOwner().getLogin()), currentVisible);
+                } else {
+                    onShowHideFragment(fragmentManager, repoIssuesPagerView, currentVisible);
+                }
+                break;
+            case RepoPagerMvp.PULL_REQUEST:
+                if (pullRequestPagerView == null) {
+                    onAddAndHide(fragmentManager, RepoPullRequestPagerView.newInstance(getRepo().getName(),
+                            getRepo().getOwner().getLogin()), currentVisible);
+                } else {
+                    onShowHideFragment(fragmentManager, pullRequestPagerView, currentVisible);
+                }
+                break;
+        }
+    }
+
+    @Override public void onShowHideFragment(@NonNull FragmentManager fragmentManager, @NonNull Fragment toShow, @NonNull Fragment toHide) {
+        toHide.onHiddenChanged(true);
+        fragmentManager
+                .beginTransaction()
+                .hide(toHide)
+                .show(toShow)
+                .commit();
+        toShow.onHiddenChanged(false);
+    }
+
+    @Override public void onAddAndHide(@NonNull FragmentManager fragmentManager, @NonNull Fragment toAdd, @NonNull Fragment toHide) {
+        toHide.onHiddenChanged(true);
+        fragmentManager
+                .beginTransaction()
+                .hide(toHide)
+                .add(R.id.container, toAdd, toAdd.getClass().getSimpleName())
+                .commit();
+        toAdd.onHiddenChanged(false);
+    }
+
+    @Override public void onMenuItemSelect(@IdRes int id, int position) {
+        if (getView() != null && isAttached()) {
+            getView().onNavigationChanged(position);
+        }
+    }
+
+    @Override public void onMenuItemReselect(@IdRes int id, int position) {}
 }

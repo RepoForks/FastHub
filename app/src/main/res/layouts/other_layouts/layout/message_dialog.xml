@@ -7,7 +7,7 @@
     android:orientation="vertical">
 
     <com.fastaccess.ui.widgets.FontTextView
-        android:id="@+id/title"
+        android:id="@+id/headerTitle"
         style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -1,4 +1,4 @@
-package com.fastaccess.ui.modules.repo.pull_request;
+package com.fastaccess.ui.modules.repo.pull_request.lists;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;

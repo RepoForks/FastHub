@@ -24,82 +24,67 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            android:background="?colorPrimary">
+            android:layout_height="wrap_content"
+            android:background="?colorPrimary"
+            android:minHeight="?actionBarSize"
+            app:theme="@style/ToolbarStyleDark">
 
-            <com.fastaccess.ui.widgets.FontTextView
-                android:id="@+id/share"
-                style="@style/TextAppearance.AppCompat.Small"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center|end"
-                android:layout_marginEnd="@dimen/spacing_xs_large"
-                android:background="?selectableItemBackgroundBorderless"
-                android:drawablePadding="@dimen/spacing_normal"
-                android:drawableTop="@drawable/ic_share"
-                android:gravity="center"/>
+                android:gravity="end|center"
+                android:orientation="horizontal"
+                android:padding="@dimen/spacing_normal">
 
-            <com.fastaccess.ui.widgets.FontTextView
-                android:id="@+id/forkRepo"
-                style="@style/TextAppearance.AppCompat.Small"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center|end"
-                android:layout_marginEnd="@dimen/spacing_xs_large"
-                android:background="?selectableItemBackgroundBorderless"
-                android:drawablePadding="@dimen/spacing_normal"
-                android:drawableTop="@drawable/ic_fork"
-                android:gravity="center"
-                tools:text="100,000"/>
+                <com.fastaccess.ui.widgets.FontTextView
+                    android:id="@+id/watchRepo"
+                    style="@style/TextAppearance.AppCompat.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|end"
+                    android:layout_marginEnd="@dimen/spacing_xs_large"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:drawablePadding="@dimen/spacing_normal"
+                    android:drawableTop="@drawable/ic_eye"
+                    android:gravity="center"
+                    tools:text="100,000"/>
 
-            <com.fastaccess.ui.widgets.FontTextView
-                android:id="@+id/starRepo"
-                style="@style/TextAppearance.AppCompat.Small"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center|end"
-                android:layout_marginEnd="@dimen/spacing_xs_large"
-                android:background="?selectableItemBackgroundBorderless"
-                android:drawablePadding="@dimen/spacing_normal"
-                android:drawableTop="@drawable/ic_star"
-                android:gravity="center"
-                android:scaleType="centerCrop"
-                tools:text="100,000"/>
+                <com.fastaccess.ui.widgets.FontTextView
+                    android:id="@+id/starRepo"
+                    style="@style/TextAppearance.AppCompat.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|end"
+                    android:layout_marginEnd="@dimen/spacing_xs_large"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:drawablePadding="@dimen/spacing_normal"
+                    android:drawableTop="@drawable/ic_star"
+                    android:gravity="center"
+                    android:scaleType="centerCrop"
+                    tools:text="100,000"/>
 
+                <com.fastaccess.ui.widgets.FontTextView
+                    android:id="@+id/forkRepo"
+                    style="@style/TextAppearance.AppCompat.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|end"
+                    android:layout_marginEnd="@dimen/spacing_xs_large"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:drawablePadding="@dimen/spacing_normal"
+                    android:drawableTop="@drawable/ic_fork"
+                    android:gravity="center"
+                    tools:text="100,000"/>
 
-            <com.fastaccess.ui.widgets.FontTextView
-                android:id="@+id/watchRepo"
-                style="@style/TextAppearance.AppCompat.Small"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center|end"
-                android:layout_marginEnd="@dimen/spacing_xs_large"
-                android:background="?selectableItemBackgroundBorderless"
-                android:drawablePadding="@dimen/spacing_normal"
-                android:drawableTop="@drawable/ic_eye"
-                android:gravity="center"
-                android:scaleType="centerCrop"
-                tools:text="100,000"/>
+            </LinearLayout>
 
 
         </android.support.v7.widget.Toolbar>
 
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tabs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?colorPrimary"
-            app:tabSelectedTextColor="?colorAccent"
-            app:tabTextColor="@color/dark_gray"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:background="@drawable/toolbar_shadow"/>
     </android.support.design.widget.AppBarLayout>
 
-    <com.fastaccess.ui.widgets.ViewPagerView
-        android:id="@+id/pager"
+    <FrameLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/scroll_behavior"/>
@@ -110,8 +95,17 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_comment"
+        android:src="@drawable/ic_add"
         android:tint="@color/white"
-        app:fabSize="auto"/>
+        android:visibility="gone"/>
+
+    <it.sephiroth.android.library.bottomnavigation.BottomNavigation
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom"
+        app:bbn_badgeProvider="@string/bbn_badgeProvider"
+        app:bbn_entries="@menu/repo_bottom_nav_menu"
+        app:layout_behavior="@string/bbn_phone_view_behavior"/>
 
 </android.support.design.widget.CoordinatorLayout>

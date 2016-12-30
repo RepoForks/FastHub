@@ -1,4 +1,4 @@
-package com.fastaccess.ui.modules.repo.issues;
+package com.fastaccess.ui.modules.repo.pull_request.lists;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,10 +12,9 @@ import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.Bundler;
 import com.fastaccess.helper.Logger;
 import com.fastaccess.provider.rest.implementation.OnLoadMore;
-import com.fastaccess.ui.adapter.IssuesAdapter;
+import com.fastaccess.ui.adapter.PullRequestAdapter;
 import com.fastaccess.ui.base.BaseFragment;
 import com.fastaccess.ui.widgets.StateLayout;
-import com.fastaccess.ui.widgets.recyclerview.BottomPaddingDecoration;
 import com.fastaccess.ui.widgets.recyclerview.DynamicRecyclerView;
 
 import butterknife.BindView;
@@ -24,18 +23,19 @@ import butterknife.BindView;
  * Created by Kosh on 03 Dec 2016, 3:56 PM
  */
 
-public class RepoIssuesView extends BaseFragment<RepoIssuesMvp.View, RepoIssuesPresenter> implements RepoIssuesMvp.View {
+public class RepoPullRequestView extends BaseFragment<RepoPullRequestMvp.View, RepoPullRequestPresenter> implements RepoPullRequestMvp.View {
     @BindView(R.id.recycler) DynamicRecyclerView recycler;
     @BindView(R.id.refresh) SwipeRefreshLayout refresh;
     @BindView(R.id.stateLayout) StateLayout stateLayout;
     private OnLoadMore<IssueState> onLoadMore;
-    private IssuesAdapter adapter;
+    private PullRequestAdapter adapter;
 
-    public static RepoIssuesView newInstance(@NonNull String repoId, @NonNull String login) {
-        RepoIssuesView view = new RepoIssuesView();
+    public static RepoPullRequestView newInstance(@NonNull String repoId, @NonNull String login, @NonNull IssueState issueState) {
+        RepoPullRequestView view = new RepoPullRequestView();
         view.setArguments(Bundler.start()
                 .put(BundleConstant.EXTRA_ID, login)
                 .put(BundleConstant.ID, repoId)
+                .put(BundleConstant.EXTRA, issueState)
                 .end());
         return view;
     }
@@ -57,21 +57,20 @@ public class RepoIssuesView extends BaseFragment<RepoIssuesMvp.View, RepoIssuesP
         stateLayout.setOnReloadListener(this);
         refresh.setOnRefreshListener(this);
         recycler.setEmptyView(stateLayout, refresh);
-        adapter = new IssuesAdapter(getPresenter().getIssues(), true);
+        adapter = new PullRequestAdapter(getPresenter().getPullRequests(), true);
         adapter.setListener(getPresenter());
         getLoadMore().setCurrent_page(getPresenter().getCurrentPage(), getPresenter().getPreviousTotal());
-
         recycler.setAdapter(adapter);
         recycler.addOnScrollListener(getLoadMore());
         if (savedInstanceState == null) {
             getPresenter().onFragmentCreated(getArguments());
-        } else if (getPresenter().getIssues().isEmpty()) {
+        } else if (getPresenter().getPullRequests().isEmpty()) {
             onRefresh();
         }
     }
 
-    @NonNull @Override public RepoIssuesPresenter providePresenter() {
-        return new RepoIssuesPresenter();
+    @NonNull @Override public RepoPullRequestPresenter providePresenter() {
+        return new RepoPullRequestPresenter();
     }
 
     @Override public void onHideProgress() {

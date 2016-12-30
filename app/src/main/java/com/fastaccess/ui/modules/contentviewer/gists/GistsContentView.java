@@ -42,7 +42,7 @@ public class GistsContentView extends BaseActivity<GistsContentMvp.View, GistsCo
 
     @BindView(R.id.appbar) AppBarLayout appbar;
     @BindView(R.id.avatarLayout) AvatarLayout avatarLayout;
-    @BindView(R.id.title) FontTextView title;
+    @BindView(R.id.headerTitle) FontTextView title;
     @BindView(R.id.size) FontTextView size;
     @BindView(R.id.date) FontTextView date;
     @BindView(R.id.pager) ViewPagerView pager;
@@ -64,7 +64,7 @@ public class GistsContentView extends BaseActivity<GistsContentMvp.View, GistsCo
         }
     }
 
-    @OnClick(R.id.title) void onTitleClick() {
+    @OnClick(R.id.headerTitle) void onTitleClick() {
         if (getPresenter().getGist() != null && !InputHelper.isEmpty(getPresenter().getGist().getDescription()))
             showMessage(getString(R.string.details), getPresenter().getGist().getDescription());
     }

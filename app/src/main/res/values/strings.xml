@@ -98,7 +98,7 @@
     <string name="code">Code</string>
     <string name="by">by</string>
     <string name="n_a">N/A</string>
-    <string name="repo">Repository</string>
+    <string name="repo">Repo</string>
     <string name="star">Star</string>
     <string name="close_issue">Close Issue</string>
     <string name="re_open_issue">Re-Open Issue</string>
@@ -136,4 +136,5 @@
     <string name="conversation">Conversations</string>
     <string name="pull_request">Pull Request</string>
     <string name="files_changed">Files Changed</string>
+    <string name="open">Open</string>
 </resources>
