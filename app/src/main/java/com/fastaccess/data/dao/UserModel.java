@@ -63,6 +63,7 @@ public class UserModel implements Parcelable {
     @SerializedName("disk_usage") private long diskUsage;
     @SerializedName("collaborators") private long collaborators;
     @SerializedName("site_admin") private boolean siteAdmin;
+    private int contributions;
     private String date;
 
     public String getLogin() {
@@ -495,6 +496,14 @@ public class UserModel implements Parcelable {
         this.date = date;
     }
 
+    public int getContributions() {
+        return contributions;
+    }
+
+    public void setContributions(int contributions) {
+        this.contributions = contributions;
+    }
+
     @Override public int describeContents() { return 0; }
 
     @Override public void writeToParcel(Parcel dest, int flags) {
@@ -533,6 +542,7 @@ public class UserModel implements Parcelable {
         dest.writeLong(this.diskUsage);
         dest.writeLong(this.collaborators);
         dest.writeByte(this.siteAdmin ? (byte) 1 : (byte) 0);
+        dest.writeInt(this.contributions);
         dest.writeString(this.date);
     }
 
@@ -572,6 +582,7 @@ public class UserModel implements Parcelable {
         this.diskUsage = in.readLong();
         this.collaborators = in.readLong();
         this.siteAdmin = in.readByte() != 0;
+        this.contributions = in.readInt();
         this.date = in.readString();
     }
 

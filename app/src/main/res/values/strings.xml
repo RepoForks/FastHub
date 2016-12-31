@@ -147,4 +147,5 @@
     <string name="no_body">No Body</string>
     <string name="download_as_zip">Source code (zip)</string>
     <string name="download_as_tar">Source code (tar.gz)</string>
+    <string name="contributors">Contributors</string>
 </resources>

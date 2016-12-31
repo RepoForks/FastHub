@@ -36,9 +36,14 @@ public class UsersViewHolder extends BaseViewHolder<UserModel> {
         avatar.findViewById(R.id.avatar).callOnClick();
     }
 
-    @Override public void bind(@NonNull UserModel actor) {
+    @Override public void bind(@NonNull UserModel actor) {}
+
+    public void bind(@NonNull UserModel actor, boolean isContributor) {
         avatar.setUrl(actor.getAvatarUrl(), actor.getLogin());
         title.setText(actor.getLogin());
-        date.setVisibility(View.GONE);
+        date.setVisibility(!isContributor ? View.GONE : View.VISIBLE);
+        if (isContributor) {
+            date.setText(String.format("%s (%s)", date.getResources().getString(R.string.commits), actor.getContributions()));
+        }
     }
 }

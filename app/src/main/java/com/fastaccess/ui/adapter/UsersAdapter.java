@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 import android.view.ViewGroup;
 
 import com.fastaccess.data.dao.UserModel;
-import com.fastaccess.data.dao.UserModel;
 import com.fastaccess.ui.adapter.viewholder.UsersViewHolder;
 import com.fastaccess.ui.widgets.recyclerview.BaseRecyclerAdapter;
 import com.fastaccess.ui.widgets.recyclerview.BaseViewHolder;
@@ -17,8 +16,15 @@ import java.util.ArrayList;
 
 public class UsersAdapter extends BaseRecyclerAdapter<UserModel, UsersViewHolder, BaseViewHolder.OnItemClickListener<UserModel>> {
 
+    private boolean isContributor;
+
     public UsersAdapter(@NonNull ArrayList<UserModel> eventsModels) {
+        this(eventsModels, false);
+    }
+
+    public UsersAdapter(@NonNull ArrayList<UserModel> eventsModels, boolean isContributor) {
         super(eventsModels);
+        this.isContributor = isContributor;
     }
 
     @Override protected UsersViewHolder viewHolder(ViewGroup parent, int viewType) {
@@ -26,6 +32,6 @@ public class UsersAdapter extends BaseRecyclerAdapter<UserModel, UsersViewHolder
     }
 
     @Override protected void onBindView(UsersViewHolder holder, int position) {
-        holder.bind(getItem(position));
+        holder.bind(getItem(position), isContributor);
     }
 }

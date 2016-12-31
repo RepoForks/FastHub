@@ -18,6 +18,7 @@ import com.fastaccess.ui.modules.main.profile.repos.ProfileReposView;
 import com.fastaccess.ui.modules.main.profile.starred.ProfileStarredView;
 import com.fastaccess.ui.modules.pull_request.details.PullRequestDetailsView;
 import com.fastaccess.ui.modules.repo.code.commits.RepoCommitsView;
+import com.fastaccess.ui.modules.repo.code.contributors.RepoContributorsView;
 import com.fastaccess.ui.modules.repo.code.releases.RepoReleasesView;
 import com.fastaccess.ui.modules.repo.issues.lists.RepoIssuesView;
 import com.fastaccess.ui.modules.repo.pull_request.lists.RepoPullRequestView;
@@ -104,6 +105,8 @@ public class FragmentPagerAdapterModel {
                 new FragmentPagerAdapterModel(context.getString(R.string.commits), RepoCommitsView
                         .newInstance(repoId, login)),
                 new FragmentPagerAdapterModel(context.getString(R.string.releases), RepoReleasesView
+                        .newInstance(repoId, login)),
+                new FragmentPagerAdapterModel(context.getString(R.string.contributors), RepoContributorsView
                         .newInstance(repoId, login)))
                 .collect(Collectors.toList());
     }

@@ -257,6 +257,10 @@ public class RestClient {
         return RestProvider.createService(RepoService.class).getReleases(login, repoId, page);
     }
 
+    public static Observable<Pageable<UserModel>> getContributors(@NonNull String login, @NonNull String repoId, int page) {
+        return RestProvider.createService(RepoService.class).getContributors(login, repoId, page);
+    }
+
 }
 
 

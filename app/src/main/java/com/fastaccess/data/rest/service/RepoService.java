@@ -71,4 +71,7 @@ public interface RepoService {
     @GET("repos/{owner}/{repo}/releases")
     Observable<Pageable<ReleasesModel>> getReleases(@Path("owner") String owner, @Path("repo") String repo, @Query("page") int page);
 
+    @GET("repos/{owner}/{repo}/contributors")
+    Observable<Pageable<UserModel>> getContributors(@Path("owner") String owner, @Path("repo") String repo, @Query("page") int page);
+
 }
