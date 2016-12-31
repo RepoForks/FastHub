@@ -47,11 +47,11 @@ public class GistsPresenter extends BasePresenter<GistsMvp.View> implements Gist
             lastPage = Integer.MAX_VALUE;
             sendToView(view -> view.getLoadMore().reset());
         }
-        setCurrentPage(page);
         if (page > lastPage || lastPage == 0) {
             sendToView(GistsMvp.View::onHideProgress);
             return;
         }
+        setCurrentPage(page);
         manageSubscription(
                 RxHelper.getObserver(RestClient.getPublicGists(page))
                         .doOnSubscribe(() -> sendToView(GistsMvp.View::onShowProgress))

@@ -31,11 +31,11 @@ public class HomePresenter extends BasePresenter<HomeMvp.View> implements HomeMv
             lastPage = Integer.MAX_VALUE;
             sendToView(view -> view.getLoadMore().reset());
         }
-        setCurrentPage(page);
         if (page > lastPage || lastPage == 0) {
             sendToView(HomeMvp.View::onHideProgress);
             return;
         }
+        setCurrentPage(page);
         manageSubscription(
                 RxHelper.getObserver(
                         RestClient.getReceivedEvents(page))

@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.fastaccess.R;
 import com.fastaccess.helper.Bundler;
+import com.fastaccess.provider.markdown.MarkDownProvider;
 import com.fastaccess.ui.base.BaseBottomSheetDialog;
 import com.fastaccess.ui.widgets.FontTextView;
 
@@ -29,7 +30,6 @@ public class MessageDialogView extends BaseBottomSheetDialog {
     }
 
     @BindView(R.id.title) FontTextView title;
-
     @BindView(R.id.message) FontTextView message;
 
     @Nullable private MessageDialogViewActionCallback callback;
@@ -62,9 +62,17 @@ public class MessageDialogView extends BaseBottomSheetDialog {
 
     @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+//        ViewCompat.setNestedScrollingEnabled(view.findViewById(R.id.scrollView), true);
         Bundle bundle = getArguments();
         title.setText(bundle.getString("bundleTitle"));
-        message.setText(bundle.getString("bundleMsg"));
+        String msg = bundle.getString("bundleMsg");
+        if (bundle.getBoolean("isMarkDown")) {
+            if (msg != null) {
+                MarkDownProvider.convertTextToMarkDown(message, msg);
+                return;
+            }
+        }
+        message.setText(msg);
     }
 
     @Override protected void onDismissedByScrolling() {
@@ -81,18 +89,28 @@ public class MessageDialogView extends BaseBottomSheetDialog {
         return newInstance(bundleTitle, bundleMsg, null);
     }
 
-    @NonNull public static MessageDialogView newInstance(@NonNull String bundleTitle, @NonNull String bundleMsg, @Nullable Bundle bundle) {
+    @NonNull public static MessageDialogView newInstance(@NonNull String bundleTitle, @NonNull String bundleMsg, boolean isMarkDown) {
+        return newInstance(bundleTitle, bundleMsg, isMarkDown, null);
+    }
+
+    @NonNull public static MessageDialogView newInstance(@NonNull String bundleTitle, @NonNull String bundleMsg, boolean isMarkDown,
+                                                         @Nullable Bundle bundle) {
         MessageDialogView messageDialogView = new MessageDialogView();
-        messageDialogView.setArguments(getBundle(bundleTitle, bundleMsg, bundle));
+        messageDialogView.setArguments(getBundle(bundleTitle, bundleMsg, isMarkDown, bundle));
         return messageDialogView;
     }
 
-    public static Bundle getBundle(String bundleTitle, String bundleMsg, Bundle bundle) {
+    @NonNull public static MessageDialogView newInstance(@NonNull String bundleTitle, @NonNull String bundleMsg, @Nullable Bundle bundle) {
+        return newInstance(bundleTitle, bundleMsg, false, bundle);
+    }
+
+    public static Bundle getBundle(String bundleTitle, String bundleMsg, boolean isMarkDown, Bundle bundle) {
         return Bundler
                 .start()
                 .put("bundleTitle", bundleTitle)
                 .put("bundleMsg", bundleMsg)
                 .put("bundle", bundle)
+                .put("isMarkDown", isMarkDown)
                 .end();
     }
 

@@ -45,9 +45,7 @@ public class PullRequestDetailsPresenter extends BasePresenter<PullRequestDetail
 
     @Override public void onItemClick(int position, View v, PullRequestAdapterModel item) {
         Logger.e(item.getType());
-        if (item.getType() == IssueEventAdapterModel.HEADER) {
-
-        } else {
+        if (item.getType() == IssueEventAdapterModel.HEADER) {} else {
             IssueEventModel issueEventModel = item.getIssueEvent();
             if (issueEventModel.getCommitUrl() != null) {
                 Activity activity = ActivityHelper.getActivity(v.getContext());
@@ -87,6 +85,7 @@ public class PullRequestDetailsPresenter extends BasePresenter<PullRequestDetail
             sendToView(PullRequestDetailsMvp.View::onHideProgress);
             return;
         }
+        setCurrentPage(page);
         String login = pullRequest.getLogin();
         String repoID = pullRequest.getRepoId();
         int number = pullRequest.getNumber();
@@ -96,7 +95,7 @@ public class PullRequestDetailsPresenter extends BasePresenter<PullRequestDetail
                         .doOnNext(response -> {
                             lastPage = response.getLast();
                             if (getCurrentPage() == 1) {
-                                getEvents().subList(1, getEvents().size());
+                                getEvents().subList(1, getEvents().size()).clear();
                             }
                             getEvents().addAll(PullRequestAdapterModel.addEvents(response.getItems()));
                             sendToView(PullRequestDetailsMvp.View::onNotifyAdapter);

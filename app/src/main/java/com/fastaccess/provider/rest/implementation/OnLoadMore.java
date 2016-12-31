@@ -2,7 +2,6 @@ package com.fastaccess.provider.rest.implementation;
 
 import android.support.annotation.Nullable;
 
-import com.fastaccess.helper.Logger;
 import com.fastaccess.ui.base.mvp.BaseMvp;
 import com.fastaccess.ui.widgets.recyclerview.scroll.InfiniteScroll;
 
@@ -22,7 +21,6 @@ public class OnLoadMore<P> extends InfiniteScroll {
     }
 
     @Override protected void onLoadMore(int page, int previousTotal) {
-        Logger.e(previousTotal);
         super.onLoadMore(page, previousTotal);
         if (presenter != null) {
             presenter.setPreviousTotal(previousTotal);

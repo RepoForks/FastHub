@@ -75,7 +75,7 @@ dependencies {
     ext {
         supportVerion = "25.1.0"
         firebase = "9.8.0"
-        thirtyinchVersion = '0.8.0-rc1'
+        thirtyinchVersion = '0.8.0-rc2'
         retrofit = '2.1.0'
     }
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -96,7 +96,7 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.4.0'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'frankiesardo:icepick:3.1.0'
-    compile 'it.sephiroth.android.library.bottomnavigation:bottom-navigation:1.0.7'
+    compile 'it.sephiroth.android.library.bottomnavigation:bottom-navigation:2.0.0'
     compile 'pub.devrel:easypermissions:0.2.1'
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'io.reactivex:rxjava:1.2.2'

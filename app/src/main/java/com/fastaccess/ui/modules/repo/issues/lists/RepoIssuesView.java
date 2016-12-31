@@ -1,5 +1,6 @@
 package com.fastaccess.ui.modules.repo.issues.lists;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,6 +15,7 @@ import com.fastaccess.helper.Logger;
 import com.fastaccess.provider.rest.implementation.OnLoadMore;
 import com.fastaccess.ui.adapter.IssuesAdapter;
 import com.fastaccess.ui.base.BaseFragment;
+import com.fastaccess.ui.modules.repo.RepoPagerMvp;
 import com.fastaccess.ui.widgets.StateLayout;
 import com.fastaccess.ui.widgets.recyclerview.DynamicRecyclerView;
 
@@ -29,6 +31,8 @@ public class RepoIssuesView extends BaseFragment<RepoIssuesMvp.View, RepoIssuesP
     @BindView(R.id.stateLayout) StateLayout stateLayout;
     private OnLoadMore<IssueState> onLoadMore;
     private IssuesAdapter adapter;
+    private RepoPagerMvp.View viewCallback;
+
 
     public static RepoIssuesView newInstance(@NonNull String repoId, @NonNull String login, @NonNull IssueState issueState) {
         RepoIssuesView view = new RepoIssuesView();
@@ -40,10 +44,24 @@ public class RepoIssuesView extends BaseFragment<RepoIssuesMvp.View, RepoIssuesP
         return view;
     }
 
+    @Override public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof RepoPagerMvp.View) {
+            viewCallback = (RepoPagerMvp.View) context;
+        }
+    }
+
+    @Override public void onDetach() {
+        super.onDetach();
+        viewCallback = null;
+    }
+
     @Override public void onNotifyAdapter() {
         Logger.e();
         onHideProgress();
         adapter.notifyDataSetChanged();
+        if (viewCallback != null && getPresenter().issueState == IssueState.open)
+            viewCallback.onShowBadgeCount(R.id.issues, adapter.getItemCount());
     }
 
     @Override protected int fragmentLayout() {

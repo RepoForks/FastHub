@@ -1,6 +1,5 @@
 package com.fastaccess.data.rest;
 
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -8,6 +7,7 @@ import com.fastaccess.BuildConfig;
 import com.fastaccess.data.dao.AccessTokenModel;
 import com.fastaccess.data.dao.CommentRequestModel;
 import com.fastaccess.data.dao.CommentsModel;
+import com.fastaccess.data.dao.CommitModel;
 import com.fastaccess.data.dao.CreateGistModel;
 import com.fastaccess.data.dao.EventsModel;
 import com.fastaccess.data.dao.FilesListModel;
@@ -17,6 +17,7 @@ import com.fastaccess.data.dao.IssueModel;
 import com.fastaccess.data.dao.IssueRequestModel;
 import com.fastaccess.data.dao.Pageable;
 import com.fastaccess.data.dao.PullRequestModel;
+import com.fastaccess.data.dao.ReleasesModel;
 import com.fastaccess.data.dao.RepoModel;
 import com.fastaccess.data.dao.SearchCodeModel;
 import com.fastaccess.data.dao.UserModel;
@@ -212,7 +213,6 @@ public class RestClient {
         return RestProvider.createService(PullRequestService.class).getPullRequest(login, repoId, number);
     }
 
-
     public static Observable<String> getRawReadMe(@NonNull String login, @NonNull String repoId) {
         return RestProvider.createService(ContentService.class, true).getRawReadme(login, repoId);
     }
@@ -248,6 +248,16 @@ public class RestClient {
     public static Observable<RepoModel> forkRepo(@NonNull String login, @NonNull String repoId) {
         return RestProvider.createService(RepoService.class).forkRepo(login, repoId);
     }
+
+    public static Observable<Pageable<CommitModel>> getCommits(@NonNull String login, @NonNull String repoId, int page) {
+        return RestProvider.createService(RepoService.class).getCommits(login, repoId, page);
+    }
+
+    public static Observable<Pageable<ReleasesModel>> getReleases(@NonNull String login, @NonNull String repoId, int page) {
+        return RestProvider.createService(RepoService.class).getReleases(login, repoId, page);
+    }
+
 }
+
 
 

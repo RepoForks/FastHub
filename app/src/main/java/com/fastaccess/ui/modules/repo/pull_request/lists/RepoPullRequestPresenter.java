@@ -30,7 +30,7 @@ public class RepoPullRequestPresenter extends BasePresenter<RepoPullRequestMvp.V
     private int page;
     private int previousTotal;
     private int lastPage = Integer.MAX_VALUE;
-    private IssueState issueState;
+    IssueState issueState;
 
     @Override public int getCurrentPage() {
         return page;

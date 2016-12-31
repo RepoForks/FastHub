@@ -127,7 +127,7 @@ public abstract class BaseActivity<V extends BaseMvp.FAView, P extends BasePrese
                     MessageDialogView.newInstance(titleRes, msgRes).show(getSupportFragmentManager(), "BaseActivity");
                 } else {
                     MessageDialogView messageDialogView = (MessageDialogView) fragment;
-                    messageDialogView.setArguments(MessageDialogView.getBundle(titleRes, msgRes, null));
+                    messageDialogView.setArguments(MessageDialogView.getBundle(titleRes, msgRes, false, null));
                     messageDialogView.initMessage();
                 }
                 return;

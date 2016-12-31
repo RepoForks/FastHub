@@ -1,6 +1,7 @@
 package com.fastaccess.ui.modules.repo;
 
 import android.content.Intent;
+import android.support.annotation.IdRes;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -62,6 +63,8 @@ public interface RepoPagerMvp {
         void onChangeStarCount(boolean isStarred);
 
         void onChangeForkCount(boolean isForked);
+
+        void onShowBadgeCount(@IdRes int id, int count);
     }
 
     interface Presenter extends BaseMvp.FAPresenter<View>, BottomNavigation.OnMenuItemSelectionListener {

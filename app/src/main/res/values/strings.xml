@@ -137,4 +137,10 @@
     <string name="pull_request">Pull Request</string>
     <string name="files_changed">Files Changed</string>
     <string name="open">Open</string>
+    <string name="commits">Commits</string>
+    <string name="released">Released</string>
+    <string name="drafted">Drafted</string>
+    <string name="this_text">This</string>
+    <string name="on">On</string>
+    <string name="releases">Releases</string>
 </resources>

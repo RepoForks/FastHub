@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -22,6 +23,7 @@ import com.fastaccess.helper.InputHelper;
 import com.fastaccess.helper.ParseDateFormat;
 import com.fastaccess.ui.base.BaseActivity;
 import com.fastaccess.ui.widgets.AvatarLayout;
+import com.fastaccess.ui.widgets.CountBadgeProvider;
 import com.fastaccess.ui.widgets.FontTextView;
 
 import java.text.NumberFormat;
@@ -197,6 +199,11 @@ public class RepoPagerView extends BaseActivity<RepoPagerMvp.View, RepoPagerPres
     @Override public void onChangeForkCount(boolean isForked) {
         long count = InputHelper.toLong(forkRepo);
         forkRepo.setText(numberFormat.format(isForked ? (count + 1) : (count > 0 ? (count - 1) : 0)));
+    }
+
+    @Override public void onShowBadgeCount(@IdRes int id, int count) {
+        CountBadgeProvider countBadgeProvider = (CountBadgeProvider) bottomNavigation.getBadgeProvider();
+        countBadgeProvider.show(id, count);
     }
 
     @Override public boolean onCreateOptionsMenu(Menu menu) {

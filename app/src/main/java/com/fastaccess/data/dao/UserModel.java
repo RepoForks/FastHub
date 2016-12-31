@@ -63,6 +63,7 @@ public class UserModel implements Parcelable {
     @SerializedName("disk_usage") private long diskUsage;
     @SerializedName("collaborators") private long collaborators;
     @SerializedName("site_admin") private boolean siteAdmin;
+    private String date;
 
     public String getLogin() {
         return login;
@@ -352,95 +353,11 @@ public class UserModel implements Parcelable {
         return hireable;
     }
 
-    @Override public int describeContents() { return 0; }
-
-    @Override public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.login);
-        dest.writeLong(this.userId);
-        dest.writeString(this.avatarUrl);
-        dest.writeString(this.gravatarId);
-        dest.writeString(this.url);
-        dest.writeString(this.htmlUrl);
-        dest.writeString(this.followersUrl);
-        dest.writeString(this.followingUrl);
-        dest.writeString(this.gistsUrl);
-        dest.writeString(this.starredUrl);
-        dest.writeString(this.subscriptionsUrl);
-        dest.writeString(this.organizationsUrl);
-        dest.writeString(this.reposUrl);
-        dest.writeString(this.eventsUrl);
-        dest.writeString(this.receivedEventsUrl);
-        dest.writeString(this.type);
-        dest.writeValue(this.siteAdmin);
-        dest.writeString(this.name);
-        dest.writeString(this.company);
-        dest.writeString(this.blog);
-        dest.writeString(this.location);
-        dest.writeString(this.email);
-        dest.writeValue(this.hireable);
-        dest.writeString(this.bio);
-        dest.writeLong(this.publicRepos);
-        dest.writeLong(this.publicGists);
-        dest.writeLong(this.followers);
-        dest.writeLong(this.following);
-        dest.writeString(this.createdAt);
-        dest.writeString(this.updatedAt);
-        dest.writeLong(this.privateGists);
-        dest.writeLong(this.totalPrivateRepos);
-        dest.writeLong(this.ownedPrivateRepos);
-        dest.writeLong(this.diskUsage);
-        dest.writeLong(this.collaborators);
-    }
-
     public UserModel() {}
 
     public UserModel(String login) {
         this.login = login;
     }
-
-    protected UserModel(Parcel in) {
-        this.login = in.readString();
-        this.userId = in.readLong();
-        this.avatarUrl = in.readString();
-        this.gravatarId = in.readString();
-        this.url = in.readString();
-        this.htmlUrl = in.readString();
-        this.followersUrl = in.readString();
-        this.followingUrl = in.readString();
-        this.gistsUrl = in.readString();
-        this.starredUrl = in.readString();
-        this.subscriptionsUrl = in.readString();
-        this.organizationsUrl = in.readString();
-        this.reposUrl = in.readString();
-        this.eventsUrl = in.readString();
-        this.receivedEventsUrl = in.readString();
-        this.type = in.readString();
-        this.siteAdmin = (boolean) in.readValue(boolean.class.getClassLoader());
-        this.name = in.readString();
-        this.company = in.readString();
-        this.blog = in.readString();
-        this.location = in.readString();
-        this.email = in.readString();
-        this.hireable = (boolean) in.readValue(boolean.class.getClassLoader());
-        this.bio = in.readString();
-        this.publicRepos = in.readLong();
-        this.publicGists = in.readLong();
-        this.followers = in.readLong();
-        this.following = in.readLong();
-        this.createdAt = in.readString();
-        this.updatedAt = in.readString();
-        this.privateGists = in.readLong();
-        this.totalPrivateRepos = in.readLong();
-        this.ownedPrivateRepos = in.readLong();
-        this.diskUsage = in.readLong();
-        this.collaborators = in.readLong();
-    }
-
-    public static final Parcelable.Creator<UserModel> CREATOR = new Parcelable.Creator<UserModel>() {
-        @Override public UserModel createFromParcel(Parcel source) {return new UserModel(source);}
-
-        @Override public UserModel[] newArray(int size) {return new UserModel[size];}
-    };
 
     @Override public String toString() {
         return "UserModel{" +
@@ -569,4 +486,98 @@ public class UserModel implements Parcelable {
     public static Completable deleteFollowing(@NonNull String login) {
         return RxPaperBook.with(FOLLOWING_BOOK_NAME).delete(String.valueOf(login));
     }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    @Override public int describeContents() { return 0; }
+
+    @Override public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.login);
+        dest.writeLong(this.userId);
+        dest.writeString(this.avatarUrl);
+        dest.writeString(this.gravatarId);
+        dest.writeString(this.url);
+        dest.writeString(this.htmlUrl);
+        dest.writeString(this.followersUrl);
+        dest.writeString(this.followingUrl);
+        dest.writeString(this.gistsUrl);
+        dest.writeString(this.starredUrl);
+        dest.writeString(this.subscriptionsUrl);
+        dest.writeString(this.organizationsUrl);
+        dest.writeString(this.reposUrl);
+        dest.writeString(this.eventsUrl);
+        dest.writeString(this.receivedEventsUrl);
+        dest.writeString(this.type);
+        dest.writeString(this.name);
+        dest.writeString(this.company);
+        dest.writeString(this.blog);
+        dest.writeString(this.location);
+        dest.writeString(this.email);
+        dest.writeByte(this.hireable ? (byte) 1 : (byte) 0);
+        dest.writeString(this.bio);
+        dest.writeLong(this.publicRepos);
+        dest.writeLong(this.publicGists);
+        dest.writeLong(this.followers);
+        dest.writeLong(this.following);
+        dest.writeString(this.createdAt);
+        dest.writeString(this.updatedAt);
+        dest.writeLong(this.privateGists);
+        dest.writeLong(this.totalPrivateRepos);
+        dest.writeLong(this.ownedPrivateRepos);
+        dest.writeLong(this.diskUsage);
+        dest.writeLong(this.collaborators);
+        dest.writeByte(this.siteAdmin ? (byte) 1 : (byte) 0);
+        dest.writeString(this.date);
+    }
+
+    protected UserModel(Parcel in) {
+        this.login = in.readString();
+        this.userId = in.readLong();
+        this.avatarUrl = in.readString();
+        this.gravatarId = in.readString();
+        this.url = in.readString();
+        this.htmlUrl = in.readString();
+        this.followersUrl = in.readString();
+        this.followingUrl = in.readString();
+        this.gistsUrl = in.readString();
+        this.starredUrl = in.readString();
+        this.subscriptionsUrl = in.readString();
+        this.organizationsUrl = in.readString();
+        this.reposUrl = in.readString();
+        this.eventsUrl = in.readString();
+        this.receivedEventsUrl = in.readString();
+        this.type = in.readString();
+        this.name = in.readString();
+        this.company = in.readString();
+        this.blog = in.readString();
+        this.location = in.readString();
+        this.email = in.readString();
+        this.hireable = in.readByte() != 0;
+        this.bio = in.readString();
+        this.publicRepos = in.readLong();
+        this.publicGists = in.readLong();
+        this.followers = in.readLong();
+        this.following = in.readLong();
+        this.createdAt = in.readString();
+        this.updatedAt = in.readString();
+        this.privateGists = in.readLong();
+        this.totalPrivateRepos = in.readLong();
+        this.ownedPrivateRepos = in.readLong();
+        this.diskUsage = in.readLong();
+        this.collaborators = in.readLong();
+        this.siteAdmin = in.readByte() != 0;
+        this.date = in.readString();
+    }
+
+    public static final Creator<UserModel> CREATOR = new Creator<UserModel>() {
+        @Override public UserModel createFromParcel(Parcel source) {return new UserModel(source);}
+
+        @Override public UserModel[] newArray(int size) {return new UserModel[size];}
+    };
 }

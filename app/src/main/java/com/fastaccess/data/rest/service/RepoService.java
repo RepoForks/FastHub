@@ -3,7 +3,9 @@ package com.fastaccess.data.rest.service;
 import android.support.annotation.NonNull;
 
 import com.fastaccess.data.dao.CommentsModel;
+import com.fastaccess.data.dao.CommitModel;
 import com.fastaccess.data.dao.Pageable;
+import com.fastaccess.data.dao.ReleasesModel;
 import com.fastaccess.data.dao.RepoModel;
 import com.fastaccess.data.dao.UserModel;
 
@@ -34,7 +36,7 @@ public interface RepoService {
     @GET("repos/{owner}/{repo}/issues/comments")
     Observable<Pageable<CommentsModel>> getRepoComments(@Path("owner") String owner,
                                                         @Path("repo") String repo,
-                                                        @Query("page") long page);
+                                                        @Query("page") int page);
 
     @GET("user/starred/{owner}/{repo}")
     Observable<Response<Boolean>> checkStarring(@NonNull @Path("owner") String login, @NonNull @Path("repo") String repoId);
@@ -49,10 +51,10 @@ public interface RepoService {
     Observable<RepoModel> forkRepo(@NonNull @Path("owner") String login, @NonNull @Path("repo") String repoId);
 
     @GET("repos/{owner}/{repo}/subscribers")
-    Observable<Pageable<UserModel>> getRepoWatchers(@Path("owner") String owner, @Path("repo") String repo, @Query("page") long page);
+    Observable<Pageable<UserModel>> getRepoWatchers(@Path("owner") String owner, @Path("repo") String repo, @Query("page") int page);
 
     @GET("users/{username}/subscriptions")
-    Observable<Pageable<RepoModel>> getWatchedRepos(@Path("username") String username, @Query("page") long page);
+    Observable<Pageable<RepoModel>> getWatchedRepos(@Path("username") String username, @Query("page") int page);
 
     @GET("user/subscriptions/{owner}/{repo}")
     Observable<Response<Boolean>> isWatchingRepo(@Path("owner") String owner, @Path("repo") String repo);
@@ -62,4 +64,11 @@ public interface RepoService {
 
     @DELETE("user/subscriptions/{owner}/{repo}")
     Observable<Response<Boolean>> unwatchRepo(@Path("owner") String owner, @Path("repo") String repo);
+
+    @GET("repos/{owner}/{repo}/commits")
+    Observable<Pageable<CommitModel>> getCommits(@Path("owner") String owner, @Path("repo") String repo, @Query("page") int page);
+
+    @GET("repos/{owner}/{repo}/releases")
+    Observable<Pageable<ReleasesModel>> getReleases(@Path("owner") String owner, @Path("repo") String repo, @Query("page") int page);
+
 }

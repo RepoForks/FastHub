@@ -86,6 +86,7 @@ public class IssueDetailsPresenter extends BasePresenter<IssueDetailsMvp.View> i
             sendToView(IssueDetailsMvp.View::onHideProgress);
             return;
         }
+        setCurrentPage(page);
         String login = issueModel.getLogin();
         String repoID = issueModel.getRepoId();
         int number = issueModel.getNumber();
@@ -95,7 +96,7 @@ public class IssueDetailsPresenter extends BasePresenter<IssueDetailsMvp.View> i
                         .doOnNext(response -> {
                             lastPage = response.getLast();
                             if (getCurrentPage() == 1) {
-                                getIssues().subList(1, getIssues().size());
+                                getIssues().subList(1, getIssues().size()).clear();
                             }
                             getIssues().addAll(IssueEventAdapterModel.addEvents(response.getItems()));
                             sendToView(IssueDetailsMvp.View::onNotifyAdapter);

@@ -1,6 +1,5 @@
-package com.fastaccess.ui.modules.repo.pull_request.lists;
+package com.fastaccess.ui.modules.repo.code.releases;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,15 +7,15 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 
 import com.fastaccess.R;
-import com.fastaccess.data.dao.types.IssueState;
+import com.fastaccess.data.dao.ReleasesModel;
 import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.Bundler;
 import com.fastaccess.helper.Logger;
 import com.fastaccess.provider.rest.implementation.OnLoadMore;
-import com.fastaccess.ui.adapter.PullRequestAdapter;
+import com.fastaccess.ui.adapter.ReleasesAdapter;
 import com.fastaccess.ui.base.BaseFragment;
-import com.fastaccess.ui.modules.repo.RepoPagerMvp;
 import com.fastaccess.ui.widgets.StateLayout;
+import com.fastaccess.ui.widgets.dialog.MessageDialogView;
 import com.fastaccess.ui.widgets.recyclerview.DynamicRecyclerView;
 
 import butterknife.BindView;
@@ -25,42 +24,26 @@ import butterknife.BindView;
  * Created by Kosh on 03 Dec 2016, 3:56 PM
  */
 
-public class RepoPullRequestView extends BaseFragment<RepoPullRequestMvp.View, RepoPullRequestPresenter> implements RepoPullRequestMvp.View {
+public class RepoReleasesView extends BaseFragment<RepoReleasesMvp.View, RepoReleasesPresenter> implements RepoReleasesMvp.View {
     @BindView(R.id.recycler) DynamicRecyclerView recycler;
     @BindView(R.id.refresh) SwipeRefreshLayout refresh;
     @BindView(R.id.stateLayout) StateLayout stateLayout;
-    private OnLoadMore<IssueState> onLoadMore;
-    private PullRequestAdapter adapter;
-    private RepoPagerMvp.View viewCallback;
+    private OnLoadMore onLoadMore;
+    private ReleasesAdapter adapter;
 
-    public static RepoPullRequestView newInstance(@NonNull String repoId, @NonNull String login, @NonNull IssueState issueState) {
-        RepoPullRequestView view = new RepoPullRequestView();
+    public static RepoReleasesView newInstance(@NonNull String repoId, @NonNull String login) {
+        RepoReleasesView view = new RepoReleasesView();
         view.setArguments(Bundler.start()
                 .put(BundleConstant.EXTRA_ID, login)
                 .put(BundleConstant.ID, repoId)
-                .put(BundleConstant.EXTRA, issueState)
                 .end());
         return view;
-    }
-
-    @Override public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof RepoPagerMvp.View) {
-            viewCallback = (RepoPagerMvp.View) context;
-        }
-    }
-
-    @Override public void onDetach() {
-        super.onDetach();
-        viewCallback = null;
     }
 
     @Override public void onNotifyAdapter() {
         Logger.e();
         onHideProgress();
         adapter.notifyDataSetChanged();
-        if (viewCallback != null && getPresenter().issueState == IssueState.open)
-            viewCallback.onShowBadgeCount(R.id.pullRequests, adapter.getItemCount());
     }
 
     @Override protected int fragmentLayout() {
@@ -74,20 +57,20 @@ public class RepoPullRequestView extends BaseFragment<RepoPullRequestMvp.View, R
         stateLayout.setOnReloadListener(this);
         refresh.setOnRefreshListener(this);
         recycler.setEmptyView(stateLayout, refresh);
-        adapter = new PullRequestAdapter(getPresenter().getPullRequests(), true);
+        adapter = new ReleasesAdapter(getPresenter().getReleases());
         adapter.setListener(getPresenter());
         getLoadMore().setCurrent_page(getPresenter().getCurrentPage(), getPresenter().getPreviousTotal());
         recycler.setAdapter(adapter);
         recycler.addOnScrollListener(getLoadMore());
         if (savedInstanceState == null) {
             getPresenter().onFragmentCreated(getArguments());
-        } else if (getPresenter().getPullRequests().isEmpty()) {
+        } else if (getPresenter().getReleases().isEmpty()) {
             onRefresh();
         }
     }
 
-    @NonNull @Override public RepoPullRequestPresenter providePresenter() {
-        return new RepoPullRequestPresenter();
+    @NonNull @Override public RepoReleasesPresenter providePresenter() {
+        return new RepoReleasesPresenter();
     }
 
     @Override public void onHideProgress() {
@@ -106,11 +89,19 @@ public class RepoPullRequestView extends BaseFragment<RepoPullRequestMvp.View, R
         if (navigationCallback != null) navigationCallback.showMessage(getString(R.string.error), message);
     }
 
-    @NonNull @Override public OnLoadMore<IssueState> getLoadMore() {
+    @NonNull @Override public OnLoadMore getLoadMore() {
         if (onLoadMore == null) {
-            onLoadMore = new OnLoadMore<>(getPresenter());
+            onLoadMore = new OnLoadMore(getPresenter());
         }
         return onLoadMore;
+    }
+
+    @Override public void onDownload(@NonNull ReleasesModel item) {
+
+    }
+
+    @Override public void onShowDetails(@NonNull ReleasesModel item) {
+        MessageDialogView.newInstance(item.getName(), item.getBody(), true).show(getChildFragmentManager(), "MessageDialogView");
     }
 
     @Override public void onRefresh() {

@@ -1,6 +1,5 @@
 package com.fastaccess.ui.widgets;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.v4.view.GravityCompat;
@@ -38,10 +37,25 @@ public class AutoLinearLayout extends FrameLayout {
         init(context, attrs, defStyleAttr, 0);
     }
 
-    @TargetApi(21)
     public AutoLinearLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs, defStyleAttr, defStyleRes);
+    }
+
+    @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        if (mOrientation == VERTICAL) {
+            measureVertical(widthMeasureSpec, heightMeasureSpec);
+        } else {
+            measureHorizontal(widthMeasureSpec, heightMeasureSpec);
+        }
+    }
+
+    @Override protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        mListPositions.clear();
+        if (mOrientation == VERTICAL)
+            layoutVertical(left, top, right, bottom);
+        else
+            layoutHorizontal(left, top, right, bottom);
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
@@ -54,15 +68,6 @@ public class AutoLinearLayout extends FrameLayout {
             }
         } finally {
             a.recycle();
-        }
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (mOrientation == VERTICAL) {
-            measureVertical(widthMeasureSpec, heightMeasureSpec);
-        } else {
-            measureHorizontal(widthMeasureSpec, heightMeasureSpec);
         }
     }
 
@@ -163,15 +168,6 @@ public class AutoLinearLayout extends FrameLayout {
 
         setMeasuredDimension(resolveSize(totalWidth + getPaddingRight() + getPaddingLeft(),
                 widthMeasureSpec), resolveSize(hSize, heightMeasureSpec));
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        mListPositions.clear();
-        if (mOrientation == VERTICAL)
-            layoutVertical(left, top, right, bottom);
-        else
-            layoutHorizontal(left, top, right, bottom);
     }
 
     /**
@@ -479,7 +475,7 @@ public class AutoLinearLayout extends FrameLayout {
     /**
      * Helper inner class that stores child position
      */
-    static class ViewPosition {
+    private static class ViewPosition {
         int left;
         int top;
         int position; //row or column
