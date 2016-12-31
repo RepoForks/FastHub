@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/spacing_xs_large"
+    android:layout_marginStart="@dimen/spacing_xs_large"
+    android:background="@drawable/bottom_border"
+    android:foreground="?selectableItemBackgroundBorderless"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/spacing_xs_large"
+    android:paddingTop="@dimen/spacing_xs_large">
+
+    <com.fastaccess.ui.widgets.FontTextView
+        android:id="@+id/title"
+        style="@style/TextAppearance.AppCompat.Medium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="3"
+        tools:text="Yes, there is shangri-la, it disappears with manifestation."/>
+</FrameLayout>

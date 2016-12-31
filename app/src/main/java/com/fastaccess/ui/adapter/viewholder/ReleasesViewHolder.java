@@ -45,8 +45,7 @@ public class ReleasesViewHolder extends BaseViewHolder<ReleasesModel> {
     }
 
     @Override public void bind(@NonNull ReleasesModel item) {
-        title.setText(SpannableBuilder.builder().bold(!InputHelper.isEmpty(item.getName())
-                                                      ? item.getName() : ParseDateFormat.getTimeAgo(item.getCreatedAt())));
+        title.setText(SpannableBuilder.builder().bold(!InputHelper.isEmpty(item.getName()) ? item.getName() : item.getTagName()));
         details.setText(SpannableBuilder.builder()
                 .append(item.getAuthor().getLogin())
                 .append(" ")

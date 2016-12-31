@@ -6,17 +6,25 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 
+import com.annimon.stream.Collectors;
+import com.annimon.stream.Stream;
 import com.fastaccess.R;
 import com.fastaccess.data.dao.ReleasesModel;
+import com.fastaccess.data.dao.SimpleUrlsModel;
 import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.Bundler;
+import com.fastaccess.helper.InputHelper;
 import com.fastaccess.helper.Logger;
+import com.fastaccess.provider.rest.RestProvider;
 import com.fastaccess.provider.rest.implementation.OnLoadMore;
 import com.fastaccess.ui.adapter.ReleasesAdapter;
 import com.fastaccess.ui.base.BaseFragment;
 import com.fastaccess.ui.widgets.StateLayout;
+import com.fastaccess.ui.widgets.dialog.ListDialogView;
 import com.fastaccess.ui.widgets.dialog.MessageDialogView;
 import com.fastaccess.ui.widgets.recyclerview.DynamicRecyclerView;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 
@@ -97,11 +105,21 @@ public class RepoReleasesView extends BaseFragment<RepoReleasesMvp.View, RepoRel
     }
 
     @Override public void onDownload(@NonNull ReleasesModel item) {
-
+        ListDialogView<SimpleUrlsModel> dialogView = new ListDialogView<>();
+        dialogView.initArguments(getString(R.string.releases),
+                Stream.of(new SimpleUrlsModel(getString(R.string.download_as_zip), item.getZipBallUrl()),
+                        new SimpleUrlsModel(getString(R.string.download_as_tar), item.getTarballUrl()))
+                        .collect(Collectors.toCollection(ArrayList::new)));
+        dialogView.show(getChildFragmentManager(), "ListDialogView");
     }
 
     @Override public void onShowDetails(@NonNull ReleasesModel item) {
-        MessageDialogView.newInstance(item.getName(), item.getBody(), true).show(getChildFragmentManager(), "MessageDialogView");
+        if (!InputHelper.isEmpty(item.getBody())) {
+            MessageDialogView.newInstance(!InputHelper.isEmpty(item.getName()) ? item.getName() : item.getTagName(),
+                    item.getBody(), true).show(getChildFragmentManager(), "MessageDialogView");
+        } else {
+            if (navigationCallback != null) navigationCallback.showMessage(R.string.empty, R.string.no_body);
+        }
     }
 
     @Override public void onRefresh() {
@@ -110,5 +128,9 @@ public class RepoReleasesView extends BaseFragment<RepoReleasesMvp.View, RepoRel
 
     @Override public void onClick(View view) {
         onRefresh();
+    }
+
+    @Override public void onItemSelected(SimpleUrlsModel item) {
+        RestProvider.downloadFile(getContext(), item.getUrl());
     }
 }

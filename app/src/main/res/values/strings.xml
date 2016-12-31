@@ -143,4 +143,8 @@
     <string name="this_text">This</string>
     <string name="on">On</string>
     <string name="releases">Releases</string>
+    <string name="empty">Empty</string>
+    <string name="no_body">No Body</string>
+    <string name="download_as_zip">Source code (zip)</string>
+    <string name="download_as_tar">Source code (tar.gz)</string>
 </resources>
