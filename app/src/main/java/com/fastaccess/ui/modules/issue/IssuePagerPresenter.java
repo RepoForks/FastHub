@@ -5,9 +5,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.fastaccess.App;
 import com.fastaccess.data.dao.IssueModel;
 import com.fastaccess.data.dao.IssueRequestModel;
+import com.fastaccess.data.dao.UserModel;
 import com.fastaccess.data.dao.types.IssueState;
 import com.fastaccess.data.rest.RestClient;
 import com.fastaccess.helper.BundleConstant;
@@ -65,7 +65,7 @@ public class IssuePagerPresenter extends BasePresenter<IssuePagerMvp.View> imple
 
     @Override public boolean isOwner() {
         return getIssue() != null && getIssue().getUser() != null &&
-                getIssue().getUser().getLogin().equals(App.getUser().getLogin());
+                getIssue().getUser().getLogin().equals(UserModel.getUser().getLogin());
     }
 
     @Override public boolean isLocked() {

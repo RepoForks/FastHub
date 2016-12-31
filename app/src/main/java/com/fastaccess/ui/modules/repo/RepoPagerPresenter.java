@@ -269,11 +269,11 @@ public class RepoPagerPresenter extends BasePresenter<RepoPagerMvp.View> impleme
         toAdd.onHiddenChanged(false);
     }
 
-    @Override public void onMenuItemSelect(@IdRes int id, int position, boolean fromUser) {
+    @Override public void onMenuItemSelect(@IdRes int id, int position) {
         if (getView() != null && isAttached()) {
             getView().onNavigationChanged(position);
         }
     }
 
-    @Override public void onMenuItemReselect(@IdRes int id, int position, boolean fromUser) {}
+    @Override public void onMenuItemReselect(@IdRes int id, int position) {}
 }

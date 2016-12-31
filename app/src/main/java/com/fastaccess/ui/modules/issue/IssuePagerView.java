@@ -21,10 +21,12 @@ import com.fastaccess.data.dao.types.IssueState;
 import com.fastaccess.helper.ActivityHelper;
 import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.Bundler;
+import com.fastaccess.helper.Logger;
 import com.fastaccess.helper.ParseDateFormat;
 import com.fastaccess.ui.adapter.FragmentsPagerAdapter;
 import com.fastaccess.ui.base.BaseActivity;
 import com.fastaccess.ui.modules.issue.comments.IssueCommentsView;
+import com.fastaccess.ui.modules.pull_request.PullRequestPagerView;
 import com.fastaccess.ui.widgets.AvatarLayout;
 import com.fastaccess.ui.widgets.FontTextView;
 import com.fastaccess.ui.widgets.ForegroundImageView;
@@ -67,7 +69,14 @@ public class IssuePagerView extends BaseActivity<IssuePagerMvp.View, IssuePagerP
         String login;
         if (issueModel.getRepository() == null) {
             PullsIssuesParser pullsIssuesParser = PullsIssuesParser.getForIssue(issueModel.getHtmlUrl());
-            if (pullsIssuesParser == null) throw new NullPointerException("pullsIssuesParser is null");
+            if (pullsIssuesParser == null) {
+                pullsIssuesParser = PullsIssuesParser.getForPullRequest(issueModel.getHtmlUrl());
+                if (pullsIssuesParser == null) return;
+                repoId = pullsIssuesParser.getRepoId();
+                login = pullsIssuesParser.getLogin();
+                context.startActivity(PullRequestPagerView.createIntent(context, repoId, login, pullsIssuesParser.getNumber()));
+                return;
+            }
             repoId = pullsIssuesParser.getRepoId();
             login = pullsIssuesParser.getLogin();
         } else {
@@ -241,6 +250,7 @@ public class IssuePagerView extends BaseActivity<IssuePagerMvp.View, IssuePagerP
     }
 
     private void hideShowFab() {
+        Logger.e(getPresenter().isLocked(), getPresenter().isOwner());
         if (getPresenter().isLocked() && !getPresenter().isOwner()) {
             fab.hide();
             return;

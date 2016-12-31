@@ -38,9 +38,10 @@ public class CommitsViewHolder extends BaseViewHolder<CommitModel> {
     @Override public void bind(@NonNull CommitModel commit) {
         title.setText(commit.getCommit().getMessage());
         details.setText(SpannableBuilder.builder()
-                .append(commit.getCommitter().getLogin())
+                .bold(commit.getCommitter() != null ? commit.getCommitter().getLogin() : commit.getAuthor().getLogin())
                 .append(" ")
-                .append(ParseDateFormat.getTimeAgo(commit.getCommit().getCommitter().getDate())));
+                .append(ParseDateFormat.getTimeAgo(commit.getCommit() != null && commit.getCommit().getCommitter() != null ? commit.getCommit()
+                        .getCommitter().getDate() : "")));
         avatarLayout.setUrl(commit.getAuthor().getAvatarUrl(), commit.getAuthor().getLogin());
         avatarLayout.setVisibility(View.VISIBLE);
     }
