@@ -22,7 +22,6 @@ import com.fastaccess.data.dao.RepoModel;
 import com.fastaccess.data.dao.SearchCodeModel;
 import com.fastaccess.data.dao.UserModel;
 import com.fastaccess.data.dao.types.IssueState;
-import com.fastaccess.data.rest.service.ContentService;
 import com.fastaccess.data.rest.service.GistService;
 import com.fastaccess.data.rest.service.IssueService;
 import com.fastaccess.data.rest.service.PullRequestService;
@@ -211,10 +210,6 @@ public class RestClient {
 
     public static Observable<PullRequestModel> getRepoPullRequest(@NonNull String login, @NonNull String repoId, int number) {
         return RestProvider.createService(PullRequestService.class).getPullRequest(login, repoId, number);
-    }
-
-    public static Observable<String> getRawReadMe(@NonNull String login, @NonNull String repoId) {
-        return RestProvider.createService(ContentService.class, true).getRawReadme(login, repoId);
     }
 
     public static Observable<String> getRepoReadme(@NonNull String login, @NonNull String repoId, @Nullable String ref) {

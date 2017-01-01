@@ -42,11 +42,11 @@ public class RestProvider {
         return interceptor;
     }
 
-    @NonNull private static Retrofit getRetrofit(boolean isRaw) {
+    @NonNull private static Retrofit getRetrofit() {
         return new Retrofit.Builder()
                 .baseUrl(REST_URL)
-                .client(getHttpClient(isRaw))
-                .addConverterFactory(!isRaw ? GsonConverterFactory.create(getGson()) : new StringConverter())
+                .client(getHttpClient())
+                .addConverterFactory(GsonConverterFactory.create(getGson()))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
     }
@@ -54,30 +54,17 @@ public class RestProvider {
     @NonNull private static Retrofit getRetrofitString() {
         return new Retrofit.Builder()
                 .baseUrl(REST_URL)
-                .client(getHttpClient(false, true))
+                .client(getHttpClient())
                 .addConverterFactory(new StringConverter())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
     }
 
-    @NonNull private static Retrofit getRetrofit() {
-        return getRetrofit(false);
-    }
-
     @NonNull private static Retrofit getRetrofit(String baseUrl, boolean isGson) {
         return new Retrofit.Builder()
                 .baseUrl(baseUrl.endsWith("/") ? baseUrl : baseUrl + "/")
-                .client(getHttpClient(false))
+                .client(getHttpClient())
                 .addConverterFactory(!isGson ? new StringConverter() : GsonConverterFactory.create(getGson()))
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build();
-    }
-
-    @NonNull private static Retrofit getRetrofit(@NonNull Gson gson) {
-        return new Retrofit.Builder()
-                .baseUrl(REST_URL)
-                .client(getHttpClient(false))
-                .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
     }
@@ -86,63 +73,35 @@ public class RestProvider {
         return createService(UserRestService.class);
     }
 
-    @NonNull public static UserRestService getUserRestService(@NonNull Gson gson) {
-        return createService(UserRestService.class, gson);
-    }
-
     @NonNull public static <S> S createService(@NonNull Class<S> service, String baseUrl, boolean isGson) {
         return getRetrofit(baseUrl, isGson).create(service);
     }
 
-    @NonNull public static <S> S createService(@NonNull Class<S> service, boolean isRaw) {
-        return getRetrofit(isRaw).create(service);
-    }
-
     @NonNull public static <S> S createService(@NonNull Class<S> service) {
-        return createService(service, false);
+        return getRetrofit().create(service);
     }
 
     @NonNull public static <S> S createStringService(@NonNull Class<S> service) {
         return getRetrofitString().create(service);
     }
 
-    @NonNull public static <S> S createService(@NonNull Class<S> service, @NonNull Gson gson) {
-        return getRetrofit(gson).create(service);
-    }
-
-    @NonNull private static OkHttpClient getHttpClient(boolean isRaw) {
-        return getHttpClient(isRaw, false);
-    }
-
-    @NonNull private static OkHttpClient getHttpClient(boolean isRaw, boolean isHtml) {
+    @NonNull private static OkHttpClient getHttpClient() {
         return new OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor(HttpLoggingInterceptor.Level.BODY))
                 .addInterceptor(new PaginationInterceptor())
                 .addInterceptor(chain -> {
                     Request original = chain.request();
                     Request.Builder requestBuilder = original.newBuilder()
-                            .header("Accept", getAccept(isRaw, isHtml))
-                            .header("Content-type", getContentType(isRaw, isHtml));
+                            .addHeader("Accept", "application/vnd.github.v3+json")
+                            .addHeader("Content-type", "application/vnd.github.v3+json");
                     if (!InputHelper.isEmpty(PrefGetter.getToken())) {
-                        requestBuilder.header("Authorization", "token " + PrefGetter.getToken());
+                        requestBuilder.addHeader("Authorization", "token " + PrefGetter.getToken());
                     }
                     requestBuilder.method(original.method(), original.body());
                     Request request = requestBuilder.build();
                     return chain.proceed(request);
                 })
                 .build();
-    }
-
-    @NonNull private static String getAccept(boolean isRaw, boolean isHtml) {
-        return isHtml ? "application/vnd.github.html"
-                      : !isRaw ? "application/vnd.github.v3+json"
-                               : "application/vnd.github.VERSION.raw";
-    }
-
-    @NonNull private static String getContentType(boolean isRaw, boolean isHtml) {
-        return isHtml ? "application/vnd.github.html"
-                      : !isRaw ? "application/vnd.github.v3+json"
-                               : "application/vnd.github.VERSION.raw; charset=utf-8";
     }
 
     @NonNull public static Gson getGson() {

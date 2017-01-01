@@ -200,7 +200,7 @@ public class PullRequestPagerView extends BaseActivity<PullRequestPagerMvp.View,
         }
         pager.setAdapter(new FragmentsPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapterModel.buildForPullRequest(this, pullRequest)));
         tabs.setupWithViewPager(pager);
-        if (!getPresenter().isLocked() && !getPresenter().isOwner()) {
+        if (!getPresenter().isLocked() || getPresenter().isOwner()) {
             pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
                 @Override public void onPageSelected(int position) {
                     super.onPageSelected(position);

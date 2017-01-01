@@ -21,7 +21,6 @@ import com.fastaccess.data.dao.types.IssueState;
 import com.fastaccess.helper.ActivityHelper;
 import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.Bundler;
-import com.fastaccess.helper.Logger;
 import com.fastaccess.helper.ParseDateFormat;
 import com.fastaccess.ui.adapter.FragmentsPagerAdapter;
 import com.fastaccess.ui.base.BaseActivity;
@@ -213,7 +212,7 @@ public class IssuePagerView extends BaseActivity<IssuePagerMvp.View, IssuePagerP
         }
         pager.setAdapter(new FragmentsPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapterModel.buildForIssues(this, issueModel)));
         tabs.setupWithViewPager(pager);
-        if (!getPresenter().isLocked() && !getPresenter().isOwner()) {
+        if (!getPresenter().isLocked() || getPresenter().isOwner()) {
             pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
                 @Override public void onPageSelected(int position) {
                     super.onPageSelected(position);
@@ -250,7 +249,6 @@ public class IssuePagerView extends BaseActivity<IssuePagerMvp.View, IssuePagerP
     }
 
     private void hideShowFab() {
-        Logger.e(getPresenter().isLocked(), getPresenter().isOwner());
         if (getPresenter().isLocked() && !getPresenter().isOwner()) {
             fab.hide();
             return;

@@ -26,6 +26,7 @@ public interface RepoService {
 
 
     @GET("repos/{login}/{repoId}")
+    @Headers({"Accept: application/vnd.github.drax-preview+json"})
     Observable<RepoModel> getRepo(@Path("login") String login, @Path("repoId") String repoId);
 
     @GET("repos/{owner}/{repo}/readme")

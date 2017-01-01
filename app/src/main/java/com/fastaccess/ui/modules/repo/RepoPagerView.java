@@ -46,6 +46,7 @@ public class RepoPagerView extends BaseActivity<RepoPagerMvp.View, RepoPagerPres
     @BindView(R.id.forkRepo) FontTextView forkRepo;
     @BindView(R.id.starRepo) FontTextView starRepo;
     @BindView(R.id.watchRepo) FontTextView watchRepo;
+    @BindView(R.id.license) FontTextView license;
     @BindView(R.id.appbar) AppBarLayout appbar;
     @BindView(R.id.fab) FloatingActionButton fab;
     @BindColor(R.color.carrot) int carrotColor;
@@ -66,6 +67,11 @@ public class RepoPagerView extends BaseActivity<RepoPagerMvp.View, RepoPagerPres
         Intent intent = new Intent(context, RepoPagerView.class);
         intent.putExtras(Bundler.start().put(BundleConstant.EXTRA_ID, login).put(BundleConstant.ID, repoId).end());
         return intent;
+    }
+
+    @OnClick(R.id.headerTitle) void onTitleClick() {
+        if (getPresenter().getRepo() != null && !InputHelper.isEmpty(getPresenter().getRepo().getDescription()))
+            showMessage(getString(R.string.details), getPresenter().getRepo().getDescription());
     }
 
     @OnClick({R.id.forkRepo, R.id.starRepo, R.id.watchRepo}) public void onClick(View view) {
@@ -116,6 +122,7 @@ public class RepoPagerView extends BaseActivity<RepoPagerMvp.View, RepoPagerPres
                 onInitRepo();
             }
         }
+        setTitle("");//notitle....
     }
 
     @Override public void onNavigationChanged(@RepoPagerMvp.RepoNavigationType int navType) {
@@ -148,6 +155,8 @@ public class RepoPagerView extends BaseActivity<RepoPagerMvp.View, RepoPagerPres
         size.setText(ParseDateFormat.getTimeAgo(repoModel.getCreatedAt()));
         date.setText(ParseDateFormat.getTimeAgo(repoModel.getUpdatedAt()));
         title.setText(repoModel.getFullName());
+        license.setVisibility(repoModel.getLicense() != null ? View.VISIBLE : View.GONE);
+        if (repoModel.getLicense() != null) license.setText(repoModel.getLicense().getSpdxId());
     }
 
     @Override public void onShowProgress() {
