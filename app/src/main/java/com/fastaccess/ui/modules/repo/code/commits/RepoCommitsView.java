@@ -62,7 +62,7 @@ public class RepoCommitsView extends BaseFragment<RepoCommitsMvp.View, RepoCommi
         recycler.addOnScrollListener(getLoadMore());
         if (savedInstanceState == null) {
             getPresenter().onFragmentCreated(getArguments());
-        } else if (getPresenter().getCommits().isEmpty()) {
+        } else if (getPresenter().getCommits().isEmpty() && !getPresenter().isApiCalled()) {
             onRefresh();
         }
     }

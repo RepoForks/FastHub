@@ -57,6 +57,7 @@ public class GistsPresenter extends BasePresenter<GistsMvp.View> implements Gist
                         .doOnSubscribe(() -> sendToView(GistsMvp.View::onShowProgress))
                         .doOnNext(listResponse -> {
                             lastPage = listResponse.getLast();
+                            setApiCalled();
                             if (getCurrentPage() == 1) {
                                 getGists().clear();
                                 manageSubscription(GistsModel.save(listResponse.getItems()).subscribe());

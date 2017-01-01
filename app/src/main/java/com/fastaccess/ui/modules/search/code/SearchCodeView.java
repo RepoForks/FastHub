@@ -59,7 +59,7 @@ public class SearchCodeView extends BaseFragment<SearchCodeMvp.View, SearchCodeP
         adapter = new CodeAdapter(getPresenter().getCodes());
         adapter.setListener(getPresenter());
         recycler.setAdapter(adapter);
-        if (!InputHelper.isEmpty(searchQuery) && getPresenter().getCodes().isEmpty()) {
+        if (!InputHelper.isEmpty(searchQuery) && getPresenter().getCodes().isEmpty() && !getPresenter().isApiCalled()) {
             onRefresh();
         }
     }

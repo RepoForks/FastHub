@@ -10,7 +10,6 @@ import com.fastaccess.data.dao.CommentsModel;
 import com.fastaccess.data.dao.CommitModel;
 import com.fastaccess.data.dao.CreateGistModel;
 import com.fastaccess.data.dao.EventsModel;
-import com.fastaccess.data.dao.FilesListModel;
 import com.fastaccess.data.dao.GistsModel;
 import com.fastaccess.data.dao.IssueEventModel;
 import com.fastaccess.data.dao.IssueModel;
@@ -31,7 +30,6 @@ import com.fastaccess.data.rest.service.SearchService;
 import com.fastaccess.provider.rest.AuthRestProvider;
 import com.fastaccess.provider.rest.RestProvider;
 
-import okhttp3.ResponseBody;
 import retrofit2.Response;
 import rx.Observable;
 
@@ -108,12 +106,9 @@ public class RestClient {
         return RestProvider.createService(GistService.class).deleteGistComment(gistId, commentId);
     }
 
-    public static Observable<ResponseBody> getFileData(@NonNull String baseUrl) {
-        return RestProvider.createService(RestService.class, baseUrl, false).getFileAsStream(baseUrl.endsWith("/") ? baseUrl : baseUrl + "/");
-    }
-
-    public static Observable<FilesListModel> getCodeFileData(@NonNull String baseUrl) {
-        return RestProvider.createService(RestService.class, baseUrl, true).getCodeFileContent(baseUrl);
+    public static Observable<String> getFileData(@NonNull String baseUrl) {
+        baseUrl = baseUrl.contains("/blobs/") ? baseUrl : baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";//blobs does not need / but gits yes.
+        return RestProvider.createStringService(RestService.class).getFileAsStream(baseUrl);
     }
 
     public static Observable<Pageable<RepoModel>> getRepos(@NonNull String username, int page) {

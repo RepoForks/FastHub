@@ -59,7 +59,8 @@ public class RepoReleasesPresenter extends BasePresenter<RepoReleasesMvp.View> i
                 .doOnSubscribe(() -> sendToView(RepoReleasesMvp.View::onShowProgress))
                 .doOnNext(response -> {
                     lastPage = response.getLast();
-                    if (page == 1) {
+                    setApiCalled();
+                    if (getCurrentPage() == 1) {
                         getReleases().clear();
                     }
                     getReleases().addAll(response.getItems());

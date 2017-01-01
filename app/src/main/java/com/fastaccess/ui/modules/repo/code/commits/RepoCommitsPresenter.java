@@ -58,7 +58,8 @@ public class RepoCommitsPresenter extends BasePresenter<RepoCommitsMvp.View> imp
                 .doOnSubscribe(() -> sendToView(RepoCommitsMvp.View::onShowProgress))
                 .doOnNext(response -> {
                     lastPage = response.getLast();
-                    if (page == 1) {
+                    setApiCalled();
+                    if (getCurrentPage() == 1) {
                         getCommits().clear();
                     }
                     getCommits().addAll(response.getItems());

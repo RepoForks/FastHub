@@ -56,7 +56,8 @@ public class ProfileReposPresenter extends BasePresenter<ProfileReposMvp.View> i
                 .doOnSubscribe(() -> sendToView(ProfileReposMvp.View::onShowProgress))
                 .doOnNext(repoModelPageable -> {
                     lastPage = repoModelPageable.getLast();
-                    if (page == 1) {
+                    setApiCalled();
+                    if (getCurrentPage() == 1) {
                         getRepos().clear();
                         manageSubscription(RepoModel.save(parameter, repoModelPageable.getItems()).subscribe());
                     }

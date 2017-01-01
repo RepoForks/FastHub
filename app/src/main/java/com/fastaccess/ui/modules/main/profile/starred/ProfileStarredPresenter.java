@@ -56,7 +56,8 @@ public class ProfileStarredPresenter extends BasePresenter<ProfileStarredMvp.Vie
                 .doOnSubscribe(() -> sendToView(ProfileStarredMvp.View::onShowProgress))
                 .doOnNext(repoModelPageable -> {
                     lastPage = repoModelPageable.getLast();
-                    if (page == 1) {
+                    setApiCalled();
+                    if (getCurrentPage() == 1) {
                         getRepos().clear();
                         manageSubscription(RepoModel.saveStarred(parameter, repoModelPageable.getItems()).subscribe());
                     }

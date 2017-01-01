@@ -14,6 +14,7 @@ import rx.Subscription;
  */
 
 public class BasePresenter<V extends BaseMvp.FAView> extends TiPresenter<V> implements BaseMvp.FAPresenter<V> {
+    private boolean apiCalled;
 
     private RxTiPresenterSubscriptionHandler subscriptionHandler = new RxTiPresenterSubscriptionHandler(this);
 
@@ -29,5 +30,13 @@ public class BasePresenter<V extends BaseMvp.FAView> extends TiPresenter<V> impl
         if (subscription != null) {
             subscriptionHandler.manageSubscription(subscription);
         }
+    }
+
+    @Override public boolean isApiCalled() {
+        return apiCalled;
+    }
+
+    @Override public void setApiCalled() {
+        apiCalled = true;
     }
 }

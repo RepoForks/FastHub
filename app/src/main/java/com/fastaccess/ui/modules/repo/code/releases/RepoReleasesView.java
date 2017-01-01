@@ -72,7 +72,7 @@ public class RepoReleasesView extends BaseFragment<RepoReleasesMvp.View, RepoRel
         recycler.addOnScrollListener(getLoadMore());
         if (savedInstanceState == null) {
             getPresenter().onFragmentCreated(getArguments());
-        } else if (getPresenter().getReleases().isEmpty()) {
+        } else if (getPresenter().getReleases().isEmpty() && !getPresenter().isApiCalled()) {
             onRefresh();
         }
     }

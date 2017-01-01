@@ -64,7 +64,7 @@ public class PullRequestCommentsPresenter extends BasePresenter<PullRequestComme
                         .doOnSubscribe(() -> sendToView(PullRequestCommentsMvp.View::onShowProgress))
                         .doOnNext(listResponse -> {
                             lastPage = listResponse.getLast();
-                            if (getCurrentPage() == 1) {
+                            setApiCalled(); if (getCurrentPage() == 1) {
                                 getComments().clear();
                             }
                             getComments().addAll(listResponse.getItems());

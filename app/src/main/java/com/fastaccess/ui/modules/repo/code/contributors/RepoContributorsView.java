@@ -63,7 +63,7 @@ public class RepoContributorsView extends BaseFragment<RepoContributorsMvp.View,
         recycler.addOnScrollListener(getLoadMore());
         if (savedInstanceState == null) {
             getPresenter().onFragmentCreated(getArguments());
-        } else if (getPresenter().getUsers().isEmpty()) {
+        } else if (getPresenter().getUsers().isEmpty() && !getPresenter().isApiCalled()) {
             onRefresh();
         }
     }

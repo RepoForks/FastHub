@@ -56,7 +56,8 @@ public class SearchReposPresenter extends BasePresenter<SearchReposMvp.View> imp
                 .doOnSubscribe(() -> sendToView(SearchReposMvp.View::onShowProgress))
                 .doOnNext(repoModelPageable -> {
                     lastPage = repoModelPageable.getLast();
-                    if (page == 1) {
+                    setApiCalled();
+                    if (getCurrentPage() == 1) {
                         getRepos().clear();
                     }
                     getRepos().addAll(repoModelPageable.getItems());

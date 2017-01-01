@@ -82,8 +82,11 @@ public class RepoIssuesView extends BaseFragment<RepoIssuesMvp.View, RepoIssuesP
         recycler.addOnScrollListener(getLoadMore());
         if (savedInstanceState == null) {
             getPresenter().onFragmentCreated(getArguments());
-        } else if (getPresenter().getIssues().isEmpty()) {
+        } else if (getPresenter().getIssues().isEmpty() && !getPresenter().isApiCalled()) {
             onRefresh();
+        } else {
+            if (viewCallback != null && getPresenter().issueState == IssueState.open)
+                viewCallback.onShowBadgeCount(R.id.issues, adapter.getItemCount());
         }
     }
 

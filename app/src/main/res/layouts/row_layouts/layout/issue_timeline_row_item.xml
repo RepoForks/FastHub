@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:foreground="?android:selectableItemBackground"
-    android:paddingBottom="@dimen/spacing_normal"
-    android:paddingEnd="@dimen/spacing_xs_large"
-    android:paddingStart="@dimen/spacing_xs_large"
-    android:paddingTop="@dimen/spacing_normal">
+    android:layout_marginBottom="@dimen/spacing_normal"
+    android:layout_marginEnd="@dimen/spacing_xs_large"
+    android:layout_marginStart="@dimen/spacing_xs_large"
+    android:layout_marginTop="@dimen/spacing_normal"
+    android:foreground="?android:selectableItemBackground">
 
     <com.fastaccess.ui.widgets.ForegroundImageView
         android:id="@+id/stateImage"

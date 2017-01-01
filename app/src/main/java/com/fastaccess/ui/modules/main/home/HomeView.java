@@ -53,7 +53,7 @@ public class HomeView extends BaseFragment<HomeMvp.View, HomePresenter> implemen
         getLoadMore().setCurrent_page(getPresenter().getCurrentPage(), getPresenter().getPreviousTotal());
         recycler.setAdapter(adapter);
         recycler.addOnScrollListener(getLoadMore());
-        if (getPresenter().getEvents().isEmpty()) {
+        if (getPresenter().getEvents().isEmpty() && !getPresenter().isApiCalled()) {
             onRefresh();
         }
     }

@@ -1,6 +1,7 @@
 package com.fastaccess.ui.adapter;
 
 import android.support.annotation.NonNull;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.ViewGroup;
 
 import com.fastaccess.data.dao.IssueEventAdapterModel;
@@ -33,6 +34,8 @@ public class IssueTimelineAdapter extends BaseRecyclerAdapter<IssueEventAdapterM
         IssueEventAdapterModel model = getItem(position);
         if (model.getType() == IssueEventAdapterModel.HEADER) {
             ((IssueDetailsViewHolder) holder).bind(model);
+            StaggeredGridLayoutManager.LayoutParams layoutParams = (StaggeredGridLayoutManager.LayoutParams) holder.itemView.getLayoutParams();
+            layoutParams.setFullSpan(true);
         } else {
             ((IssueTimelineViewHolder) holder).bind(model);
         }

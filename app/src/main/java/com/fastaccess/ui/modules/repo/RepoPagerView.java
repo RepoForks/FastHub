@@ -3,6 +3,7 @@ package com.fastaccess.ui.modules.repo;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -20,6 +21,7 @@ import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.Bundler;
 import com.fastaccess.helper.InputHelper;
 import com.fastaccess.helper.ParseDateFormat;
+import com.fastaccess.helper.TypeFaceHelper;
 import com.fastaccess.provider.scheme.SchemeParser;
 import com.fastaccess.ui.base.BaseActivity;
 import com.fastaccess.ui.widgets.AvatarLayout;
@@ -52,6 +54,7 @@ public class RepoPagerView extends BaseActivity<RepoPagerMvp.View, RepoPagerPres
     @BindColor(R.color.carrot) int carrotColor;
     @BindView(R.id.bottomNavigation) BottomNavigation bottomNavigation;
     private NumberFormat numberFormat = NumberFormat.getNumberInstance();
+    private CountBadgeProvider countBadgeProvider;
 
     public static void startRepoPager(@NonNull Context context, @NonNull RepoModel repoModel) {
         Intent intent = new Intent(context, RepoPagerView.class);
@@ -110,6 +113,9 @@ public class RepoPagerView extends BaseActivity<RepoPagerMvp.View, RepoPagerPres
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        countBadgeProvider = (CountBadgeProvider) bottomNavigation.getBadgeProvider();
+        Typeface myTypeface = TypeFaceHelper.getTypeface();
+        bottomNavigation.setDefaultTypeface(myTypeface);
         if (savedInstanceState == null) {
             getPresenter().onActivityCreated(getIntent());
             bottomNavigation.setDefaultSelectedIndex(0);
@@ -208,7 +214,6 @@ public class RepoPagerView extends BaseActivity<RepoPagerMvp.View, RepoPagerPres
     }
 
     @Override public void onShowBadgeCount(@IdRes int id, int count) {
-        CountBadgeProvider countBadgeProvider = (CountBadgeProvider) bottomNavigation.getBadgeProvider();
         countBadgeProvider.show(id, count);
     }
 

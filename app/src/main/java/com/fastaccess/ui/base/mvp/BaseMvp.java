@@ -25,6 +25,10 @@ public interface BaseMvp {
 
         void manageSubscription(@Nullable Subscription subscription);
 
+        boolean isApiCalled();
+
+        void setApiCalled();
+
     }
 
     interface NavigationCallback {

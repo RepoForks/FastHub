@@ -65,7 +65,8 @@ public class RepoIssuesPresenter extends BasePresenter<RepoIssuesMvp.View> imple
                 .doOnSubscribe(() -> sendToView(RepoIssuesMvp.View::onShowProgress))
                 .doOnNext(issues -> {
                     lastPage = issues.getLast();
-                    if (page == 1) {
+                    setApiCalled();
+                    if (getCurrentPage() == 1) {
                         getIssues().clear();
                     }
                     //filter issues only.

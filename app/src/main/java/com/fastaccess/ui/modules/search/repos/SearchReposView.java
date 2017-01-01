@@ -56,7 +56,7 @@ public class SearchReposView extends BaseFragment<SearchReposMvp.View, SearchRep
         adapter = new ReposAdapter(getPresenter().getRepos(), false, true);
         adapter.setListener(getPresenter());
         recycler.setAdapter(adapter);
-        if (!InputHelper.isEmpty(searchQuery) && getPresenter().getRepos().isEmpty()) {
+        if (!InputHelper.isEmpty(searchQuery) && getPresenter().getRepos().isEmpty() && !getPresenter().isApiCalled()) {
             onRefresh();
         }
     }

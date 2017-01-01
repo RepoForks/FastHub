@@ -94,6 +94,7 @@ public class PullRequestDetailsPresenter extends BasePresenter<PullRequestDetail
                         .doOnSubscribe(() -> sendToView(PullRequestDetailsMvp.View::onShowProgress))
                         .doOnNext(response -> {
                             lastPage = response.getLast();
+                            setApiCalled();
                             if (getCurrentPage() == 1) {
                                 getEvents().subList(1, getEvents().size()).clear();
                             }

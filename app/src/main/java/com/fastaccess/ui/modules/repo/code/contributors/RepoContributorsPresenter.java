@@ -57,7 +57,8 @@ public class RepoContributorsPresenter extends BasePresenter<RepoContributorsMvp
                 .doOnSubscribe(() -> sendToView(RepoContributorsMvp.View::onShowProgress))
                 .doOnNext(repoModelPageable -> {
                     lastPage = repoModelPageable.getLast();
-                    if (page == 1) {
+                    setApiCalled();
+                    if (getCurrentPage() == 1) {
                         getUsers().clear();
                     }
                     getUsers().addAll(repoModelPageable.getItems());

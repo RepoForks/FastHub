@@ -56,7 +56,8 @@ public class SearchUsersPresenter extends BasePresenter<SearchUsersMvp.View> imp
                 .doOnNext(repoModelPageable -> {
                     if (repoModelPageable.isIncompleteResults()) return;
                     lastPage = repoModelPageable.getLast();
-                    if (page == 1) {
+                    setApiCalled();
+                    if (getCurrentPage() == 1) {
                         getUsers().clear();
                     }
                     getUsers().addAll(repoModelPageable.getItems());

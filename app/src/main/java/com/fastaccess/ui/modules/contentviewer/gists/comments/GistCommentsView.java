@@ -18,7 +18,6 @@ import com.fastaccess.ui.base.BaseFragment;
 import com.fastaccess.ui.modules.comment.CommentsEditorView;
 import com.fastaccess.ui.widgets.StateLayout;
 import com.fastaccess.ui.widgets.dialog.MessageDialogView;
-import com.fastaccess.ui.widgets.recyclerview.BottomPaddingDecoration;
 import com.fastaccess.ui.widgets.recyclerview.DynamicRecyclerView;
 
 import butterknife.BindView;
@@ -60,10 +59,9 @@ public class GistCommentsView extends BaseFragment<GistCommentsMvp.View, GistCom
         adapter = new CommentsAdapter(getPresenter().getComments());
         adapter.setListener(getPresenter());
         getLoadMore().setCurrent_page(getPresenter().getCurrentPage(), getPresenter().getPreviousTotal());
-
         recycler.setAdapter(adapter);
         recycler.addOnScrollListener(getLoadMore());
-        if (getPresenter().getComments().isEmpty()) {
+        if (getPresenter().getComments().isEmpty() && !getPresenter().isApiCalled()) {
             onRefresh();
         }
     }

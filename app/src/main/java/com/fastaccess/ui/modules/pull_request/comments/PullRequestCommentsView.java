@@ -59,7 +59,7 @@ public class PullRequestCommentsView extends BaseFragment<PullRequestCommentsMvp
         getLoadMore().setCurrent_page(getPresenter().getCurrentPage(), getPresenter().getPreviousTotal());
         recycler.setAdapter(adapter);
         recycler.addOnScrollListener(getLoadMore());
-        if (getPresenter().getComments().isEmpty()) {
+        if (getPresenter().getComments().isEmpty() && !getPresenter().isApiCalled()) {
             onRefresh();
         }
     }

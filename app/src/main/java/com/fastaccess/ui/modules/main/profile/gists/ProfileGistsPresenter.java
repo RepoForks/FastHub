@@ -59,6 +59,7 @@ public class ProfileGistsPresenter extends BasePresenter<ProfileGistsMvp.View> i
                         .doOnSubscribe(() -> sendToView(ProfileGistsMvp.View::onShowProgress))
                         .doOnNext(listResponse -> {
                             lastPage = listResponse.getLast();
+                            setApiCalled();
                             if (getCurrentPage() == 1) {
                                 getGists().clear();
                                 manageSubscription(GistsModel.saveUserGists(parameter,

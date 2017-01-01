@@ -61,6 +61,7 @@ public class GistCommentsPresenter extends BasePresenter<GistCommentsMvp.View> i
                         .doOnSubscribe(() -> sendToView(GistCommentsMvp.View::onShowProgress))
                         .doOnNext(listResponse -> {
                             lastPage = listResponse.getLast();
+                            setApiCalled();
                             if (getCurrentPage() == 1) {
                                 getComments().clear();
                                 manageSubscription(CommentsModel.save(parameter, listResponse.getItems()).subscribe());

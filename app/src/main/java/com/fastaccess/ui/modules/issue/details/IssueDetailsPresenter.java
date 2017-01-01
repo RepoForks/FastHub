@@ -95,6 +95,7 @@ public class IssueDetailsPresenter extends BasePresenter<IssueDetailsMvp.View> i
                         .doOnSubscribe(() -> sendToView(IssueDetailsMvp.View::onShowProgress))
                         .doOnNext(response -> {
                             lastPage = response.getLast();
+                            setApiCalled();
                             if (getCurrentPage() == 1) {
                                 getIssues().subList(1, getIssues().size()).clear();
                             }

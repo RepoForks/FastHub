@@ -55,7 +55,8 @@ public class ProfileFollowingPresenter extends BasePresenter<ProfileFollowingMvp
                 .doOnSubscribe(() -> sendToView(ProfileFollowingMvp.View::onShowProgress))
                 .doOnNext(repoModelPageable -> {
                     lastPage = repoModelPageable.getLast();
-                    if (page == 1) {
+                    setApiCalled();
+                    if (getCurrentPage() == 1) {
                         getUsers().clear();
                         manageSubscription(UserModel.saveFollowing(parameter, repoModelPageable.getItems()).subscribe());
                     }

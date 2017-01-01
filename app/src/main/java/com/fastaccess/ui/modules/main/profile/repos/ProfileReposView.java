@@ -58,7 +58,7 @@ public class ProfileReposView extends BaseFragment<ProfileReposMvp.View, Profile
         adapter.setListener(getPresenter());
         recycler.setAdapter(adapter);
         recycler.addOnScrollListener(getLoadMore());
-        if (getPresenter().getRepos().isEmpty()) {
+        if (getPresenter().getRepos().isEmpty() && !getPresenter().isApiCalled()) {
             onRefresh();
         }
     }

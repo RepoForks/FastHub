@@ -55,7 +55,8 @@ public class SearchCodePresenter extends BasePresenter<SearchCodeMvp.View> imple
                 .doOnSubscribe(() -> sendToView(SearchCodeMvp.View::onShowProgress))
                 .doOnNext(repoModelPageable -> {
                     lastPage = repoModelPageable.getLast();
-                    if (page == 1) {
+                    setApiCalled();
+                    if (getCurrentPage() == 1) {
                         getCodes().clear();
                     }
                     getCodes().addAll(repoModelPageable.getItems());

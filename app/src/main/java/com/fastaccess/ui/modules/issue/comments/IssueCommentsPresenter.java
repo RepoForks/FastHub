@@ -64,6 +64,7 @@ public class IssueCommentsPresenter extends BasePresenter<IssueCommentsMvp.View>
                         .doOnSubscribe(() -> sendToView(IssueCommentsMvp.View::onShowProgress))
                         .doOnNext(listResponse -> {
                             lastPage = listResponse.getLast();
+                            setApiCalled();
                             if (getCurrentPage() == 1) {
                                 getComments().clear();
                             }

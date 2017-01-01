@@ -58,7 +58,7 @@ public class ProfileFollowingView extends BaseFragment<ProfileFollowingMvp.View,
         adapter.setListener(getPresenter());
         recycler.setAdapter(adapter);
         recycler.addOnScrollListener(getLoadMore());
-        if (getPresenter().getUsers().isEmpty()) {
+        if (getPresenter().getUsers().isEmpty() && !getPresenter().isApiCalled()) {
             onRefresh();
         }
     }

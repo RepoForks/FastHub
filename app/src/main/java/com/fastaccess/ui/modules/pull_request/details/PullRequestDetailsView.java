@@ -50,7 +50,7 @@ public class PullRequestDetailsView extends BaseFragment<PullRequestDetailsMvp.V
         getLoadMore().setCurrent_page(getPresenter().getCurrentPage(), getPresenter().getPreviousTotal());
         recycler.setAdapter(adapter);
         recycler.addOnScrollListener(getLoadMore());
-        if (getPresenter().getEvents().size() == 1) {
+        if (getPresenter().getEvents().size() == 1 && !getPresenter().isApiCalled()) {
             onRefresh();
         }
     }

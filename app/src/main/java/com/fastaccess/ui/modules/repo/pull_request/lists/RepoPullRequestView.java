@@ -81,8 +81,11 @@ public class RepoPullRequestView extends BaseFragment<RepoPullRequestMvp.View, R
         recycler.addOnScrollListener(getLoadMore());
         if (savedInstanceState == null) {
             getPresenter().onFragmentCreated(getArguments());
-        } else if (getPresenter().getPullRequests().isEmpty()) {
+        } else if (getPresenter().getPullRequests().isEmpty() && !getPresenter().isApiCalled()) {
             onRefresh();
+        } else {
+            if (viewCallback != null && getPresenter().issueState == IssueState.open)
+                viewCallback.onShowBadgeCount(R.id.pullRequests, adapter.getItemCount());
         }
     }
 

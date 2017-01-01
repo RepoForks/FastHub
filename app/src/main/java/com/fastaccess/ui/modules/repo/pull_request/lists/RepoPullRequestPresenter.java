@@ -63,7 +63,8 @@ public class RepoPullRequestPresenter extends BasePresenter<RepoPullRequestMvp.V
                 .doOnSubscribe(() -> sendToView(RepoPullRequestMvp.View::onShowProgress))
                 .doOnNext(response -> {
                     lastPage = response.getLast();
-                    if (page == 1) {
+                    setApiCalled();
+                    if (getCurrentPage() == 1) {
                         getPullRequests().clear();
                     }
                     getPullRequests().addAll(response.getItems());

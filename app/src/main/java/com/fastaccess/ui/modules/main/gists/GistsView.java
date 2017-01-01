@@ -12,7 +12,6 @@ import com.fastaccess.provider.rest.implementation.OnLoadMore;
 import com.fastaccess.ui.adapter.GistsAdapter;
 import com.fastaccess.ui.base.BaseFragment;
 import com.fastaccess.ui.widgets.StateLayout;
-import com.fastaccess.ui.widgets.recyclerview.BottomPaddingDecoration;
 import com.fastaccess.ui.widgets.recyclerview.DynamicRecyclerView;
 
 import butterknife.BindView;
@@ -50,7 +49,7 @@ public class GistsView extends BaseFragment<GistsMvp.View, GistsPresenter> imple
         getLoadMore().setCurrent_page(getPresenter().getCurrentPage(), getPresenter().getPreviousTotal());
         recycler.setAdapter(adapter);
         recycler.addOnScrollListener(getLoadMore());
-        if (getPresenter().getGists().isEmpty()) {
+        if (getPresenter().getGists().isEmpty() && !getPresenter().isApiCalled()) {
             onRefresh();
         }
     }

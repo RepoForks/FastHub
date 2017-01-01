@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Base64;
 
 import com.fastaccess.R;
 import com.fastaccess.data.dao.FileModel;
@@ -12,14 +11,11 @@ import com.fastaccess.data.dao.FilesListModel;
 import com.fastaccess.data.rest.RestClient;
 import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.InputHelper;
-import com.fastaccess.helper.Logger;
 import com.fastaccess.helper.RxHelper;
 import com.fastaccess.provider.markdown.MarkDownProvider;
 import com.fastaccess.provider.rest.RestProvider;
 import com.fastaccess.ui.base.mvp.presenter.BasePresenter;
 import com.fastaccess.ui.modules.viewer.ViewerMvp.Presenter;
-
-import java.io.IOException;
 
 /**
  * Created by Kosh on 27 Nov 2016, 3:43 PM
@@ -106,77 +102,38 @@ public class ViewerPresenter extends BasePresenter<ViewerMvp.View> implements Pr
     }
 
     @Override public void onWorkOnline(@NonNull FilesListModel filesListModel) {
-        Logger.e(filesListModel.isNeedFetching());
-        if (filesListModel.isNeedFetching()) {
-            manageSubscription(RxHelper.getObserver(RestClient.getCodeFileData(filesListModel.getRawUrl()))
-                    .doOnSubscribe(() -> sendToView(ViewerMvp.View::onShowMdProgress))
-                    .map(file -> {
-                        if (file.getContent() != null)
-                            file.setContent(new String(Base64.decode(file.getContent(), Base64.DEFAULT)));
-                        return file;
-                    })
-                    .doOnNext(file -> {
-                        if (file.getContent() != null) {
-                            Logger.e(file.getContent());
-                            downloadedStream = file.getContent();
-                            sendToView(view -> view.onSetCode(downloadedStream));
-                            FileModel fileModel = new FileModel();
-                            fileModel.setContent(downloadedStream);
-                            fileModel.setFileName(filesListModel.getFilename());
-                            fileModel.setMarkdown(false);
-                            fileModel.setId(filesListModel.getId());
-                            manageSubscription(FileModel.save(fileModel).subscribe());
-                        }
-                    })
-                    .onErrorReturn(throwable -> {
-                        throwable.printStackTrace();
-                        int code = RestProvider.getErrorCode(throwable);
-                        if (code == 404) {
-                            sendToView(view -> view.onShowError(R.string.no_file_found));
+        manageSubscription(RxHelper.getObserver(RestClient.getFileData(filesListModel.getRawUrl()))
+                .doOnSubscribe(() -> sendToView(ViewerMvp.View::onShowMdProgress))
+                .doOnNext(s -> {
+                    isMarkdown = MarkDownProvider.isMarkdown(filesListModel.getFilename());
+                    downloadedStream = s;
+                    sendToView(view -> {
+                        if (isMarkdown) {
+                            view.onSetMdText(downloadedStream, null);
                         } else {
-                            sendToView(view -> view.onShowError(throwable.getMessage()));
+                            view.onSetCode(downloadedStream);
                         }
-                        return null;
-                    })
-                    .subscribe());
-        } else {
-            manageSubscription(RxHelper.getObserver(RestClient.getFileData(filesListModel.getRawUrl()))
-                    .doOnSubscribe(() -> sendToView(ViewerMvp.View::onShowMdProgress))
-                    .doOnNext(s -> {
-                        isMarkdown = MarkDownProvider.isMarkdown(filesListModel.getFilename());
-                        sendToView(view -> {
-                            try {
-                                downloadedStream = s.string();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            if (isMarkdown) {
-                                view.onSetMdText(downloadedStream, null);
-                            } else {
-                                view.onSetCode(downloadedStream);
-                            }
-                        });
-                        if (downloadedStream != null) {
-                            FileModel fileModel = new FileModel();
-                            fileModel.setContent(downloadedStream);
-                            fileModel.setFileName(filesListModel.getFilename());
-                            fileModel.setMarkdown(isMarkdown);
-                            fileModel.setId(filesListModel.getId());
-                            manageSubscription(FileModel.save(fileModel).subscribe());
-                        }
-                    })
-                    .onErrorReturn(throwable -> {
-                        throwable.printStackTrace();
-                        int code = RestProvider.getErrorCode(throwable);
-                        if (code == 404) {
-                            sendToView(view -> view.onShowError(R.string.no_file_found));
-                        } else {
-                            sendToView(view -> view.onShowError(throwable.getMessage()));
-                        }
-                        return null;
-                    })
-                    .subscribe());
-        }
+                    });
+                    if (downloadedStream != null) {
+                        FileModel fileModel = new FileModel();
+                        fileModel.setContent(downloadedStream);
+                        fileModel.setFileName(filesListModel.getFilename());
+                        fileModel.setMarkdown(isMarkdown);
+                        fileModel.setId(filesListModel.getId());
+                        manageSubscription(FileModel.save(fileModel).subscribe());
+                    }
+                })
+                .onErrorReturn(throwable -> {
+                    throwable.printStackTrace();
+                    int code = RestProvider.getErrorCode(throwable);
+                    if (code == 404) {
+                        sendToView(view -> view.onShowError(R.string.no_file_found));
+                    } else {
+                        sendToView(view -> view.onShowError(throwable.getMessage()));
+                    }
+                    return null;
+                })
+                .subscribe());
     }
 
     @Override public void onWorkOnline(@NonNull String repoId, @NonNull String login, @Nullable String baseUrl) {

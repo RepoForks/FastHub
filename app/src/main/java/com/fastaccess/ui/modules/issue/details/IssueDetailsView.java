@@ -50,7 +50,7 @@ public class IssueDetailsView extends BaseFragment<IssueDetailsMvp.View, IssueDe
         getLoadMore().setCurrent_page(getPresenter().getCurrentPage(), getPresenter().getPreviousTotal());
         recycler.setAdapter(adapter);
         recycler.addOnScrollListener(getLoadMore());
-        if (getPresenter().getIssues().size() == 1) {
+        if (getPresenter().getIssues().size() == 1  && !getPresenter().isApiCalled()) {
             onRefresh();
         }
     }

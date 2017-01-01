@@ -1,6 +1,7 @@
 package com.fastaccess.ui.adapter;
 
 import android.support.annotation.NonNull;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.ViewGroup;
 
 import com.fastaccess.data.dao.PullRequestAdapterModel;
@@ -33,6 +34,8 @@ public class PullRequestTimelineAdapter extends BaseRecyclerAdapter<PullRequestA
         PullRequestAdapterModel model = getItem(position);
         if (model.getType() == PullRequestAdapterModel.HEADER) {
             ((PullRequestDetailsViewHolder) holder).bind(model);
+            StaggeredGridLayoutManager.LayoutParams layoutParams = (StaggeredGridLayoutManager.LayoutParams) holder.itemView.getLayoutParams();
+            layoutParams.setFullSpan(true);
         } else {
             ((PullRequestTimelineViewHolder) holder).bind(model);
         }

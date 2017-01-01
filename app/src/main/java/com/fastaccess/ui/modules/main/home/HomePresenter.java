@@ -45,6 +45,7 @@ public class HomePresenter extends BasePresenter<HomeMvp.View> implements HomeMv
                         .doOnSubscribe(() -> sendToView(HomeMvp.View::onShowProgress))
                         .doOnNext(response -> {
                             lastPage = response.getLast();
+                            setApiCalled();
                             if (getCurrentPage() == 1) {
                                 eventsModels.clear();
                                 manageSubscription(EventsModel.save(response.getItems()).subscribe());

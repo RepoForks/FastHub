@@ -58,7 +58,8 @@ public class SearchIssuesPresenter extends BasePresenter<SearchIssuesMvp.View> i
                 .doOnSubscribe(() -> sendToView(SearchIssuesMvp.View::onShowProgress))
                 .doOnNext(repoModelPageable -> {
                     lastPage = repoModelPageable.getLast();
-                    if (page == 1) {
+                    setApiCalled();
+                    if (getCurrentPage() == 1) {
                         getIssues().clear();
                     }
                     getIssues().addAll(repoModelPageable.getItems());
@@ -76,7 +77,7 @@ public class SearchIssuesPresenter extends BasePresenter<SearchIssuesMvp.View> i
     }
 
     @Override public void onItemClick(int position, View v, IssueModel item) {
-        Logger.e(Bundler.start().put("item",item).end().size());
+        Logger.e(Bundler.start().put("item", item).end().size());
         IssuePagerView.createIntentForOffline(v.getContext(), item);
     }
 

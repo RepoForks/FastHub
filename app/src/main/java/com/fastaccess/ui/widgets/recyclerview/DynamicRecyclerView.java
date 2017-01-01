@@ -75,13 +75,13 @@ public class DynamicRecyclerView extends RecyclerView {
         }
     }
 
-    private void showParentOrSelf(boolean show) {
+    private void showParentOrSelf(boolean showRecyclerView) {
         if (parentView == null) {
-            setVisibility(show ? VISIBLE : GONE);
+            setVisibility(showRecyclerView ? VISIBLE : GONE);
         } else {
-            parentView.setVisibility(show ? VISIBLE : GONE);
+            parentView.setVisibility(showRecyclerView ? VISIBLE : GONE);
         }
-        emptyView.setVisibility(!show ? VISIBLE : GONE);
+        emptyView.setVisibility(!showRecyclerView ? VISIBLE : GONE);
     }
 
     public void setEmptyView(@NonNull StateLayout emptyView, @Nullable View parentView) {
