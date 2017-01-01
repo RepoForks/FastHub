@@ -47,6 +47,20 @@ public class SchemeParser {
         }
     }
 
+    public static void launchUri(@NonNull Context context, @NonNull Uri data) {
+        Intent intent = convert(context, data);
+        if (intent != null) {
+            context.startActivity(intent);
+        } else {
+            Activity activity = ActivityHelper.getActivity(context);
+            if (activity == null) {
+                context.startActivity(new Intent(ACTION_VIEW, data).addCategory(CATEGORY_BROWSABLE));
+            } else {
+                ActivityHelper.startCustomTab(activity, data);
+            }
+        }
+    }
+
     protected boolean isMatch(@Nullable String url, @NonNull Matcher matcher) {
         return !InputHelper.isEmpty(url) && matcher.reset(url).matches();
     }
@@ -65,6 +79,10 @@ public class SchemeParser {
         if (intent == null) return null;
         if (!ACTION_VIEW.equals(intent.getAction())) return null;
         Uri data = intent.getData();
+        return convert(context, data);
+    }
+
+    @Nullable public static Intent convert(@NonNull Context context, Uri data) {
         if (data == null) return null;
         if (TextUtils.isEmpty(data.getHost()) || TextUtils.isEmpty(data.getScheme())) {
             String host = data.getHost();
@@ -77,7 +95,6 @@ public class SchemeParser {
                 if (path.charAt(0) == '/') data = Uri.parse(prefix + path);
                 else data = Uri.parse(prefix + '/' + path);
             else data = Uri.parse(prefix);
-            intent.setData(data);
         }
 
         return getIntentForURI(context, data);

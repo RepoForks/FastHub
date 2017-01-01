@@ -1,16 +1,19 @@
 package com.fastaccess.ui.modules.main.home;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.annimon.stream.Collectors;
+import com.annimon.stream.Stream;
 import com.fastaccess.data.dao.EventsModel;
+import com.fastaccess.data.dao.SimpleUrlsModel;
 import com.fastaccess.data.dao.types.EventsType;
 import com.fastaccess.data.rest.RestClient;
 import com.fastaccess.helper.Logger;
 import com.fastaccess.helper.RxHelper;
+import com.fastaccess.provider.scheme.SchemeParser;
 import com.fastaccess.ui.base.mvp.presenter.BasePresenter;
 import com.fastaccess.ui.modules.repo.RepoPagerView;
 
@@ -101,19 +104,19 @@ public class HomePresenter extends BasePresenter<HomeMvp.View> implements HomeMv
         if (item.getType() == EventsType.ForkEvent) {
             RepoPagerView.startRepoPager(v.getContext(), item.getPayload().getForkee());
         } else {
-            Uri uri = Uri.parse(item.getRepo().getName());
-            if (uri.getPathSegments() != null && !uri.getPathSegments().isEmpty()) {
-                Logger.e(uri.getPathSegments().get(0));
-                String owner = uri.getPathSegments().get(0);
-                String repoId = uri.getLastPathSegment();
-                Intent intent = RepoPagerView.createIntent(v.getContext(), repoId, owner);
-                v.getContext().startActivity(intent);
-
-            }
+            SchemeParser.launchUri(v.getContext(), Uri.parse(item.getRepo().getName()));
         }
     }
 
     @Override public void onItemLongClick(int position, View v, EventsModel item) {
-        //TODO
+        if (item.getType() == EventsType.ForkEvent) {
+            if (getView() != null) {
+                getView().onOpenRepoChooser(Stream.of(new SimpleUrlsModel(item.getRepo().getName(), item.getRepo().getUrl()),
+                        new SimpleUrlsModel(item.getPayload().getForkee().getFullName(), item.getPayload().getForkee().getUrl()))
+                        .collect(Collectors.toCollection(ArrayList::new)));
+            }
+        } else {
+            onItemClick(position, v, item);
+        }
     }
 }

@@ -92,6 +92,6 @@ public class ProfileReposPresenter extends BasePresenter<ProfileReposMvp.View> i
     }
 
     @Override public void onItemLongClick(int position, View v, RepoModel item) {
-        //TODO
+        onItemClick(position, v, item);
     }
 }

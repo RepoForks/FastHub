@@ -40,10 +40,6 @@ public class ReposViewHolder extends BaseViewHolder<RepoModel> {
         return new ReposViewHolder(getView(viewGroup, R.layout.repos_row_item), adapter);
     }
 
-    public void bind(@NonNull RepoModel repo, boolean isStarred) {
-        bind(repo, isStarred, false);
-    }
-
     public void bind(@NonNull RepoModel repo, boolean isStarred, boolean withImage) {
         if (repo.isFork()) {
             title.setText(SpannableBuilder.builder().bold(forked).append(" ").append(repo.getName()));

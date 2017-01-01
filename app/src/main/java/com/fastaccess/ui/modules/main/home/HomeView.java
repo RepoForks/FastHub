@@ -1,5 +1,6 @@
 package com.fastaccess.ui.modules.main.home;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -7,12 +8,17 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 
 import com.fastaccess.R;
+import com.fastaccess.data.dao.SimpleUrlsModel;
 import com.fastaccess.helper.Logger;
 import com.fastaccess.provider.rest.implementation.OnLoadMore;
+import com.fastaccess.provider.scheme.SchemeParser;
 import com.fastaccess.ui.adapter.FeedsAdapter;
 import com.fastaccess.ui.base.BaseFragment;
 import com.fastaccess.ui.widgets.StateLayout;
+import com.fastaccess.ui.widgets.dialog.ListDialogView;
 import com.fastaccess.ui.widgets.recyclerview.DynamicRecyclerView;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 
@@ -78,6 +84,12 @@ public class HomeView extends BaseFragment<HomeMvp.View, HomePresenter> implemen
         if (navigationCallback != null) navigationCallback.showMessage(getString(R.string.error), message);
     }
 
+    @Override public void onOpenRepoChooser(@NonNull ArrayList<SimpleUrlsModel> models) {
+        ListDialogView<SimpleUrlsModel> dialogView = new ListDialogView<>();
+        dialogView.initArguments(getString(R.string.repo_chooser), models);
+        dialogView.show(getChildFragmentManager(), "ListDialogView");
+    }
+
     @NonNull @Override public HomePresenter providePresenter() {
         return new HomePresenter();
     }
@@ -98,4 +110,7 @@ public class HomeView extends BaseFragment<HomeMvp.View, HomePresenter> implemen
         onRefresh();
     }
 
+    @Override public void onItemSelected(SimpleUrlsModel item) {
+        SchemeParser.launchUri(getContext(), Uri.parse(item.getItem()));
+    }
 }

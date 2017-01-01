@@ -19,7 +19,6 @@ import com.fastaccess.ui.widgets.recyclerview.DynamicRecyclerView;
 import java.util.ArrayList;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 
 /**
  * Created by Kosh on 31 Dec 2016, 3:19 PM
@@ -27,17 +26,14 @@ import butterknife.OnClick;
 
 public class ListDialogView<O extends Parcelable> extends BaseBottomSheetDialog implements BaseViewHolder.OnItemClickListener<O> {
 
-    public interface onSimpleItemSelection<O> {
+    public interface onSimpleItemSelection<O extends Parcelable> {
         void onItemSelected(O item);
     }
 
     @BindView(R.id.title) FontTextView title;
     @BindView(R.id.recycler) DynamicRecyclerView recycler;
-    private onSimpleItemSelection onSimpleItemSelection;
 
-    @OnClick(R.id.cancel) void onCancel() {
-        dismiss();
-    }
+    private onSimpleItemSelection onSimpleItemSelection;
 
     @Override protected int layoutRes() {
         return R.layout.simple_list_dialog;

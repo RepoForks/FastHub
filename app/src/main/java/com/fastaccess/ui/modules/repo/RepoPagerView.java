@@ -3,12 +3,12 @@ package com.fastaccess.ui.modules.repo;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.MenuItemCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,11 +16,11 @@ import android.view.View;
 import com.fastaccess.R;
 import com.fastaccess.data.dao.RepoModel;
 import com.fastaccess.helper.ActivityHelper;
-import com.fastaccess.helper.AppHelper;
 import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.Bundler;
 import com.fastaccess.helper.InputHelper;
 import com.fastaccess.helper.ParseDateFormat;
+import com.fastaccess.provider.scheme.SchemeParser;
 import com.fastaccess.ui.base.BaseActivity;
 import com.fastaccess.ui.widgets.AvatarLayout;
 import com.fastaccess.ui.widgets.CountBadgeProvider;
@@ -56,11 +56,7 @@ public class RepoPagerView extends BaseActivity<RepoPagerMvp.View, RepoPagerPres
     public static void startRepoPager(@NonNull Context context, @NonNull RepoModel repoModel) {
         Intent intent = new Intent(context, RepoPagerView.class);
         intent.putExtras(Bundler.start().put(BundleConstant.ITEM, repoModel).end());
-        if (AppHelper.isOnline(context)) {
-            context.startActivity(createIntent(context, repoModel.getName(), repoModel.getOwner().getLogin()));//for the sake of subs count.
-        } else {
-            context.startActivity(createIntent(context, repoModel.getName(), repoModel.getOwner().getLogin()));
-        }
+        context.startActivity(createIntent(context, repoModel.getName(), repoModel.getOwner().getLogin()));
     }
 
     public static Intent createIntent(@NonNull Context context, @NonNull String repoId, @NonNull String login) {
@@ -157,6 +153,7 @@ public class RepoPagerView extends BaseActivity<RepoPagerMvp.View, RepoPagerPres
         title.setText(repoModel.getFullName());
         license.setVisibility(repoModel.getLicense() != null ? View.VISIBLE : View.GONE);
         if (repoModel.getLicense() != null) license.setText(repoModel.getLicense().getSpdxId());
+        supportInvalidateOptionsMenu();
     }
 
     @Override public void onShowProgress() {
@@ -216,14 +213,28 @@ public class RepoPagerView extends BaseActivity<RepoPagerMvp.View, RepoPagerPres
     }
 
     @Override public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.share_menu, menu);
-        MenuItemCompat.setShowAsAction(menu.findItem(R.id.share), MenuItem.SHOW_AS_ACTION_NEVER);
+        getMenuInflater().inflate(R.menu.repo_menu, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override public boolean onPrepareOptionsMenu(Menu menu) {
+        RepoModel repoModel = getPresenter().getRepo();
+        if (repoModel != null && repoModel.isFork() && repoModel.getParent() != null) {
+            MenuItem menuItem = menu.findItem(R.id.originalRepo);
+            menuItem.setVisible(true);
+            menuItem.setTitle(repoModel.getParent().getFullName());
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.share) {
             if (getPresenter().getRepo() != null) ActivityHelper.shareUrl(this, getPresenter().getRepo().getHtmlUrl());
+            return true;
+        } else if (item.getItemId() == R.id.originalRepo) {
+            if (getPresenter().getRepo() != null && getPresenter().getRepo().getParent() != null/*not really needed*/) {
+                SchemeParser.launchUri(this, Uri.parse(getPresenter().getRepo().getParent().getFullName()));
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);

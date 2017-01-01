@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.fastaccess.R;
 import com.fastaccess.data.dao.CommitModel;
+import com.fastaccess.helper.InputHelper;
 import com.fastaccess.helper.ParseDateFormat;
 import com.fastaccess.ui.widgets.AvatarLayout;
 import com.fastaccess.ui.widgets.FontTextView;
@@ -37,12 +38,14 @@ public class CommitsViewHolder extends BaseViewHolder<CommitModel> {
 
     @Override public void bind(@NonNull CommitModel commit) {
         title.setText(commit.getCommit().getMessage());
+        String login = commit.getAuthor() != null ? commit.getAuthor().getLogin() : commit.getCommit().getAuthor().getName();
+        String avatar = commit.getAuthor() != null ? commit.getAuthor().getAvatarUrl() : null;
+        String date = commit.getCommit().getAuthor().getDate();
         details.setText(SpannableBuilder.builder()
-                .bold(commit.getCommitter() != null ? commit.getCommitter().getLogin() : commit.getAuthor().getLogin())
+                .bold(InputHelper.toNA(login))
                 .append(" ")
-                .append(ParseDateFormat.getTimeAgo(commit.getCommit() != null && commit.getCommit().getCommitter() != null ? commit.getCommit()
-                        .getCommitter().getDate() : "")));
-        avatarLayout.setUrl(commit.getAuthor().getAvatarUrl(), commit.getAuthor().getLogin());
+                .append(ParseDateFormat.getTimeAgo(date != null ? date : "")));
+        avatarLayout.setUrl(avatar, login);
         avatarLayout.setVisibility(View.VISIBLE);
     }
 }

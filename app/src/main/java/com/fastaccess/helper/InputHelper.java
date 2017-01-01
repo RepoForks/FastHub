@@ -1,6 +1,7 @@
 package com.fastaccess.helper;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.text.TextUtils;
 import android.widget.EditText;
@@ -50,7 +51,7 @@ public class InputHelper {
         return toString(textInputLayout.getEditText());
     }
 
-    public static String toNA(@NonNull String value) {
+    public static String toNA(@Nullable String value) {
         return isEmpty(value) ? "N/A" : value;
     }
 
