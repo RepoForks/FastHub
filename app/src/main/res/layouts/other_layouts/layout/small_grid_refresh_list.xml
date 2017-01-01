@@ -19,6 +19,6 @@
 
     </com.fastaccess.ui.widgets.AppbarRefreshLayout>
 
-    <include layout="@layout/empty_layout"/>
+    <include layout="@layout/state_layout"/>
 
 </FrameLayout>

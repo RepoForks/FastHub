@@ -32,5 +32,5 @@
         android:layout_height="match_parent"/>
 
 
-    <include layout="@layout/empty_layout"/>
+    <include layout="@layout/state_layout"/>
 </FrameLayout>

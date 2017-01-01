@@ -123,7 +123,7 @@ public class StateLayout extends NestedScrollView {
 
     @Override protected void onFinishInflate() {
         super.onFinishInflate();
-        inflate(getContext(), R.layout.state_layout, this);
+        inflate(getContext(), R.layout.empty_layout, this);
         if (isInEditMode()) return;
         ButterKnife.bind(this);
     }

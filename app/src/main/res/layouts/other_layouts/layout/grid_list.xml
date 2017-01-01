@@ -14,5 +14,5 @@
         app:spanCount="@integer/num_columns"/>
 
 
-    <include layout="@layout/empty_layout"/>
+    <include layout="@layout/state_layout"/>
 </FrameLayout>
