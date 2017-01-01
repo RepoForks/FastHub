@@ -65,6 +65,7 @@ public interface IssueService {
 
 
     @GET("repos/{owner}/{repo}/issues/{number}/comments")
+//    @Headers("Accept: application/vnd.github.VERSION.html")
     Observable<Pageable<CommentsModel>> getIssueComments(@Path("owner") String owner,
                                                          @Path("repo") String repo,
                                                          @Path("number") int number,

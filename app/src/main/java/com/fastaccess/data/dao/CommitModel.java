@@ -21,9 +21,9 @@ public class CommitModel implements Parcelable {
     private GitCommitModel commit;
     private UserModel author;
     private UserModel committer;
-    private List<CommentsModel> parents;
+    private List<CommitModel> parents;
     private GithubState stats;
-    private List<FilesListModel> files;
+    private List<CommitFileModel> files;
     @SerializedName("html_url") private String htmlUrl;
 
     public String getUrl() {
@@ -90,11 +90,11 @@ public class CommitModel implements Parcelable {
         this.committer = committer;
     }
 
-    public List<CommentsModel> getParents() {
+    public List<CommitModel> getParents() {
         return parents;
     }
 
-    public void setParents(List<CommentsModel> parents) {
+    public void setParents(List<CommitModel> parents) {
         this.parents = parents;
     }
 
@@ -106,11 +106,11 @@ public class CommitModel implements Parcelable {
         this.stats = stats;
     }
 
-    public List<FilesListModel> getFiles() {
+    public List<CommitFileModel> getFiles() {
         return files;
     }
 
-    public void setFiles(List<FilesListModel> files) {
+    public void setFiles(List<CommitFileModel> files) {
         this.files = files;
     }
 
@@ -150,9 +150,9 @@ public class CommitModel implements Parcelable {
         this.commit = in.readParcelable(GitCommitModel.class.getClassLoader());
         this.author = in.readParcelable(UserModel.class.getClassLoader());
         this.committer = in.readParcelable(UserModel.class.getClassLoader());
-        this.parents = in.createTypedArrayList(CommentsModel.CREATOR);
+        this.parents = in.createTypedArrayList(CommitModel.CREATOR);
         this.stats = in.readParcelable(GithubState.class.getClassLoader());
-        this.files = in.createTypedArrayList(FilesListModel.CREATOR);
+        this.files = in.createTypedArrayList(CommitFileModel.CREATOR);
         this.htmlUrl = in.readString();
     }
 

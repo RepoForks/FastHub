@@ -21,7 +21,7 @@ public class CommentsAdapter extends BaseRecyclerAdapter<CommentsModel, Comments
     }
 
     @Override protected CommentsViewHolder viewHolder(ViewGroup parent, int viewType) {
-        return new CommentsViewHolder(CommentsViewHolder.getView(parent), this);
+        return CommentsViewHolder.newInstance(parent, this);
     }
 
     @Override protected void onBindView(CommentsViewHolder holder, int position) {

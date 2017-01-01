@@ -9,8 +9,8 @@ import android.os.Parcelable;
 
 public class GithubState implements Parcelable {
     private int additions;
-    private Integer deletions;
-    private Integer total;
+    private int deletions;
+    private int total;
 
     public int getAdditions() {
         return additions;
@@ -20,39 +20,39 @@ public class GithubState implements Parcelable {
         this.additions = additions;
     }
 
-    public Integer getDeletions() {
+    public int getDeletions() {
         return deletions;
     }
 
-    public void setDeletions(Integer deletions) {
+    public void setDeletions(int deletions) {
         this.deletions = deletions;
     }
 
-    public Integer getTotal() {
+    public int getTotal() {
         return total;
     }
 
-    public void setTotal(Integer total) {
+    public void setTotal(int total) {
         this.total = total;
     }
+
+    public GithubState() {}
 
     @Override public int describeContents() { return 0; }
 
     @Override public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this.additions);
-        dest.writeValue(this.deletions);
-        dest.writeValue(this.total);
+        dest.writeInt(this.deletions);
+        dest.writeInt(this.total);
     }
-
-    public GithubState() {}
 
     protected GithubState(Parcel in) {
         this.additions = in.readInt();
-        this.deletions = (Integer) in.readValue(Integer.class.getClassLoader());
-        this.total = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.deletions = in.readInt();
+        this.total = in.readInt();
     }
 
-    public static final Parcelable.Creator<GithubState> CREATOR = new Parcelable.Creator<GithubState>() {
+    public static final Creator<GithubState> CREATOR = new Creator<GithubState>() {
         @Override public GithubState createFromParcel(Parcel source) {return new GithubState(source);}
 
         @Override public GithubState[] newArray(int size) {return new GithubState[size];}

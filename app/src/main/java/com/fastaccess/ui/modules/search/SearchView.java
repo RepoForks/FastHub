@@ -8,14 +8,16 @@ import android.text.Editable;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
 
 import com.fastaccess.R;
 import com.fastaccess.data.dao.FragmentPagerAdapterModel;
 import com.fastaccess.helper.AnimHelper;
 import com.fastaccess.helper.AppHelper;
+import com.fastaccess.helper.Logger;
 import com.fastaccess.ui.adapter.FragmentsPagerAdapter;
 import com.fastaccess.ui.base.BaseActivity;
-import com.fastaccess.ui.widgets.FontEditText;
+import com.fastaccess.ui.widgets.FontAutoCompleteEditText;
 import com.fastaccess.ui.widgets.ForegroundImageView;
 import com.fastaccess.ui.widgets.ViewPagerView;
 
@@ -30,11 +32,13 @@ import butterknife.OnTextChanged;
 
 public class SearchView extends BaseActivity<SearchMvp.View, SearchPresenter> implements SearchMvp.View {
 
-    @BindView(R.id.searchEditText) FontEditText searchEditText;
+    @BindView(R.id.searchEditText) FontAutoCompleteEditText searchEditText;
     @BindView(R.id.clear) ForegroundImageView clear;
     @BindView(R.id.tabs) TabLayout tabs;
     @BindView(R.id.appbar) AppBarLayout appbar;
     @BindView(R.id.pager) ViewPagerView pager;
+
+    private ArrayAdapter<String> adapter;
 
     @OnTextChanged(value = R.id.searchEditText, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     void onTextChange(Editable s) {
@@ -91,5 +95,17 @@ public class SearchView extends BaseActivity<SearchMvp.View, SearchPresenter> im
         setTitle("");
         pager.setAdapter(new FragmentsPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapterModel.buildForSearch(this)));
         tabs.setupWithViewPager(pager);
+        searchEditText.setAdapter(getAdapter());
+        searchEditText.setOnItemClickListener((parent, view, position, id) -> getPresenter().onSearchClicked(pager, searchEditText));
+    }
+
+    @Override public void onNotifyAdapter() {
+        Logger.e();
+        getAdapter().notifyDataSetChanged();
+    }
+
+    private ArrayAdapter<String> getAdapter() {
+        if (adapter == null) adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, getPresenter().getHints());
+        return adapter;
     }
 }

@@ -19,11 +19,11 @@ public class GithubHelper {
 
     private static Matcher IMAGE_SRC_MATCHER = Pattern.compile("(src|SRC)=\"(.*?)\"").matcher("");
 
-    @NonNull public static String generateContent(@NonNull String source, @Nullable String baseUrl) {
+    @NonNull public static String generateContent(@NonNull String source, @Nullable String baseUrl, boolean breakLine) {
         if (baseUrl == null) {
-            return mergeContent(source);
+            return mergeContent(source, breakLine);
         } else {
-            return mergeContent(validateImageBaseUrl(source, baseUrl));
+            return mergeContent(validateImageBaseUrl(source, baseUrl), breakLine);
         }
     }
 
@@ -57,7 +57,7 @@ public class GithubHelper {
         return source;
     }
 
-    private static String mergeContent(@NonNull String source) {
+    private static String mergeContent(@NonNull String source, boolean breakLine) {
         return "<html>\n" +
                 "\n" +
                 "<head>\n" +
@@ -68,7 +68,7 @@ public class GithubHelper {
                 "\n" +
                 "<body>\n" +
                 source +
-                "\n<script src=\"./intercept-touch.js\"></script>\n" +
+                "\n" + (!breakLine ? "<script src=\"./intercept-touch.js\"></script>\n" : "") + "" +
                 "</body>\n" +
                 "\n" +
                 "</html>\n";

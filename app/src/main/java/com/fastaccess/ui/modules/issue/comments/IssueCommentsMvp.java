@@ -48,6 +48,7 @@ public interface IssueCommentsMvp {
         void onShowProgressDialog();
 
         void onTagUser(@Nullable UserModel user);
+
     }
 
     interface Presenter extends BaseMvp.FAPresenter<View>,

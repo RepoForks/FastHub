@@ -145,15 +145,17 @@ public class IssueCommentsPresenter extends BasePresenter<IssueCommentsMvp.View>
     }
 
     @Override public void onItemClick(int position, View v, CommentsModel item) {
-        if (item.getUser() != null) {
-            UserModel userModel = UserModel.getUser();
-            if (userModel != null && item.getUser().getLogin().equals(userModel.getLogin())) {
-                if (getView() != null) getView().onEditComment(item);
+        if (getView() != null) {
+            if (item.getUser() != null) {
+                UserModel userModel = UserModel.getUser();
+                if (userModel != null && item.getUser().getLogin().equals(userModel.getLogin())) {
+                    getView().onEditComment(item);
+                } else {
+                    getView().onTagUser(item.getUser());
+                }
             } else {
-                if (getView() != null) getView().onTagUser(item.getUser());
+                getView().onTagUser(item.getUser());
             }
-        } else if (getView() != null) {
-            getView().onTagUser(item.getUser());
         }
     }
 

@@ -7,10 +7,12 @@ import android.view.ViewGroup;
 
 import com.fastaccess.R;
 import com.fastaccess.data.dao.CommentsModel;
+import com.fastaccess.helper.InputHelper;
 import com.fastaccess.helper.ParseDateFormat;
 import com.fastaccess.provider.markdown.MarkDownProvider;
 import com.fastaccess.ui.widgets.AvatarLayout;
 import com.fastaccess.ui.widgets.FontTextView;
+import com.fastaccess.ui.widgets.SpanFixTextView;
 import com.fastaccess.ui.widgets.recyclerview.BaseRecyclerAdapter;
 import com.fastaccess.ui.widgets.recyclerview.BaseViewHolder;
 
@@ -25,15 +27,16 @@ public class CommentsViewHolder extends BaseViewHolder<CommentsModel> {
     @BindView(R.id.avatarView) AvatarLayout avatar;
     @BindView(R.id.date) FontTextView date;
     @BindView(R.id.name) FontTextView name;
-    @BindView(R.id.comment) FontTextView comment;
+    @BindView(R.id.comment) SpanFixTextView comment;
 
-    public CommentsViewHolder(@NonNull View itemView, @Nullable BaseRecyclerAdapter adapter) {
+    private CommentsViewHolder(@NonNull View itemView, @Nullable BaseRecyclerAdapter adapter) {
         super(itemView, adapter);
         comment.setOnLongClickListener(this);
+        comment.setOnClickListener(this);
     }
 
-    public static View getView(@NonNull ViewGroup viewGroup) {
-        return getView(viewGroup, R.layout.comments_row_item);
+    public static CommentsViewHolder newInstance(@NonNull ViewGroup viewGroup, @Nullable BaseRecyclerAdapter adapter) {
+        return new CommentsViewHolder(getView(viewGroup, R.layout.comments_row_item), adapter);
     }
 
     @Override public void bind(@NonNull CommentsModel commentsModel) {
@@ -42,7 +45,7 @@ public class CommentsViewHolder extends BaseViewHolder<CommentsModel> {
         } else {
             avatar.setUrl(null, null);
         }
-        MarkDownProvider.convertTextToMarkDown(comment, commentsModel.getBody());
+        if (!InputHelper.isEmpty(commentsModel.getBody())) MarkDownProvider.convertTextToMarkDown(comment, commentsModel.getBody());
         name.setText(commentsModel.getUser() != null ? commentsModel.getUser().getLogin() : "Anonymous");
         date.setText(ParseDateFormat.getTimeAgo(commentsModel.getCreatedAt()));
     }

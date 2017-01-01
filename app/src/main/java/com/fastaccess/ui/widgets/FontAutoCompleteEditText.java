@@ -5,7 +5,7 @@ import android.support.annotation.ColorRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.util.AttributeSet;
-import android.widget.AdapterView;
+import android.view.inputmethod.EditorInfo;
 
 import com.fastaccess.helper.TypeFaceHelper;
 import com.fastaccess.helper.ViewHelper;
@@ -33,6 +33,9 @@ public class FontAutoCompleteEditText extends AppCompatAutoCompleteTextView {
 
     private void init() {
         if (isInEditMode()) return;
+        if (isInEditMode()) return;
+        setInputType(getInputType() | EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_FLAG_NO_FULLSCREEN);
+        setImeOptions(getImeOptions() | EditorInfo.IME_FLAG_NO_FULLSCREEN);
         TypeFaceHelper.applyTypeface(this);
     }
 
@@ -40,9 +43,5 @@ public class FontAutoCompleteEditText extends AppCompatAutoCompleteTextView {
         int nColor = ContextCompat.getColor(getContext(), normalColor);
         int pColor = ContextCompat.getColor(getContext(), pressedColor);
         setTextColor(ViewHelper.textSelector(nColor, pColor));
-    }
-
-    @Override public void setOnItemClickListener(AdapterView.OnItemClickListener l) {
-        super.setOnItemClickListener(l);
     }
 }
