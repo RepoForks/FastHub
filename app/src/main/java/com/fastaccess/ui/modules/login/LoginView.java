@@ -3,20 +3,20 @@ package com.fastaccess.ui.modules.login;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.fastaccess.R;
-import com.fastaccess.helper.InputHelper;
 import com.fastaccess.helper.Logger;
 import com.fastaccess.ui.base.BaseActivity;
 import com.fastaccess.ui.modules.main.MainView;
-import com.fastaccess.ui.widgets.FontButton;
+import com.fastaccess.ui.widgets.AppbarRefreshLayout;
+import com.prettifier.pretty.NestedWebView;
 
 import butterknife.BindView;
-import butterknife.OnClick;
-import icepick.State;
 
 /**
  * Created by Kosh on 09 Nov 2016, 9:46 PM
@@ -24,8 +24,8 @@ import icepick.State;
 
 public class LoginView extends BaseActivity<LoginMvp.View, LoginPresenter> implements LoginMvp.View {
 
-    @BindView(R.id.login) FontButton login;
-    @State String code;
+    @BindView(R.id.webView) NestedWebView webView;
+    @BindView(R.id.refresh) AppbarRefreshLayout refresh;
 
     @Override protected int layout() {
         return R.layout.login_layout;
@@ -61,7 +61,7 @@ public class LoginView extends BaseActivity<LoginMvp.View, LoginPresenter> imple
 
     @Override public void onShowMessage(@NonNull String msg) {
         hideProgress();
-        Snackbar.make(login, msg, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(webView, msg, Snackbar.LENGTH_LONG).show();
     }
 
     @Override public void onSuccessfullyLoggedIn() {
@@ -70,34 +70,38 @@ public class LoginView extends BaseActivity<LoginMvp.View, LoginPresenter> imple
         finish();
     }
 
-    @Override public void onHandleIntentResult(@Nullable Intent intent) {
-        if (InputHelper.isEmpty(code)) {
-            code = getPresenter().onResume(intent);
-            Logger.e(code);
-            if (!InputHelper.isEmpty(code)) {
-                getPresenter().onGetToken(code);
-            }
-        }
-    }
-
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        onHandleIntentResult(getIntent());
-        setTitle(R.string.login);
-    }
-
-    @OnClick(R.id.login) public void onClick() {
-        code = null;
-        getPresenter().onAuthorize(this);
-    }
-
-    @Override protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        onHandleIntentResult(intent);
+        refresh.setOnRefreshListener(this);
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override public void onProgressChanged(WebView view, int progress) {
+                super.onProgressChanged(view, progress);
+                if (progress == 100) {
+                    refresh.setRefreshing(false);
+                } else if (progress < 100) {
+                    refresh.setRefreshing(true);//if (!refresh.isRefreshing())  is handled by the method,we shouldn't care.
+                }
+            }
+        });
+        webView.setWebViewClient(new WebViewClient() {
+            @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                String code = getPresenter().getCode(url);
+                Logger.e(code, url);
+                if (code != null) {
+                    getPresenter().onGetToken(code);
+                }
+                return false;
+            }
+        });
+        webView.loadUrl(getPresenter().getAuthorizationUrl().toString());
     }
 
     @NonNull @Override public LoginPresenter providePresenter() {
         return new LoginPresenter();
+    }
+
+    @Override public void onRefresh() {
+        webView.loadUrl(getPresenter().getAuthorizationUrl().toString());
     }
 }
 

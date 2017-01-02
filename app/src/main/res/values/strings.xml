@@ -153,4 +153,5 @@
     <string name="deletion">Deletion</string>
     <string name="addition">Addition</string>
     <string name="commit">Commit</string>
+    <string name="please_login">Please Login to Continue Using FastHub</string>
 </resources>

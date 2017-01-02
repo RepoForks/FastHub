@@ -26,6 +26,7 @@ public class UILProvider {
             ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
                     .writeDebugLogs()
                     .defaultDisplayImageOptions(getOptions())
+                    .denyCacheImageMultipleSizesInMemory()
                     .diskCache(new LimitedAgeDiskCache(context.getCacheDir(), AlarmManager.INTERVAL_DAY))
                     .build();
             imageLoader.init(config);

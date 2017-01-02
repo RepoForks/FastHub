@@ -1,6 +1,6 @@
 package com.fastaccess.ui.modules.login;
 
-import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -8,6 +8,7 @@ import android.support.annotation.StringRes;
 import com.fastaccess.data.dao.AccessTokenModel;
 import com.fastaccess.data.dao.UserModel;
 import com.fastaccess.ui.base.mvp.BaseMvp;
+import com.fastaccess.ui.widgets.AppbarRefreshLayout;
 
 import retrofit2.Response;
 
@@ -17,7 +18,7 @@ import retrofit2.Response;
 
 public interface LoginMvp {
 
-    interface View extends BaseMvp.FAView {
+    interface View extends BaseMvp.FAView, AppbarRefreshLayout.OnRefreshListener {
         void onShowProgress();
 
         void onHideProgress();
@@ -26,16 +27,14 @@ public interface LoginMvp {
 
         void onShowMessage(@NonNull String msg);
 
-        void onHandleIntentResult(@Nullable Intent intent);
-
         void onSuccessfullyLoggedIn();
     }
 
     interface Presenter extends BaseMvp.FAPresenter<LoginMvp.View> {
 
-        @Nullable String onResume(@Nullable Intent intent);
+        @Nullable String getCode(@NonNull String url);
 
-        void onAuthorize(@NonNull LoginView loginView);
+        @NonNull Uri getAuthorizationUrl();
 
         void onGetToken(@NonNull String code);
 

@@ -29,6 +29,10 @@ public class CommentsModel implements Parcelable {
     @SerializedName("html_url") private String htmlUrl;
     @SerializedName("created_at") private String createdAt;
     @SerializedName("updated_at") private String updatedAt;
+    private int position;
+    private int line;
+    private String path;
+    @SerializedName("commit_id") private String commitId;
 
     public long getId() {
         return id;
@@ -94,37 +98,7 @@ public class CommentsModel implements Parcelable {
         this.updatedAt = updatedAt;
     }
 
-    @Override public int describeContents() { return 0; }
-
-    @Override public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(this.id);
-        dest.writeParcelable(this.user, flags);
-        dest.writeString(this.url);
-        dest.writeString(this.body);
-        dest.writeString(this.bodyHtml);
-        dest.writeString(this.htmlUrl);
-        dest.writeString(this.createdAt);
-        dest.writeString(this.updatedAt);
-    }
-
     public CommentsModel() {}
-
-    protected CommentsModel(Parcel in) {
-        this.id = in.readLong();
-        this.user = in.readParcelable(UserModel.class.getClassLoader());
-        this.url = in.readString();
-        this.body = in.readString();
-        this.bodyHtml = in.readString();
-        this.htmlUrl = in.readString();
-        this.createdAt = in.readString();
-        this.updatedAt = in.readString();
-    }
-
-    public static final Parcelable.Creator<CommentsModel> CREATOR = new Parcelable.Creator<CommentsModel>() {
-        @Override public CommentsModel createFromParcel(Parcel source) {return new CommentsModel(source);}
-
-        @Override public CommentsModel[] newArray(int size) {return new CommentsModel[size];}
-    };
 
     @Override public boolean equals(Object o) {
         if (this == o) return true;
@@ -159,4 +133,73 @@ public class CommentsModel implements Parcelable {
         return RxPaperBook.with(BOOK_NAME).delete(gistId);
     }
 
+    public String getCommitId() {
+        return commitId;
+    }
+
+    public void setCommitId(String commitId) {
+        this.commitId = commitId;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public void setLine(int line) {
+        this.line = line;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    @Override public int describeContents() { return 0; }
+
+    @Override public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(this.id);
+        dest.writeParcelable(this.user, flags);
+        dest.writeString(this.url);
+        dest.writeString(this.body);
+        dest.writeString(this.bodyHtml);
+        dest.writeString(this.htmlUrl);
+        dest.writeString(this.createdAt);
+        dest.writeString(this.updatedAt);
+        dest.writeInt(this.position);
+        dest.writeInt(this.line);
+        dest.writeString(this.path);
+        dest.writeString(this.commitId);
+    }
+
+    protected CommentsModel(Parcel in) {
+        this.id = in.readLong();
+        this.user = in.readParcelable(UserModel.class.getClassLoader());
+        this.url = in.readString();
+        this.body = in.readString();
+        this.bodyHtml = in.readString();
+        this.htmlUrl = in.readString();
+        this.createdAt = in.readString();
+        this.updatedAt = in.readString();
+        this.position = in.readInt();
+        this.line = in.readInt();
+        this.path = in.readString();
+        this.commitId = in.readString();
+    }
+
+    public static final Creator<CommentsModel> CREATOR = new Creator<CommentsModel>() {
+        @Override public CommentsModel createFromParcel(Parcel source) {return new CommentsModel(source);}
+
+        @Override public CommentsModel[] newArray(int size) {return new CommentsModel[size];}
+    };
 }

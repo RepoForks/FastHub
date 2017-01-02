@@ -1,6 +1,5 @@
 package com.fastaccess.ui.modules.login;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,24 +23,22 @@ import retrofit2.Response;
 
 public class LoginPresenter extends BasePresenter<LoginMvp.View> implements LoginMvp.Presenter {
 
-    @Nullable @Override public String onResume(@Nullable Intent intent) {
-        if (intent == null) return null;
-        Uri uri = intent.getData();
-        Logger.e(uri, intent);
+    @Nullable @Override public String getCode(@NonNull String url) {
+        Uri uri = Uri.parse(url);
         if (uri != null && uri.toString().startsWith(BuildConfig.REDIRECT_URL)) {
             String code = uri.getQueryParameter("code");
             if (code != null) {
                 return code;
             } else if (uri.getQueryParameter("error") != null) {
                 Logger.e(uri.getQueryParameter("error"));
-                if (isAttached()) getView().onShowMessage(R.string.failed_login);
+                sendToView(view -> view.onShowMessage(R.string.failed_login));
             }
         }
         return null;
     }
 
-    @Override public void onAuthorize(@NonNull LoginView loginView) {
-        Uri uri = new Uri.Builder()
+    @NonNull @Override public Uri getAuthorizationUrl() {
+        return new Uri.Builder()
                 .scheme("https")
                 .authority("github.com")
                 .appendPath("login")
@@ -52,8 +49,6 @@ public class LoginPresenter extends BasePresenter<LoginMvp.View> implements Logi
                 .appendQueryParameter("scope", "user,repo,gist,delete_repo,notifications")
                 .appendQueryParameter("state", BuildConfig.APPLICATION_ID)
                 .build();
-        loginView.startActivity(new Intent(Intent.ACTION_VIEW, uri));
-
     }
 
     @Override public void onGetToken(@NonNull String code) {
@@ -85,11 +80,11 @@ public class LoginPresenter extends BasePresenter<LoginMvp.View> implements Logi
                     return;
                 }
             } else {
-                if (getView() != null) getView().onShowMessage(modelResponse.message());
+                sendToView(view -> view.onShowMessage(modelResponse.message()));
                 return;
             }
         }
-        if (getView() != null) getView().onShowMessage(R.string.failed_login);
+        sendToView(view -> view.onShowMessage(R.string.failed_login));
     }
 
     @Override public void onUserResponse(@Nullable Response<UserModel> modelResponse) {
@@ -100,10 +95,10 @@ public class LoginPresenter extends BasePresenter<LoginMvp.View> implements Logi
                 Logger.e(userModel);
                 if (getView() != null) getView().onSuccessfullyLoggedIn();
             } else {
-                if (getView() != null) getView().onShowMessage(modelResponse.message());
+                sendToView(view -> view.onShowMessage(modelResponse.message()));
                 return;
             }
         }
-        if (getView() != null) getView().onShowMessage(R.string.failed_login);
+        sendToView(view -> view.onShowMessage(R.string.failed_login));
     }
 }
