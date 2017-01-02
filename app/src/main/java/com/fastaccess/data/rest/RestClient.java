@@ -243,6 +243,15 @@ public class RestClient {
         return RestProvider.createService(RepoService.class).getCommits(login, repoId, page);
     }
 
+    public static Observable<CommitModel> getCommit(@NonNull String login, @NonNull String repoId, @NonNull String sha) {
+        return RestProvider.createService(RepoService.class).getCommit(login, repoId, sha);
+    }
+
+    public static Observable<Pageable<CommentsModel>> getCommitComments(@NonNull String login, @NonNull String repoId,
+                                                                        @NonNull String sha, int page) {
+        return RestProvider.createService(RepoService.class).getCommitComments(login, repoId, sha, page);
+    }
+
     public static Observable<Pageable<ReleasesModel>> getReleases(@NonNull String login, @NonNull String repoId, int page) {
         return RestProvider.createService(RepoService.class).getReleases(login, repoId, page);
     }

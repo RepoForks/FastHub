@@ -42,7 +42,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.modules.contentviewer.gists.GistsContentView"
+            android:name=".ui.modules.main.gists.view.GistsContentView"
             android:label="@string/gist"/>
 
         <activity
@@ -74,12 +74,16 @@
             android:label="@string/repo"/>
 
         <activity
-            android:name=".ui.modules.issue.IssuePagerView"
+            android:name=".ui.modules.repo.issues.view.IssuePagerView"
             android:label="@string/issue"/>
 
         <activity
-            android:name=".ui.modules.pull_request.PullRequestPagerView"
+            android:name=".ui.modules.repo.pull_request.view.PullRequestPagerView"
             android:label="@string/pull_request"/>
+
+        <activity
+            android:name=".ui.modules.repo.code.commits.view.CommitPagerView"
+            android:label="@string/commit"/>
         <activity
             android:name=".ui.modules.interceptor.SchemeInterceptorView"
             android:configChanges="keyboard|orientation|screenSize"

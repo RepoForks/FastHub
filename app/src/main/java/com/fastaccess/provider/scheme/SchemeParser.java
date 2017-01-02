@@ -8,16 +8,17 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.annimon.stream.Optional;
+import com.annimon.stream.Stream;
 import com.fastaccess.helper.ActivityHelper;
-import com.fastaccess.helper.InputHelper;
-import com.fastaccess.ui.modules.contentviewer.gists.GistsContentView;
-import com.fastaccess.ui.modules.issue.IssuePagerView;
-import com.fastaccess.ui.modules.pull_request.PullRequestPagerView;
+import com.fastaccess.ui.modules.main.gists.view.GistsContentView;
 import com.fastaccess.ui.modules.repo.RepoPagerView;
+import com.fastaccess.ui.modules.repo.code.commits.view.CommitPagerView;
+import com.fastaccess.ui.modules.repo.issues.view.IssuePagerView;
+import com.fastaccess.ui.modules.repo.pull_request.view.PullRequestPagerView;
 import com.fastaccess.ui.modules.user.UserPagerView;
 
 import java.util.List;
-import java.util.regex.Matcher;
 
 import static android.content.Intent.ACTION_VIEW;
 import static android.content.Intent.CATEGORY_BROWSABLE;
@@ -61,20 +62,6 @@ public class SchemeParser {
         }
     }
 
-    protected boolean isMatch(@Nullable String url, @NonNull Matcher matcher) {
-        return !InputHelper.isEmpty(url) && matcher.reset(url).matches();
-    }
-
-    @Nullable public static String getGistId(@NonNull Uri uri) {
-        List<String> segments = uri.getPathSegments();
-        return segments != null && !segments.isEmpty() ? segments.get(0) : null;
-    }
-
-    @Nullable public static String getUser(@NonNull Uri uri) {
-        List<String> segments = uri.getPathSegments();
-        return segments != null && !segments.isEmpty() && segments.size() == 1 ? segments.get(0) : null;
-    }
-
     @Nullable public static Intent convert(@NonNull Context context, final Intent intent) {
         if (intent == null) return null;
         if (!ACTION_VIEW.equals(intent.getAction())) return null;
@@ -100,39 +87,27 @@ public class SchemeParser {
         return getIntentForURI(context, data);
     }
 
-    static private Intent getIntentForURI(@NonNull Context context, @NonNull Uri data) {
+    @Nullable private static Intent getIntentForURI(@NonNull Context context, @NonNull Uri data) {
         if (HOST_GISTS.equals(data.getHost())) {
             String gist = getGistId(data);
             if (gist != null) {
                 return GistsContentView.createIntent(context, gist);
             }
         } else if (HOST_DEFAULT.equals(data.getHost())) {
-//            CommitMatch commit = CommitUriMatcher.getCommit(data);
-//            if (commit != null) {
-//                return CommitViewActivity.createIn tent(commit.repository, commit.commit);
-//            }
-//
+            Intent userIntent = getUser(context, data);
             Intent pullRequestIntent = getPullRequestIntent(context, data);
-            if (pullRequestIntent != null) {
-                return pullRequestIntent;
-            }
             Intent issueIntent = getIssueIntent(context, data);
-            if (issueIntent != null) {
-                return issueIntent;
-            }
             Intent repoIntent = getRepo(context, data);
-            if (repoIntent != null) {
-                return repoIntent;
-            }
-            String login = getUser(data);
-            if (login != null) {
-                return UserPagerView.createIntent(context, login);
-            }
+            Intent commit = getCommit(context, data);
+            Optional<Intent> intentOptional = returnNonNull(userIntent, pullRequestIntent, commit, issueIntent, repoIntent);
+            Optional<Intent> empty = Optional.empty();
+            if (intentOptional != null && intentOptional.isPresent() && intentOptional != empty)
+                return intentOptional.get();
         }
         return null;
     }
 
-    private static Intent getPullRequestIntent(@NonNull Context context, @NonNull Uri uri) {
+    @Nullable private static Intent getPullRequestIntent(@NonNull Context context, @NonNull Uri uri) {
         List<String> segments = uri.getPathSegments();
         if (segments == null || segments.size() < 4) return null;
         if (!"pull".equals(segments.get(2))) return null;
@@ -151,7 +126,7 @@ public class SchemeParser {
         return PullRequestPagerView.createIntent(context, repo, owner, issueNumber);
     }
 
-    private static Intent getIssueIntent(@NonNull Context context, @NonNull Uri uri) {
+    @Nullable private static Intent getIssueIntent(@NonNull Context context, @NonNull Uri uri) {
         List<String> segments = uri.getPathSegments();
         if (segments == null || segments.size() < 4) return null;
         if (!"issues".equals(segments.get(2))) return null;
@@ -170,11 +145,37 @@ public class SchemeParser {
         return IssuePagerView.createIntent(context, repo, owner, issueNumber);
     }
 
-    public static Intent getRepo(@NonNull Context context, @NonNull Uri uri) {
+    @Nullable private static Intent getRepo(@NonNull Context context, @NonNull Uri uri) {
         List<String> segments = uri.getPathSegments();
-        if (segments == null || segments.size() < 2) return null;
+        if (segments == null || segments.size() < 2 || segments.size() > 2) return null;
         String owner = segments.get(0);
         String repoName = segments.get(1);
         return RepoPagerView.createIntent(context, repoName, owner);
+    }
+
+    @Nullable private static Intent getCommit(@NonNull Context context, @NonNull Uri uri) {
+        List<String> segments = uri.getPathSegments();
+        if (segments == null || segments.size() < 4 || !"commit".equals(segments.get(2))) return null;
+        String login = segments.get(0);
+        String repoId = segments.get(1);
+        String sha = segments.get(3);
+        return CommitPagerView.createIntent(context, repoId, login, sha);
+    }
+
+    @Nullable private static String getGistId(@NonNull Uri uri) {
+        List<String> segments = uri.getPathSegments();
+        return segments != null && !segments.isEmpty() ? segments.get(0) : null;
+    }
+
+    @Nullable private static Intent getUser(@NonNull Context context, @NonNull Uri uri) {
+        List<String> segments = uri.getPathSegments();
+        if (segments != null && !segments.isEmpty() && segments.size() == 1) {
+            return UserPagerView.createIntent(context, segments.get(0));
+        }
+        return null;
+    }
+
+    @SafeVarargs private static <T> Optional<T> returnNonNull(T... t) {
+        return Stream.of(t).filter(value -> value != null).findFirst();
     }
 }

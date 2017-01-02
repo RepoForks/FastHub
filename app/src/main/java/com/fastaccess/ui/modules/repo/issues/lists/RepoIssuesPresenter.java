@@ -16,7 +16,7 @@ import com.fastaccess.helper.InputHelper;
 import com.fastaccess.helper.Logger;
 import com.fastaccess.helper.RxHelper;
 import com.fastaccess.ui.base.mvp.presenter.BasePresenter;
-import com.fastaccess.ui.modules.issue.IssuePagerView;
+import com.fastaccess.ui.modules.repo.issues.view.IssuePagerView;
 
 import java.util.ArrayList;
 

@@ -7,8 +7,8 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.fastaccess.R;
 import com.fastaccess.data.dao.GistsModel;
-import com.fastaccess.ui.modules.contentviewer.gists.comments.GistCommentsView;
-import com.fastaccess.ui.modules.contentviewer.gists.files.GistFilesListView;
+import com.fastaccess.ui.modules.main.gists.view.comments.GistCommentsView;
+import com.fastaccess.ui.modules.main.gists.view.files.GistFilesListView;
 
 /**
  * Created by Kosh on 13 Nov 2016, 1:41 PM

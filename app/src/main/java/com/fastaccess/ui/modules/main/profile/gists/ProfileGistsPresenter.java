@@ -11,7 +11,7 @@ import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.Bundler;
 import com.fastaccess.helper.RxHelper;
 import com.fastaccess.ui.base.mvp.presenter.BasePresenter;
-import com.fastaccess.ui.modules.contentviewer.gists.GistsContentView;
+import com.fastaccess.ui.modules.main.gists.view.GistsContentView;
 
 import java.util.ArrayList;
 

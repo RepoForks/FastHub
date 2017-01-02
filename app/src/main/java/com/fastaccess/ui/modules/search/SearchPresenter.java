@@ -2,8 +2,9 @@ package com.fastaccess.ui.modules.search;
 
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
-import android.widget.EditText;
+import android.widget.AutoCompleteTextView;
 
+import com.annimon.stream.Stream;
 import com.fastaccess.R;
 import com.fastaccess.data.dao.SearchHintsModel;
 import com.fastaccess.helper.AppHelper;
@@ -16,10 +17,10 @@ import com.fastaccess.ui.modules.search.users.SearchUsersView;
 
 import java.util.ArrayList;
 
+
 /**
  * Created by Kosh on 08 Dec 2016, 8:20 PM
  */
-
 public class SearchPresenter extends BasePresenter<SearchMvp.View> implements SearchMvp.Presenter {
     private ArrayList<String> hints = new ArrayList<>();
 
@@ -30,7 +31,7 @@ public class SearchPresenter extends BasePresenter<SearchMvp.View> implements Se
                 .limit(11)
                 .subscribe(strings -> {
                     if (strings != null) hints.addAll(strings);
-                    view.onNotifyAdapter();
+                    view.onNotifyAdapter(null);
                 }));
     }
 
@@ -38,10 +39,11 @@ public class SearchPresenter extends BasePresenter<SearchMvp.View> implements Se
         return hints;
     }
 
-    @Override public void onSearchClicked(@NonNull ViewPager viewPager, @NonNull EditText editText) {
+    @Override public void onSearchClicked(@NonNull ViewPager viewPager, @NonNull AutoCompleteTextView editText) {
         boolean isEmpty = InputHelper.isEmpty(editText) || InputHelper.toString(editText).length() < 3;
         editText.setError(isEmpty ? editText.getResources().getString(R.string.minimum_three_chars) : null);
         if (!isEmpty) {
+            editText.dismissDropDown();
             AppHelper.hideKeyboard(editText);
             SearchReposView repos = (SearchReposView) viewPager.getAdapter().instantiateItem(viewPager, 0);
             SearchUsersView users = (SearchUsersView) viewPager.getAdapter().instantiateItem(viewPager, 1);
@@ -52,10 +54,10 @@ public class SearchPresenter extends BasePresenter<SearchMvp.View> implements Se
             users.onSetSearchQuery(query);
             issues.onSetSearchQuery(query);
             code.onSetSearchQuery(query);
-            manageSubscription(SearchHintsModel.saveHints(query).subscribe());
-            if (!hints.contains(query)) {
-                hints.add(query);
-                sendToView(SearchMvp.View::onNotifyAdapter);
+            boolean noneMatch = Stream.of(hints).noneMatch(value -> value.equalsIgnoreCase(query));
+            if (noneMatch) {
+                manageSubscription(SearchHintsModel.saveHints(query).subscribe());
+                sendToView(view -> view.onNotifyAdapter(query));
             }
         }
     }

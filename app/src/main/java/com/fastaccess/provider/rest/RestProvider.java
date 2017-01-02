@@ -91,12 +91,12 @@ public class RestProvider {
                 .addInterceptor(new PaginationInterceptor())
                 .addInterceptor(chain -> {
                     Request original = chain.request();
-                    Request.Builder requestBuilder = original.newBuilder()
-                            .addHeader("Accept", "application/vnd.github.v3+json")
-                            .addHeader("Content-type", "application/vnd.github.v3+json");
+                    Request.Builder requestBuilder = original.newBuilder();
                     if (!InputHelper.isEmpty(PrefGetter.getToken())) {
-                        requestBuilder.addHeader("Authorization", "token " + PrefGetter.getToken());
+                        requestBuilder.header("Authorization", "token " + PrefGetter.getToken());
                     }
+                    requestBuilder.addHeader("Accept", "application/vnd.github.v3+json")
+                            .addHeader("Content-type", "application/vnd.github.v3+json");
                     requestBuilder.method(original.method(), original.body());
                     Request request = requestBuilder.build();
                     return chain.proceed(request);

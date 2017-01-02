@@ -25,6 +25,8 @@ public class CommitModel implements Parcelable {
     private GithubState stats;
     private List<CommitFileModel> files;
     @SerializedName("html_url") private String htmlUrl;
+    private String login;
+    private String repoId;
 
     public String getUrl() {
         return url;
@@ -122,6 +124,24 @@ public class CommitModel implements Parcelable {
         this.htmlUrl = htmlUrl;
     }
 
+    public CommitModel() {}
+
+    public String getRepoId() {
+        return repoId;
+    }
+
+    public void setRepoId(String repoId) {
+        this.repoId = repoId;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
     @Override public int describeContents() { return 0; }
 
     @Override public void writeToParcel(Parcel dest, int flags) {
@@ -137,9 +157,9 @@ public class CommitModel implements Parcelable {
         dest.writeParcelable(this.stats, flags);
         dest.writeTypedList(this.files);
         dest.writeString(this.htmlUrl);
+        dest.writeString(this.login);
+        dest.writeString(this.repoId);
     }
-
-    public CommitModel() {}
 
     protected CommitModel(Parcel in) {
         this.url = in.readString();
@@ -154,6 +174,8 @@ public class CommitModel implements Parcelable {
         this.stats = in.readParcelable(GithubState.class.getClassLoader());
         this.files = in.createTypedArrayList(CommitFileModel.CREATOR);
         this.htmlUrl = in.readString();
+        this.login = in.readString();
+        this.repoId = in.readString();
     }
 
     public static final Creator<CommitModel> CREATOR = new Creator<CommitModel>() {

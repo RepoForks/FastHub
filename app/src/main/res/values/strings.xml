@@ -150,4 +150,7 @@
     <string name="contributors">Contributors</string>
     <string name="repo_chooser">Choose Repo</string>
     <string name="clear">Clear</string>
+    <string name="deletion">Deletion</string>
+    <string name="addition">Addition</string>
+    <string name="commit">Commit</string>
 </resources>

@@ -35,6 +35,8 @@ public class BundleConstant {
         String EDIT_GIST_COMMENT_EXTRA = "edit_comment_extra";
         String NEW_GIST_COMMENT_EXTRA = "new_gist_comment_extra";
         String EDIT_ISSUE_COMMENT_EXTRA = "edit_issue_comment_extra";
+        String EDIT_COMMIT_COMMENT_EXTRA = "edit_commit_comment_extra";
         String NEW_ISSUE_COMMENT_EXTRA = "new_issue_comment_extra";
+        String NEW_COMMIT_COMMENT_EXTRA = "new_commit_comment_extra";
     }
 }

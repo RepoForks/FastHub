@@ -8,20 +8,21 @@ import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 import com.fastaccess.R;
 import com.fastaccess.data.dao.types.IssueState;
-import com.fastaccess.ui.modules.issue.comments.IssueCommentsView;
-import com.fastaccess.ui.modules.issue.details.IssueDetailsView;
 import com.fastaccess.ui.modules.main.profile.followers.ProfileFollowersView;
 import com.fastaccess.ui.modules.main.profile.following.ProfileFollowingView;
 import com.fastaccess.ui.modules.main.profile.gists.ProfileGistsView;
 import com.fastaccess.ui.modules.main.profile.overview.ProfileOverviewView;
 import com.fastaccess.ui.modules.main.profile.repos.ProfileReposView;
 import com.fastaccess.ui.modules.main.profile.starred.ProfileStarredView;
-import com.fastaccess.ui.modules.pull_request.details.PullRequestDetailsView;
 import com.fastaccess.ui.modules.repo.code.commits.RepoCommitsView;
+import com.fastaccess.ui.modules.repo.code.commits.view.comments.CommitCommentsView;
 import com.fastaccess.ui.modules.repo.code.contributors.RepoContributorsView;
 import com.fastaccess.ui.modules.repo.code.releases.RepoReleasesView;
 import com.fastaccess.ui.modules.repo.issues.lists.RepoIssuesView;
+import com.fastaccess.ui.modules.repo.issues.view.comments.IssueCommentsView;
+import com.fastaccess.ui.modules.repo.issues.view.details.IssueDetailsView;
 import com.fastaccess.ui.modules.repo.pull_request.lists.RepoPullRequestView;
+import com.fastaccess.ui.modules.repo.pull_request.view.details.PullRequestDetailsView;
 import com.fastaccess.ui.modules.search.code.SearchCodeView;
 import com.fastaccess.ui.modules.search.issues.SearchIssuesView;
 import com.fastaccess.ui.modules.search.repos.SearchReposView;
@@ -126,6 +127,15 @@ public class FragmentPagerAdapterModel {
                         RepoPullRequestView.newInstance(repoId, login, IssueState.open)),
                 new FragmentPagerAdapterModel(context.getString(R.string.closed),
                         RepoPullRequestView.newInstance(repoId, login, IssueState.closed)))
+                .collect(Collectors.toList());
+    }
+
+    @NonNull public static List<FragmentPagerAdapterModel> buildForCommit(@NonNull Context context, @NonNull CommitModel commitModel) {
+        String login = commitModel.getLogin();
+        String repoId = commitModel.getRepoId();
+        String sha = commitModel.getSha();
+        return Stream.of(new FragmentPagerAdapterModel(context.getString(R.string.comments),
+                CommitCommentsView.newInstance(login, repoId, sha)))
                 .collect(Collectors.toList());
     }
 }

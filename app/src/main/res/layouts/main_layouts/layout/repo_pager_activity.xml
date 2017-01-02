@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.modules.contentviewer.gists.GistsContentView">
+    tools:context=".ui.modules.main.gists.view.GistsContentView">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"

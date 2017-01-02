@@ -75,4 +75,12 @@ public interface RepoService {
     @GET("repos/{owner}/{repo}/contributors")
     Observable<Pageable<UserModel>> getContributors(@Path("owner") String owner, @Path("repo") String repo, @Query("page") int page);
 
+    @GET("repos/{owner}/{repo}/commits/{sha}")
+    Observable<CommitModel> getCommit(@Path("owner") String owner, @Path("repo") String repo, @Path("sha") String sha);
+
+    @GET("repos/{owner}/{repo}/commits/{sha}/comments")
+    Observable<Pageable<CommentsModel>> getCommitComments(@NonNull @Path("owner") String owner, @NonNull @Path("repo") String repo,
+                                                           @NonNull @Path("sha") String ref, @Query("page") int page);
+
+
 }

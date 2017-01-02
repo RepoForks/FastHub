@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import com.fastaccess.data.dao.UserModel;
 import com.fastaccess.provider.scheme.SchemeParser;
 
 /**
@@ -15,6 +16,10 @@ public class SchemeInterceptorView extends Activity {
 
     @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (UserModel.getUser() == null) {
+            finish();
+            return;
+        }
         onCreate(getIntent());
     }
 

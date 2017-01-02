@@ -11,6 +11,7 @@ import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.InputHelper;
 import com.fastaccess.helper.RxHelper;
 import com.fastaccess.ui.base.mvp.presenter.BasePresenter;
+import com.fastaccess.ui.modules.repo.code.commits.view.CommitPagerView;
 
 import java.util.ArrayList;
 
@@ -85,7 +86,7 @@ public class RepoCommitsPresenter extends BasePresenter<RepoCommitsMvp.View> imp
     }
 
     @Override public void onItemClick(int position, View v, CommitModel item) {
-//        IssuePagerView.createIntentForOffline(v.getContext(), item);
+        CommitPagerView.createIntentForOffline(v.getContext(), item);
     }
 
     @Override public void onItemLongClick(int position, View v, CommitModel item) {

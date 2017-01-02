@@ -2,6 +2,7 @@ package com.fastaccess.ui.modules.search;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.text.Editable;
@@ -14,7 +15,6 @@ import com.fastaccess.R;
 import com.fastaccess.data.dao.FragmentPagerAdapterModel;
 import com.fastaccess.helper.AnimHelper;
 import com.fastaccess.helper.AppHelper;
-import com.fastaccess.helper.Logger;
 import com.fastaccess.ui.adapter.FragmentsPagerAdapter;
 import com.fastaccess.ui.base.BaseActivity;
 import com.fastaccess.ui.widgets.FontAutoCompleteEditText;
@@ -59,7 +59,7 @@ public class SearchView extends BaseActivity<SearchMvp.View, SearchPresenter> im
         return false;
     }
 
-    @OnClick(value = {R.id.clear}) void onSearchIconsClick(View view) {
+    @OnClick(value = {R.id.clear}) void onClear(View view) {
         if (view.getId() == R.id.clear) {
             AppHelper.hideKeyboard(searchEditText);
             searchEditText.setText("");
@@ -99,9 +99,9 @@ public class SearchView extends BaseActivity<SearchMvp.View, SearchPresenter> im
         searchEditText.setOnItemClickListener((parent, view, position, id) -> getPresenter().onSearchClicked(pager, searchEditText));
     }
 
-    @Override public void onNotifyAdapter() {
-        Logger.e();
-        getAdapter().notifyDataSetChanged();
+    @Override public void onNotifyAdapter(@Nullable String query) {
+        if (query == null) getAdapter().notifyDataSetChanged();
+        else getAdapter().add(query);
     }
 
     private ArrayAdapter<String> getAdapter() {

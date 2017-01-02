@@ -60,7 +60,7 @@ public class CountBadgeProvider extends BadgeProvider {
             this.text = String.valueOf(count);
             paint.setColor(color);
             textPaint.setColor(Color.WHITE);
-            textPaint.setTextSize(20);
+            textPaint.setTextSize(24);
         }
 
         @Override public void draw(@NonNull final Canvas canvas) {
