@@ -1,9 +1,15 @@
 package com.fastaccess.data.dao;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
+import com.fastaccess.R;
 import com.fastaccess.data.dao.types.IssueState;
+import com.fastaccess.helper.InputHelper;
+import com.fastaccess.helper.ParseDateFormat;
+import com.fastaccess.ui.widgets.SpannableBuilder;
 import com.google.gson.annotations.SerializedName;
 
 import org.objectweb.asm.Label;
@@ -441,4 +447,23 @@ public class PullRequestModel implements Parcelable {
 
         @Override public PullRequestModel[] newArray(int size) {return new PullRequestModel[size];}
     };
+
+    @NonNull public static SpannableBuilder getMergeBy(@NonNull PullRequestModel pullRequest, @NonNull Context context) {
+        UserModel merger = pullRequest.getMergedBy() != null ? pullRequest.getMergedBy() : pullRequest.getBase().getUser();
+        boolean isMerge = pullRequest.isMerged() || !InputHelper.isEmpty(pullRequest.getMergedAt());
+        String status = !isMerge ? context.getString(pullRequest.getState().getStatus()) : context.getString(R.string.merged);
+        SpannableBuilder builder = SpannableBuilder.builder();
+        builder.append(merger.getLogin())
+                .append(" ")
+                .append(status)
+                .append(" ");
+        if (isMerge) {
+            builder.append(ParseDateFormat.getTimeAgo(pullRequest.getMergedAt()));
+        } else {
+            builder.append(ParseDateFormat.getTimeAgo(
+                    pullRequest.getState() == IssueState.closed
+                    ? pullRequest.getClosedAt() : pullRequest.getCreatedAt()));
+        }
+        return builder;
+    }
 }

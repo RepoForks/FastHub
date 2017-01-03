@@ -12,7 +12,6 @@ import java.util.List;
  */
 
 public class CommitModel implements Parcelable {
-
     private String url;
     private String ref;
     private RepoModel repo;
@@ -21,6 +20,7 @@ public class CommitModel implements Parcelable {
     private GitCommitModel commit;
     private UserModel author;
     private UserModel committer;
+    private UserModel user;
     private List<CommitModel> parents;
     private GithubState stats;
     private List<CommitFileModel> files;
@@ -142,6 +142,14 @@ public class CommitModel implements Parcelable {
         this.login = login;
     }
 
+    public UserModel getUser() {
+        return user;
+    }
+
+    public void setUser(UserModel user) {
+        this.user = user;
+    }
+
     @Override public int describeContents() { return 0; }
 
     @Override public void writeToParcel(Parcel dest, int flags) {
@@ -153,6 +161,7 @@ public class CommitModel implements Parcelable {
         dest.writeParcelable(this.commit, flags);
         dest.writeParcelable(this.author, flags);
         dest.writeParcelable(this.committer, flags);
+        dest.writeParcelable(this.user, flags);
         dest.writeTypedList(this.parents);
         dest.writeParcelable(this.stats, flags);
         dest.writeTypedList(this.files);
@@ -170,6 +179,7 @@ public class CommitModel implements Parcelable {
         this.commit = in.readParcelable(GitCommitModel.class.getClassLoader());
         this.author = in.readParcelable(UserModel.class.getClassLoader());
         this.committer = in.readParcelable(UserModel.class.getClassLoader());
+        this.user = in.readParcelable(UserModel.class.getClassLoader());
         this.parents = in.createTypedArrayList(CommitModel.CREATOR);
         this.stats = in.readParcelable(GithubState.class.getClassLoader());
         this.files = in.createTypedArrayList(CommitFileModel.CREATOR);

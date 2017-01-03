@@ -7,10 +7,8 @@ import android.view.ViewGroup;
 
 import com.fastaccess.R;
 import com.fastaccess.data.dao.PullRequestModel;
-import com.fastaccess.helper.ParseDateFormat;
 import com.fastaccess.ui.widgets.AvatarLayout;
 import com.fastaccess.ui.widgets.FontTextView;
-import com.fastaccess.ui.widgets.SpannableBuilder;
 import com.fastaccess.ui.widgets.recyclerview.BaseRecyclerAdapter;
 import com.fastaccess.ui.widgets.recyclerview.BaseViewHolder;
 
@@ -36,13 +34,11 @@ public class PullRequestViewHolder extends BaseViewHolder<PullRequestModel> {
         return new PullRequestViewHolder(getView(viewGroup, R.layout.issue_row_item), adapter);
     }
 
-    public void bind(@NonNull PullRequestModel issueModel, boolean withAvatar) {
-        title.setText(issueModel.getTitle());
-        details.setText(SpannableBuilder.builder().append(itemView.getResources().getString(issueModel.getState().getStatus()))
-                .append(" ").append(by).append(" ").append(issueModel.getUser().getLogin()).append(" ")
-                .append(ParseDateFormat.getTimeAgo(issueModel.getCreatedAt())));
+    public void bind(@NonNull PullRequestModel pullRequest, boolean withAvatar) {
+        title.setText(pullRequest.getTitle());
+        details.setText(PullRequestModel.getMergeBy(pullRequest, details.getContext()));
         if (withAvatar) {
-            avatarLayout.setUrl(issueModel.getUser().getAvatarUrl(), issueModel.getUser().getLogin());
+            avatarLayout.setUrl(pullRequest.getUser().getAvatarUrl(), pullRequest.getUser().getLogin());
             avatarLayout.setVisibility(View.VISIBLE);
         }
     }

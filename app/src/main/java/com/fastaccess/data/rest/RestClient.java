@@ -159,11 +159,11 @@ public class RestClient {
         return RestProvider.createService(IssueService.class).getIssue(login, repoId, number);
     }
 
-    public static Observable<Response<Boolean>> lockIssue(@NonNull String login, @NonNull String repoId, int number) {
+    public static Observable<Response<Boolean>> lockConversations(@NonNull String login, @NonNull String repoId, int number) {
         return RestProvider.createService(IssueService.class).lockIssue(login, repoId, number);
     }
 
-    public static Observable<Response<Boolean>> unLockIssue(@NonNull String login, @NonNull String repoId, int number) {
+    public static Observable<Response<Boolean>> unLockConversations(@NonNull String login, @NonNull String repoId, int number) {
         return RestProvider.createService(IssueService.class).unlockIssue(login, repoId, number);
     }
 

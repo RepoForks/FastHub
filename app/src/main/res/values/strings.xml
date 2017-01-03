@@ -109,10 +109,13 @@
     <string name="re_open">Re-Open</string>
     <string name="close">Close</string>
     <string name="success_re_opened">Successfully re-opened.</string>
-    <string name="lock_issue_details">Locking the conversation means:\nOther users can’t add new comments to this issue.\nYou and other collaborators with access to this repository can still leave comments that others can see.\nYou can always unlock this issue again in the future.\n</string>
-    <string name="unlock_issue_details">Unlocking the conversation means:\nEveryone will be able to comment on this issue once more.\nYou can always lock this issue again in the future.\n</string>
-    <string name="lock_issue">Lock Issue</string>
-    <string name="unlock_issue">Unlock Issue</string>
+    <string name="lock_issue_details">Locking the conversation means:\n&#183;Other users can’t add new comments to this issue.\n&#183;You and other 
+        collaborators with access to this repository can still leave comments that others can see.\n&#183;You can always unlock this issue again in the 
+        future.\n</string>
+    <string name="unlock_issue_details">Unlocking the conversation means:\n&#183;Everyone will be able to comment on this issue once more.\n&#183;You can 
+        always lock this issue again in the future.\n</string>
+    <string name="lock_issue">Lock Conversation</string>
+    <string name="unlock_issue">Unlock Conversation</string>
     <string name="readme">Readme</string>
     <string name="opened">Opened</string>
     <string name="closed">Closed</string>
@@ -154,4 +157,6 @@
     <string name="addition">Addition</string>
     <string name="commit">Commit</string>
     <string name="please_login">Please Login to Continue Using FastHub</string>
+    <string name="merged">Merged</string>
+    <string name="merge">Merge</string>
 </resources>

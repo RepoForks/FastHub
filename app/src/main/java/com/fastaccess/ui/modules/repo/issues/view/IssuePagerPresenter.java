@@ -115,7 +115,7 @@ public class IssuePagerPresenter extends BasePresenter<IssuePagerMvp.View> imple
         String repoId = currentIssue.getRepoId();
         int number = currentIssue.getNumber();
         Observable<Response<Boolean>> observable = RxHelper
-                .getObserver(isLocked() ? RestClient.unLockIssue(login, repoId, number) : RestClient.lockIssue(login, repoId, number));
+                .getObserver(isLocked() ? RestClient.unLockConversations(login, repoId, number) : RestClient.lockConversations(login, repoId, number));
         manageSubscription(observable
                 .doOnSubscribe(() -> sendToView(IssuePagerMvp.View::onShowProgress))
                 .doOnNext(booleanResponse -> {

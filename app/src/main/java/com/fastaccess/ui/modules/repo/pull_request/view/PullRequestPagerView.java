@@ -17,13 +17,11 @@ import com.fastaccess.data.dao.FragmentPagerAdapterModel;
 import com.fastaccess.data.dao.PullRequestModel;
 import com.fastaccess.data.dao.PullsIssuesParser;
 import com.fastaccess.data.dao.UserModel;
-import com.fastaccess.data.dao.types.IssueState;
 import com.fastaccess.helper.ActivityHelper;
 import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.Bundler;
 import com.fastaccess.helper.InputHelper;
 import com.fastaccess.helper.Logger;
-import com.fastaccess.helper.ParseDateFormat;
 import com.fastaccess.ui.adapter.FragmentsPagerAdapter;
 import com.fastaccess.ui.base.BaseActivity;
 import com.fastaccess.ui.modules.repo.pull_request.view.comments.PullRequestCommentsView;
@@ -128,23 +126,15 @@ public class PullRequestPagerView extends BaseActivity<PullRequestPagerMvp.View,
     }
 
     @Override public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.issue_menu, menu);
-        menu.findItem(R.id.closeIssue).setVisible(getPresenter().isOwner());
-        menu.findItem(R.id.lockIssue).setVisible(getPresenter().isOwner());
+        getMenuInflater().inflate(R.menu.pull_request_menu, menu);
+        menu.findItem(R.id.merge).setVisible(getPresenter().isOwner() && getPresenter().isMergeable());
+        menu.findItem(R.id.lockIssue).setVisible(getPresenter().isOwner() || getPresenter().isRepoOwner());
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.share) {
             if (getPresenter().getPullRequest() != null) ActivityHelper.shareUrl(this, getPresenter().getPullRequest().getHtmlUrl());
-            return true;
-        } else if (item.getItemId() == R.id.closeIssue) {
-            PullRequestModel pullRequest = getPresenter().getPullRequest();
-            if (pullRequest == null) return true;
-            MessageDialogView.newInstance(
-                    pullRequest.getState() == IssueState.open ? getString(R.string.close_issue) : getString(R.string.re_open_issue),
-                    getString(R.string.confirm_message), Bundler.start().put(BundleConstant.EXTRA, true).end())
-                    .show(getSupportFragmentManager(), MessageDialogView.TAG);
             return true;
         } else if (item.getItemId() == R.id.lockIssue) {
             MessageDialogView.newInstance(
@@ -157,19 +147,16 @@ public class PullRequestPagerView extends BaseActivity<PullRequestPagerMvp.View,
     }
 
     @Override public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem closeIssue = menu.findItem(R.id.closeIssue);
         MenuItem lockIssue = menu.findItem(R.id.lockIssue);
+        boolean isRepoOwner = getPresenter().isRepoOwner();
         boolean isOwner = getPresenter().isOwner();
         boolean isLocked = getPresenter().isLocked();
-        menu.findItem(R.id.closeIssue).setVisible(isOwner);
-        menu.findItem(R.id.lockIssue).setVisible(isOwner);
-        if (isOwner) {
-            //noinspection ConstantConditions ( getIssue at this stage is not null but AS doesn't know. )
-            closeIssue.setTitle(getPresenter().getPullRequest().getState() == IssueState.closed ? getString(R.string.re_open) : getString(R.string
-                    .close));
+        boolean isMergable = getPresenter().isMergeable();
+        lockIssue.setVisible(isRepoOwner);
+        if (isRepoOwner) {
             lockIssue.setTitle(isLocked ? getString(R.string.unlock_issue) : getString(R.string.lock_issue));
         }
-
+        menu.findItem(R.id.merge).setVisible(isMergable && (isOwner || isRepoOwner));
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -196,13 +183,15 @@ public class PullRequestPagerView extends BaseActivity<PullRequestPagerMvp.View,
         PullRequestModel pullRequest = getPresenter().getPullRequest();
         setTitle(String.format("#%s", pullRequest.getNumber()));
         UserModel userModel = pullRequest.getUser();
-        title.setText(pullRequest.getTitle());
         if (userModel != null) {
+            title.setText(SpannableBuilder.builder().append(userModel.getLogin()).append("/").append(pullRequest.getTitle()));
             date.setVisibility(View.GONE);
-            size.setText(SpannableBuilder.builder().append(getString(pullRequest.getState().getStatus()))
-                    .append(" ").append(getString(R.string.by)).append(" ").append(userModel.getLogin()).append(" ")
-                    .append(ParseDateFormat.getTimeAgo(pullRequest.getCreatedAt())));
+            boolean isMerge = !InputHelper.isEmpty(pullRequest.getMergedAt());
+            int status = !isMerge ? pullRequest.getState().getStatus() : R.string.merged;
+            size.setText(getPresenter().getMergeBy(pullRequest, getApplicationContext()));
             avatarLayout.setUrl(userModel.getAvatarUrl(), userModel.getLogin());
+        } else {
+            title.setText(SpannableBuilder.builder().append(pullRequest.getTitle()));
         }
         pager.setAdapter(new FragmentsPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapterModel.buildForPullRequest(this, pullRequest)));
         tabs.setupWithViewPager(pager);
