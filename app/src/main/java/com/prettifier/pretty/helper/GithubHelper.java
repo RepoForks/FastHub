@@ -4,6 +4,9 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.fastaccess.helper.Logger;
+import com.fastaccess.provider.rest.RestProvider;
+
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,22 +22,28 @@ public class GithubHelper {
 
     private static Matcher IMAGE_SRC_MATCHER = Pattern.compile("(src|SRC)=\"(.*?)\"").matcher("");
 
-    @NonNull public static String generateContent(@NonNull String source, @Nullable String baseUrl, boolean breakLine) {
+    private static Matcher LINK_TAG_MATCHER = Pattern.compile("<(a)(.*?)>").matcher("");
+
+    private static Matcher HREF_MATCHER = Pattern.compile("(href)=\"(.*?)\"").matcher("");
+
+    @NonNull public static String generateContent(@NonNull String source, @Nullable String baseUrl) {
+        Logger.e(baseUrl);
         if (baseUrl == null) {
-            return mergeContent(source, breakLine);
+            return mergeContent(source);
         } else {
-            return mergeContent(validateImageBaseUrl(source, baseUrl), breakLine);
+            return mergeContent(validateImageBaseUrl(source, baseUrl));
         }
     }
 
     /**
-     * A hacking method that appends the https://raw.githubusercontent.com/ to given image src.
-     *
-     * @param source
-     * @param baseUrl
-     * @return full image url.
+     * A hacking method that appends the https://raw.githubusercontent.com/ to given image src or baseUrl to the href if is not full url.
      */
     @NonNull private static String validateImageBaseUrl(@NonNull String source, @NonNull String baseUrl) {
+        Uri uri = Uri.parse(baseUrl);
+        List<String> segments = uri.getPathSegments();
+        if (segments == null || segments.size() < 2) return source;
+        String owner = segments.get(0);
+        String repoName = segments.get(1);
         Matcher matcher = IMAGE_TAG_MATCHER.reset(source);
         while (matcher.find()) {
             String image = matcher.group(2).trim();
@@ -46,18 +55,36 @@ public class GithubHelper {
             if (src == null || src.startsWith("http://") || src.startsWith("https://")) {
                 continue;
             }
-            Uri uri = Uri.parse(baseUrl);
-            List<String> segments = uri.getPathSegments();
-            if (segments == null || segments.size() < 2) break;
-            String owner = segments.get(0);
-            String repoName = segments.get(1);
             String finalSrc = "https://raw.githubusercontent.com/" + owner + "/" + repoName + "/master/" + src;
             source = source.replace(src, finalSrc);
+        }
+        return validateLinks(source, baseUrl);
+    }
+
+    private static String validateLinks(@NonNull String source, @NonNull String baseUrl) {
+        Uri uri = Uri.parse(baseUrl);
+        List<String> segments = uri.getPathSegments();
+        if (segments == null || segments.size() < 2) return source;
+        String owner = segments.get(0);
+        String repoName = segments.get(1);
+        Matcher matcher = LINK_TAG_MATCHER.reset(source);
+        while (matcher.find()) {
+            String link = matcher.group(2).trim();
+            HREF_MATCHER.reset(link);
+            String href = null;
+            if (HREF_MATCHER.find()) {
+                href = HREF_MATCHER.group(2).trim();
+            }
+            if (href == null || href.startsWith("http://") || href.startsWith("https://")) {
+                continue;
+            }
+            String finalSrc = RestProvider.REST_URL + "repos/" + owner + "/" + repoName + "/contents/" + href;
+            source = source.replace(href, finalSrc);
         }
         return source;
     }
 
-    private static String mergeContent(@NonNull String source, boolean breakLine) {
+    private static String mergeContent(@NonNull String source) {
         return "<html>\n" +
                 "\n" +
                 "<head>\n" +
@@ -68,7 +95,7 @@ public class GithubHelper {
                 "\n" +
                 "<body>\n" +
                 source +
-                "\n" + (!breakLine ? "<script src=\"./intercept-touch.js\"></script>\n" : "") + "" +
+                "\n<script src=\"./intercept-touch.js\"></script>\n" +
                 "</body>\n" +
                 "\n" +
                 "</html>\n";

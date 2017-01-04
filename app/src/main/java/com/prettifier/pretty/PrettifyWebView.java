@@ -17,9 +17,11 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.fastaccess.data.dao.FilesListModel;
 import com.fastaccess.helper.ActivityHelper;
 import com.fastaccess.helper.InputHelper;
-import com.fastaccess.helper.Logger;
+import com.fastaccess.provider.rest.RestProvider;
+import com.fastaccess.ui.modules.viewer.FilesViewerView;
 import com.prettifier.pretty.callback.MarkDownInterceptorInterface;
 import com.prettifier.pretty.helper.GithubHelper;
 import com.prettifier.pretty.helper.MarkDownHelper;
@@ -99,26 +101,27 @@ public class PrettifyWebView extends NestedWebView {
     }
 
     public void setGithubContent(@NonNull String source, @Nullable String baseUrl) {
-        setGithubContent(source, baseUrl, false);
-    }
-
-    public void setGithubContent(@NonNull String source, @Nullable String baseUrl, boolean breakLine) {
         if (!InputHelper.isEmpty(source)) {
             addJavascriptInterface(new MarkDownInterceptorInterface(this), "Android");
             this.content = source;
-            String page = GithubHelper.generateContent(source, baseUrl, breakLine);
+            String page = GithubHelper.generateContent(source, baseUrl);
             post(() -> loadDataWithBaseURL("file:///android_asset/md/", page, "text/html", "utf-8", null));
         }
     }
 
     public void setMdSource(@NonNull String source) {
+        setMdSource(source, false);
+    }
+
+    public void setMdSource(@NonNull String source, boolean wrap) {
         if (!InputHelper.isEmpty(source)) {
             addJavascriptInterface(new MarkDownInterceptorInterface(this), "Android");
             this.content = source;
-            String page = MarkDownHelper.generateContent(source);
+            String page = MarkDownHelper.generateContent(source, wrap);
             post(() -> loadDataWithBaseURL("file:///android_asset/md/", page, "text/html", "utf-8", null));
         }
     }
+
 
     public void refresh() {
         if (content != null) {
@@ -142,21 +145,31 @@ public class PrettifyWebView extends NestedWebView {
 
     private class WebClient extends WebViewClient {
         @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-            Activity activity = ActivityHelper.getActivity(view.getContext());
-            if (activity != null) {
-                ActivityHelper.startCustomTab(activity, request.getUrl());
-            }
+            startActivity(request.getUrl());
+
             return true;
+        }
+    }
+
+    private void startActivity(Uri url) {
+        if (RestProvider.REST_URL.contains(url.getAuthority()) && url.getPathSegments() != null
+                && url.getPathSegments().size() > 2) {
+            FilesListModel listModel = new FilesListModel();
+            listModel.setFilename(url.getLastPathSegment());
+            listModel.setRawUrl(url.toString());
+            listModel.setId(url.getPathSegments().get(1) + url.getPathSegments().get(2));
+            FilesViewerView.startActivity(getContext(), listModel);
+        } else {
+            Activity activity = ActivityHelper.getActivity(getContext());
+            if (activity != null) {
+                ActivityHelper.startCustomTab(activity, url);
+            }
         }
     }
 
     private class WebClientCompat extends WebViewClient {
         @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            Logger.e(url);
-            Activity activity = ActivityHelper.getActivity(view.getContext());
-            if (activity != null) {
-                ActivityHelper.startCustomTab(activity, Uri.parse(url));
-            }
+            startActivity(Uri.parse(url));
             return true;
         }
     }

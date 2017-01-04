@@ -10,11 +10,11 @@ import android.support.annotation.NonNull;
 
 public class MarkDownHelper {
 
-    @NonNull public static String generateContent(@NonNull String source) {
-        return mergeContent(source);
+    @NonNull public static String generateContent(@NonNull String source, boolean wrap) {
+        return mergeContent(source, wrap);
     }
 
-    private static String mergeContent(@NonNull String source) {
+    private static String mergeContent(@NonNull String source, boolean wrap) {
         return "<html>\n" +
                 "\n" +
                 "<head>\n" +
@@ -22,7 +22,7 @@ public class MarkDownHelper {
                 "    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n" +
                 "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n" +
                 "    <link rel=\"stylesheet\" href=\"./bootstrap.css\">\n" +
-                "    <link rel=\"stylesheet\" type=\"text/css\" href=\"./md.css\">\n" +
+                "    <link rel=\"stylesheet\" type=\"text/css\" href=\"./" + (wrap ? "md_wrap.css" : "md.css") + "\">\n" +
                 "</head>\n" +
                 "\n" +
                 "<body>\n" +
@@ -31,7 +31,7 @@ public class MarkDownHelper {
                 "            <div id=\"md\" class=\"col-md-12\"></div>\n" +
                 "        </div>\n" +
                 "    <script src=\"./markdown-it.js\"></script>\n" +
-                "    <script src=\"./intercept-touch.js\"></script>\n" +
+                "    " + (wrap ? "" : "<script src=\"./intercept-touch.js\"></script>") + "\n" +
                 "    <script type=\"text/javascript\">\n" +
                 "    var md = window.markdownit({\n" +
                 "        html: true,\n" +

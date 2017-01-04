@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.fastaccess.R;
+import com.fastaccess.data.dao.IssueEventAdapterModel;
 import com.fastaccess.data.dao.IssueModel;
 import com.fastaccess.helper.BundleConstant;
 import com.fastaccess.helper.Bundler;
@@ -43,6 +44,7 @@ public class IssueDetailsView extends BaseFragment<IssueDetailsMvp.View, IssueDe
     @Override protected void onFragmentCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         if (savedInstanceState == null) getPresenter().onFragmentCreated(getArguments());
         recycler.setEmptyView(stateLayout, refresh);
+        recycler.getRecycledViewPool().setMaxRecycledViews(IssueEventAdapterModel.HEADER, 0);//FIXME find a better way to cache webview
         refresh.setOnRefreshListener(this);
         stateLayout.setOnReloadListener(this);
         adapter = new IssueTimelineAdapter(getPresenter().getIssues());

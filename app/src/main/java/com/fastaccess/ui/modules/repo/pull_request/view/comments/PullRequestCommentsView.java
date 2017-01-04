@@ -52,6 +52,7 @@ public class PullRequestCommentsView extends BaseFragment<PullRequestCommentsMvp
     @Override protected void onFragmentCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         if (savedInstanceState == null) getPresenter().onFragmentCreated(getArguments());
         recycler.setEmptyView(stateLayout, refresh);
+        recycler.setItemViewCacheSize(10);//FIXME
         refresh.setOnRefreshListener(this);
         stateLayout.setOnReloadListener(this);
         adapter = new CommentsAdapter(getPresenter().getComments());

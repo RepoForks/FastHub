@@ -9,12 +9,11 @@ import com.fastaccess.R;
 import com.fastaccess.data.dao.CommentsModel;
 import com.fastaccess.helper.InputHelper;
 import com.fastaccess.helper.ParseDateFormat;
-import com.fastaccess.provider.markdown.MarkDownProvider;
 import com.fastaccess.ui.widgets.AvatarLayout;
 import com.fastaccess.ui.widgets.FontTextView;
-import com.fastaccess.ui.widgets.SpanFixTextView;
 import com.fastaccess.ui.widgets.recyclerview.BaseRecyclerAdapter;
 import com.fastaccess.ui.widgets.recyclerview.BaseViewHolder;
+import com.prettifier.pretty.PrettifyWebView;
 
 import butterknife.BindView;
 
@@ -27,7 +26,7 @@ public class CommentsViewHolder extends BaseViewHolder<CommentsModel> {
     @BindView(R.id.avatarView) AvatarLayout avatar;
     @BindView(R.id.date) FontTextView date;
     @BindView(R.id.name) FontTextView name;
-    @BindView(R.id.comment) SpanFixTextView comment;
+    @BindView(R.id.comment) PrettifyWebView comment;
 
     private CommentsViewHolder(@NonNull View itemView, @Nullable BaseRecyclerAdapter adapter) {
         super(itemView, adapter);
@@ -45,7 +44,12 @@ public class CommentsViewHolder extends BaseViewHolder<CommentsModel> {
         } else {
             avatar.setUrl(null, null);
         }
-        if (!InputHelper.isEmpty(commentsModel.getBody())) MarkDownProvider.convertTextToMarkDown(comment, commentsModel.getBody());
+        if (!InputHelper.isEmpty(commentsModel.getBody())) {
+            comment.setNestedScrollingEnabled(false);
+            if (!InputHelper.isEmpty(commentsModel.getBody())) {
+                comment.setMdSource(commentsModel.getBody(), true);
+            }
+        }
         name.setText(commentsModel.getUser() != null ? commentsModel.getUser().getLogin() : "Anonymous");
         date.setText(ParseDateFormat.getTimeAgo(commentsModel.getCreatedAt()));
     }

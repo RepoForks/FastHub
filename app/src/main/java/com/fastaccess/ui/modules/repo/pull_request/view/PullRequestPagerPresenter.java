@@ -69,7 +69,7 @@ public class PullRequestPagerPresenter extends BasePresenter<PullRequestPagerMvp
         if (getPullRequest() != null && getPullRequest().getAssignee() != null) {
             isOwner = getPullRequest().getAssignee().getLogin().equals(App.getUser().getLogin());
         } else {
-            isOwner = getPullRequest().getBase() != null &&
+            isOwner = getPullRequest() != null && getPullRequest().getBase() != null &&
                     getPullRequest().getBase().getUser().getLogin().equals(App.getUser().getLogin());
         }
         return isOwner;
